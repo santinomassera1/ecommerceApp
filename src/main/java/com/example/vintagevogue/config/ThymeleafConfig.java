@@ -26,4 +26,8 @@ public class ThymeleafConfig {
         templateResolver.setCacheable(false);
         return templateResolver;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fb5bd05981b960023b76268448945f182399185d

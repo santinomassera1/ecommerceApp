@@ -18,4 +18,8 @@ public class EmailService {
         message.setText(text);
         emailSender.send(message);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fb5bd05981b960023b76268448945f182399185d

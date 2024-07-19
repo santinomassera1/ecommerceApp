@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/css/login.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <title>Reset Password</title>
+    <title>Forgot Password</title>
     <style>
         .button-1, .button-2, .login-button, .signup-button {
             cursor: pointer;
@@ -14,31 +14,25 @@
     </style>
 </head>
 <body>
+
 <div class="container">
     <div class="box-1">
         <div class="content-holder">
-            <h2>Reset Your Password</h2>
+            <h2>Forgot Your Password?</h2>
             <button class="button-1" onclick="window.location.href='/auth/register'">Sign up</button>
         </div>
     </div>
     <div class="box-2">
         <div class="form-container">
-            <h1>Reset Password</h1>
-            <form id="resetPasswordForm">
-                <input type="hidden" name="token" id="token" value="${token}">
-                <input type="password" placeholder="Enter new password" class="input-field" name="newPassword" required>
+            <h1>Forgot Password</h1>
+            <form id="forgotPasswordForm">
+                <input type="email" placeholder="Enter your email" class="input-field" name="email" required>
                 <br><br>
-                <input type="password" placeholder="Confirm new password" class="input-field" name="confirmPassword" required>
-                <br><br>
-                <button class="login-button" type="submit">Reset Password</button>
+                <button class="login-button" type="submit">Send Reset Link</button>
             </form>
         </div>
     </div>
 </div>
 <script src="/js/auth.js"></script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> fb5bd05981b960023b76268448945f182399185d
