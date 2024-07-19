@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Assignment</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<div class="container">
+    <h1>Assign Roles to Users</h1>
+    <form id="roleAssignmentForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role">
+            <option value="ROLE_USER">User</option>
+            <option value="ROLE_ADMIN">Admin</option>
+            <option value="ROLE_SUPPORT">Support</option>
+        </select>
+
+        <button type="submit">Assign Role</button>
+    </form>
+</div>
+<script>
+    document.getElementById('roleAssignmentForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const role = document.getElementById('role').value;
+
+        fetch('/admin/assign-role', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, role })
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>

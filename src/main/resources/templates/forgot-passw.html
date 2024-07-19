@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <title>Forgot Password</title>
+    <style>
+        .button-1, .button-2, .login-button, .signup-button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="box-1">
+        <div class="content-holder">
+            <h2>Forgot Your Password?</h2>
+            <button class="button-1" onclick="window.location.href='/auth/register'">Sign up</button>
+        </div>
+    </div>
+    <div class="box-2">
+        <div class="form-container">
+            <h1>Forgot Password</h1>
+            <form id="forgotPasswordForm">
+                <input type="email" placeholder="Enter your email" class="input-field" name="email" required>
+                <br><br>
+                <button class="login-button" type="submit">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/js/auth.js"></script>
+</body>
+</html>
