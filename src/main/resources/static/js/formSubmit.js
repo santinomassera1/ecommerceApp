@@ -42,8 +42,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     } else {
         Swal.fire('Error', result.message, 'error');
     }
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> fb5bd05981b960023b76268448945f182399185d
+
+
