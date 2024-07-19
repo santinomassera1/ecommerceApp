@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<<<<<<< HEAD
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Technical Support</title>
@@ -44,47 +43,3 @@
 </script>
 </body>
 </html>
-=======
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technical Support</title>
-    <link rel="stylesheet" href="/css/main.css">
-</head>
-<body>
-<div class="container">
-    <h1>Technical Support</h1>
-    <form id="supportForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="issue">Issue:</label>
-        <textarea id="issue" name="issue" required></textarea>
-
-        <button type="submit">Submit</button>
-    </form>
-</div>
-<script>
-    document.getElementById('supportForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = document.getElementById('username').value;
-        const issue = document.getElementById('issue').value;
-
-        fetch('/support/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, issue })
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    });
-</script>
-</body>
-</html>
->>>>>>> fb5bd05981b960023b76268448945f182399185d

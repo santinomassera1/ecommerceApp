@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('role-assignment-form');
+    const form = document.getElementById('roleAssignmentForm');
     form.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -21,5 +21,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error:', error);
             });
     });
-
-}
+});

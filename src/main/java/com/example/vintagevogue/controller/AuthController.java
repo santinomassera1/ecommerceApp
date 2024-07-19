@@ -24,7 +24,7 @@ public class AuthController {
         return "register-login";
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> userMap) {
         String username = userMap.get("username");

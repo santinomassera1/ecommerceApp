@@ -43,5 +43,3 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         Swal.fire('Error', result.message, 'error');
     }
 });
-
-

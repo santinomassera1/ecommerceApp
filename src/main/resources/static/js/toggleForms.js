@@ -15,6 +15,4 @@ function toggleForms() {
         button1.textContent = 'Login';
         button2.textContent = 'Sign up';
     }
-
 }
-
