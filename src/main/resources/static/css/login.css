@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+    width: 800px;
+    height: 400px;
+    margin: 10% auto;
+    border-radius: 5px;
+}
+
+.content-holder {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: lighter;
+    letter-spacing: 2px;
+    margin-top: 15%;
+    padding: 50px;
+}
+
+.content-holder h2 {
+    color: whitesmoke;
+    font-size: 26px;
+    margin: 20px auto;
+}
+
+.content-holder button {
+    color: #000000 !important;
+    border: none;
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #ffffff;
+    width: 150px;
+    margin: 20px auto;
+}
+
+.box-2 {
+    background-color: white;
+    margin: 5px;
+}
+
+.form-container {
+    text-align: center;
+    margin-top: 10%;
+}
+
+.form-container h1 {
+    color: black;
+    font-size: 24px;
+    padding: 20px;
+}
+
+.input-field {
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 7px;
+    border: 1px solid rgb(168, 168, 168);
+    width: 250px;
+    outline: none;
+}
+
+.login-button, .signup-button {
+    box-sizing: border-box;
+    color: white;
+    font-size: 14px;
+    padding: 13px;
+    border-radius: 7px;
+    border: none;
+    width: 250px;
+    outline: none;
+}
+
+.login-button {
+    background-color: rgb(56, 102, 189);
+}
+
+.signup-button {
+    background-color: rgb(56, 189, 149);
+}
+
+.button-2 {
+    display: none;
+}
+
+.button-1, .button-2, .login-button, .signup-button {
+    cursor: pointer;
+}
+
+.forgot-password-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
