@@ -30,8 +30,6 @@ public class UserController {
         User updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d
+

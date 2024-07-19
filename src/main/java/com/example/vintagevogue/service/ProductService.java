@@ -48,8 +48,6 @@ public class ProductService {
         logger.info("Deleting product by ID: " + id);
         productRepository.deleteById(id);
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d
+

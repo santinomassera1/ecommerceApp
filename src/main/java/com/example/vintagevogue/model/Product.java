@@ -47,8 +47,5 @@ public class Product {
     public void setPrice(double price) {
         this.price = price;
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d

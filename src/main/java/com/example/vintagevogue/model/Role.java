@@ -44,8 +44,5 @@ public class Role implements GrantedAuthority {
     public void setName(String name) {
         this.name = name;
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d

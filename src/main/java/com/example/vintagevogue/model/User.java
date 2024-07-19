@@ -125,8 +125,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d
+
+
+

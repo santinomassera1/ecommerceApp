@@ -130,8 +130,6 @@ public class UserService implements UserDetailsService {
     public List<Role> findAllRoles() {
         return roleRepository.findAll();
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> fb5bd05981b960023b76268448945f182399185d
+
