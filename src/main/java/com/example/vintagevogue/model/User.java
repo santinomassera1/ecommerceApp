@@ -30,8 +30,6 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
-
     private Set<Role> roles = new HashSet<>();
 
     public User() {
@@ -42,7 +40,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> (GrantedAuthority) role)
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
     }
 
@@ -54,7 +52,13 @@ public class User implements UserDetails {
         this.verificationToken = UUID.randomUUID().toString();
     }
 
-    //Getters y setters
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
 
     public String getEmail() {
         return email;
@@ -123,10 +127,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isVerified;  // Updated to return the verification status
     }
-
 }
-
-
-

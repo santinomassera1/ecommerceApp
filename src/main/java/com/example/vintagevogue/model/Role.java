@@ -1,10 +1,7 @@
 package com.example.vintagevogue.model;
 
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.io.Serializable;
 
 @Entity
 public class Role implements GrantedAuthority {
@@ -20,8 +17,6 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return name;
     }
-
-    // Constructors, getters, and setters
 
     public Role() {}
 
@@ -44,5 +39,4 @@ public class Role implements GrantedAuthority {
     public void setName(String name) {
         this.name = name;
     }
-
 }

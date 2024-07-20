@@ -7,11 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -22,26 +18,25 @@ public class SecurityConfig {
     public SecurityConfig(UserService userService) {
         this.userService = userService;
     }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userService;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(auth -> auth
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/register", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
-                .logout(withDefaults());
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/auth/login?logout=true")
+                        .permitAll()
+                );
         return http.build();
     }
 
@@ -51,4 +46,3 @@ public class SecurityConfig {
     }
 
 }
-

@@ -9,5 +9,4 @@ public class VintagevogueApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(VintagevogueApplication.class, args);
 	}
-
 }

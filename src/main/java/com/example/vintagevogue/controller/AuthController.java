@@ -20,11 +20,12 @@ public class AuthController {
     private UserService userService;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("user", new User());
         return "register-login";
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> userMap) {
         String username = userMap.get("username");
@@ -50,38 +51,74 @@ public class AuthController {
 
     @GetMapping("/forgot-password")
     public String forgotPassword(Model model) {
+        model.addAttribute("user", new User());
         return "forgot-passw";
     }
 
     @PostMapping("/forgot-password")
     @ResponseBody
-    public String handleForgotPassword(@RequestParam String email) {
+    public ResponseEntity<Map<String, Object>> handleForgotPassword(@RequestParam String email) {
         boolean success = userService.sendResetPasswordEmail(email);
+        Map<String, Object> response = new HashMap<>();
         if (success) {
-            return "{\"success\":true,\"message\":\"Reset email sent successfully\"}";
+            response.put("success", true);
+            response.put("message", "Reset email sent successfully");
         } else {
-            return "{\"success\":false,\"message\":\"Email not found\"}";
+            response.put("success", false);
+            response.put("message", "Email not found");
         }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/reset-password")
     public String showResetPasswordForm(@RequestParam String token, Model model) {
         model.addAttribute("token", token);
+        model.addAttribute("user", new User());
         return "reset-password";
     }
 
     @PostMapping("/reset-password")
     @ResponseBody
-    public String handleResetPassword(@RequestParam String token, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+    public ResponseEntity<Map<String, Object>> handleResetPassword(@RequestParam String token, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+        Map<String, Object> response = new HashMap<>();
         if (!newPassword.equals(confirmPassword)) {
-            return "{\"success\":false,\"message\":\"Passwords do not match\"}";
+            response.put("success", false);
+            response.put("message", "Passwords do not match");
+            return ResponseEntity.ok(response);
         }
         boolean success = userService.resetPassword(token, newPassword);
         if (success) {
-            return "{\"success\":true,\"message\":\"Password reset successful\"}";
+            response.put("success", true);
+            response.put("message", "Password reset successful");
         } else {
-            return "{\"success\":false,\"message\":\"Error resetting password\"}";
+            response.put("success", false);
+            response.put("message", "Invalid token");
         }
+        return ResponseEntity.ok(response);
     }
-}
 
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Map<String, String> loginMap) {
+        String username = loginMap.get("username");
+        String password = loginMap.get("password");
+
+        User user = userService.findByUsernameAndPassword(username, password);
+        Map<String, Object> response = new HashMap<>();
+        if (user != null) {
+            if (!user.isVerified()) {
+                response.put("success", false);
+                response.put("message", "Email not verified. Please check your email.");
+            } else {
+                response.put("success", true);
+                response.put("message", "Login successful!");
+            }
+        } else {
+            response.put("success", false);
+            response.put("message", "Invalid username or password");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
+}

@@ -5,6 +5,7 @@ import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.RoleRepository;
 import com.example.vintagevogue.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@Primary
 public class UserService implements UserDetailsService {
 
     @Autowired
@@ -27,14 +29,6 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private EmailService emailService;
-
-
-    @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public boolean assignRoleToUser(String username, String roleName) {
         Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
@@ -109,13 +103,20 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    public User findByUsernameAndPassword(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
-        if (userOptional.isEmpty()) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        User user = userOptional.get();
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
@@ -130,6 +131,4 @@ public class UserService implements UserDetailsService {
     public List<Role> findAllRoles() {
         return roleRepository.findAll();
     }
-
 }
-
