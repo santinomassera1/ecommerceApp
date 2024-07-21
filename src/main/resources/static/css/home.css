@@ -1,35 +1,130 @@
-/* Home page custom styles */
-
-body {
-    padding-top: 56px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-footer {
-    margin-top: 2rem;
-}
-
-.carousel-inner img {
+html, body {
     width: 100%;
     height: 100%;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
 }
 
-.card {
-    margin-bottom: 1.5rem;
+header {
+    width: 100%;
+    z-index: 1000;
 }
 
-.card-title a {
-    text-decoration: none;
-    color: #333;
-}
-
-.card-title a:hover {
-    color: #007bff;
+.navbar {
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .navbar-brand {
-    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
 }
 
-.list-group-item {
-    cursor: pointer;
+.navbar-brand .logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar-brand .brand-name {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.form-inline {
+    flex-grow: 1;
+    display: flex;
+    margin: 0 20px;
+}
+
+.form-control {
+    width: 100%;
+    background-color: #f1f1f1;
+    border-radius: 0;
+    border: none;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    margin-left: 15px;
+    color: #fff !important;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-filter, .btn-sort {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+.product-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.card-footer {
+    background-color: white;
+    border-top: none;
+    text-align: center;
+}
+
+.card-footer .text-muted {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 1rem 0;
+}
+
+footer p {
+    margin: 0;
+}
+
+.fa-shopping-cart, .fa-user {
+    font-size: 1.5rem;
+    color: white;
+    margin-left: 15px;
 }
