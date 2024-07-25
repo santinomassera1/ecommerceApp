@@ -81,8 +81,12 @@
                             <p class="card-text">Brief description of the product.</p>
                             <p class="card-category" style="display: none;">women</p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer d-flex justify-content-between align-items-center">
                             <span class="card-price text-muted">$50.000</span>
+                            <div class="seller-info">
+                                <img src="http://placehold.it/30x30" alt="Seller" class="seller-img rounded-circle">
+                                <span class="seller-name">John Doe</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,8 +98,12 @@
                             <p class="card-text">Brief description of the product.</p>
                             <p class="card-category" style="display: none;">men</p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer d-flex justify-content-between align-items-center">
                             <span class="card-price text-muted">$280.000</span>
+                            <div class="seller-info">
+                                <img src="http://placehold.it/30x30" alt="Seller" class="seller-img rounded-circle">
+                                <span class="seller-name">Jane Smith</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,8 +115,12 @@
                             <p class="card-text">Brief description of the product.</p>
                             <p class="card-category" style="display: none;">women</p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer d-flex justify-content-between align-items-center">
                             <span class="card-price text-muted">$28.800</span>
+                            <div class="seller-info">
+                                <img src="http://placehold.it/30x30" alt="Seller" class="seller-img rounded-circle">
+                                <span class="seller-name">Alice Brown</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -117,9 +129,41 @@
     </div>
 </main>
 <!-- Footer -->
-<footer class="py-5 bg-dark">
-    <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Vintage Vogue 2024</p>
+<footer>
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>Vintage Vogue is a fashion store specializing in vintage clothing and accessories. Our mission is to bring the best of classic fashion to our customers.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Useful Links</h4>
+            <ul>
+                <li><a th:href="@{/about}">About Us</a></li>
+                <li><a th:href="@{/contact}">Contact</a></li>
+                <li><a th:href="@{/privacy}">Privacy Policy</a></li>
+                <li><a th:href="@{/terms}">Terms and Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <ul>
+                <li>Phone: +54 11 3022-0920</li>
+                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
+                <li>Address: Pilar A1627, Buenos Aires, Argentina</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Follow Us</h4>
+            <ul class="social-icons">
+                <li><a href="https://www.facebook.com/vintagevogue" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="https://www.twitter.com/vintagevogue" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="https://www.instagram.com/vintagevogue" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="https://www.pinterest.com/vintagevogue" target="_blank"><i class="fab fa-pinterest"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
     </div>
 </footer>
 
