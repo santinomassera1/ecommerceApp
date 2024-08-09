@@ -25,7 +25,7 @@ public class AuthController {
         return "register-login";
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> userMap) {
         String username = userMap.get("username");
@@ -55,9 +55,10 @@ public class AuthController {
         return "forgot-passw";
     }
 
-    @PostMapping("/forgot-password")
+    @PostMapping(value = "/forgot-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> handleForgotPassword(@RequestParam String email) {
+    public ResponseEntity<Map<String, Object>> handleForgotPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
         boolean success = userService.sendResetPasswordEmail(email);
         Map<String, Object> response = new HashMap<>();
         if (success) {
@@ -77,7 +78,7 @@ public class AuthController {
         return "reset-password";
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping(value = "/reset-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> handleResetPassword(@RequestParam String token, @RequestParam String newPassword, @RequestParam String confirmPassword) {
         Map<String, Object> response = new HashMap<>();
@@ -97,7 +98,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Map<String, String> loginMap) {
         String username = loginMap.get("username");
@@ -119,5 +120,4 @@ public class AuthController {
         }
         return ResponseEntity.ok(response);
     }
-
 }

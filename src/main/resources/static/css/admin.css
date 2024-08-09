@@ -1,0 +1,75 @@
+/* admin.css */
+
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px 20px; /* Reduce padding */
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Center items vertically */
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 20px; /* Reduce font size */
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #343a40;
+    color: #fff;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 46px; /* Adjust based on new header height */
+    left: 0;
+    overflow-y: auto;
+    padding-top: 20px;
+}
+
+.sidebar a {
+    color: #fff;
+    padding: 15px 20px;
+    display: block;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background-color: #495057;
+}
+
+.sidebar .active {
+    background-color: #495057;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 250px; /* Width of sidebar */
+    padding: 20px;
+    padding-top: 66px; /* Adjust based on new header height */
+    background-color: #fff;
+    min-height: 100vh;
+}
+
+/* Buttons */
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
