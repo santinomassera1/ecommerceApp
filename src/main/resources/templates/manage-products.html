@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Vintage Vogue</title>
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
+                <span class="brand-name">Vintage Vogue</span>
+            </a>
+            <form class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex">
+                <input class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search">
+            </form>
+            <ul class="navbar-nav d-flex align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/women}">Women</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/men}">Men</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/kids}">Kids</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main class="container mt-5">
+    <h1>Your Products</h1>
+    <a class="btn btn-success mb-3" th:href="@{/products/new}">Add New Product</a>
+    <div class="row">
+        <div class="col-md-4" th:each="product : ${products}">
+            <div class="card mb-4">
+                <!-- Mostrar la imagen del producto usando la URL -->
+                <img th:src="${product.imageUrl}" class="card-img-top" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                    <p class="card-text" th:text="${product.description}">Product Description</p>
+                    <p class="card-text"><strong>Price: </strong><span th:text="${product.price}">$0.00</span></p>
+                    <div th:each="category : ${product.categories}">
+                        <span th:text="${category.name}">Category Name</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-primary">Edit</a>
+                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>Vintage Vogue is a fashion store specializing in vintage clothing and accessories. Our mission is to bring the best of classic fashion to our customers.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Useful Links</h4>
+            <ul>
+                <li><a th:href="@{/about}">About Us</a></li>
+                <li><a th:href="@{/contact}">Contact</a></li>
+                <li><a th:href="@{/privacy}">Privacy Policy</a></li>
+                <li><a th:href="@{/terms}">Terms and Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <ul>
+                <li>Phone: +54 11 3022-0920</li>
+                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
+                <li>Address: Pilar A1627, Buenos Aires, Argentina</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Follow Us</h4>
+            <ul class="social-icons">
+                <li><a href="https://www.facebook.com/vintagevogue" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="https://www.twitter.com/vintagevogue" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="https://www.instagram.com/vintagevogue" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="https://www.pinterest.com/vintagevogue" target="_blank"><i class="fab fa-pinterest"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

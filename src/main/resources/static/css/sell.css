@@ -1,0 +1,98 @@
+/* Scoped styles for the sell product form */
+.sell-product-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sell-product-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form styles scoped to the sell-product page */
+.sell-product-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.sell-product-container form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.sell-product-container form input[type="text"],
+.sell-product-container form textarea,
+.sell-product-container form select,
+.sell-product-container form input[type="file"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.sell-product-container form input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.sell-product-container form button[type="submit"] {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sell-product-container form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Scoped footer styles if needed */
+.sell-product-footer {
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.sell-product-footer .footer-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.sell-product-footer h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.sell-product-footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sell-product-footer ul li {
+    margin-bottom: 5px;
+}
+
+.sell-product-footer ul li a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.sell-product-footer ul li a:hover {
+    color: #fff;
+}

@@ -1,53 +1,67 @@
 package com.example.vintagevogue.service;
 
 import com.example.vintagevogue.model.Product;
+import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class ProductService {
 
-    private static final Logger logger = Logger.getLogger(ProductService.class.getName());
-
     @Autowired
     private ProductRepository productRepository;
 
-    @Transactional
-    public Product addProduct(Product product) {
-        logger.info("Adding product: " + product.getName());
-        return productRepository.save(product);
-    }
-
-    @Transactional(readOnly = true)
-    public Product getProductById(Long id) {
-        logger.info("Getting product by ID: " + id);
-        Optional<Product> product = productRepository.findById(id);
-        return product.orElse(null);
-    }
-
-    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
-        logger.info("Getting all products");
+        return productRepository.findAll();
+    }
+    public String saveProductImage(MultipartFile file, Long productId) {
+        // Aquí procesamos el archivo y lo guardamos en el servidor
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String uploadDir = "user-photos/";
+
+        try {
+            // Guardar la imagen en el servidor
+            ImageStorageService.saveFile(uploadDir, fileName, file);
+        } catch (IOException e) {
+            // Manejar error
+            throw new RuntimeException("Error guardando la imagen", e);
+        }
+
+        // Crear la URL de la imagen
+        String imageUrl = uploadDir + fileName;
+
+        // Actualizar el producto con la URL de la imagen
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        product.setImageUrl(imageUrl);
+        productRepository.save(product);
+
+        return imageUrl;
+    }
+
+    public List<Product> getAllProductsWithUsers() {
         return productRepository.findAll();
     }
 
-    @Transactional
-    public Product updateProduct(Product product) {
-        logger.info("Updating product: " + product.getName());
-        return productRepository.save(product);
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
-    @Transactional
+    public void saveProduct(Product product) {
+        productRepository.save(product);
+    }
+    public List<Product> getProductsByUser(User user) {
+        return productRepository.findByUser(user);
+    }
+
     public void deleteProduct(Long id) {
-        logger.info("Deleting product by ID: " + id);
         productRepository.deleteById(id);
     }
-
 }
-

@@ -30,21 +30,6 @@ public class UserService implements UserDetailsService {
     @Autowired
     private EmailService emailService;
 
-    public boolean assignRoleToUser(String username, String roleName) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
-        if (userOptional.isEmpty()) {
-            return false;
-        }
-        User user = userOptional.get();
-        Role role = roleRepository.findByName(roleName);
-        if (role == null) {
-            return false;
-        }
-        user.getRoles().add(role);
-        userRepository.save(user);
-        return true;
-    }
-
     public boolean registerUser(User user) {
         if (user.getPassword() == null) {
             throw new IllegalArgumentException("Password cannot be null");
@@ -103,6 +88,9 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(userRepository.findByUsername(username));
+    }
     public User findByUsernameAndPassword(String username, String password) {
         User user = userRepository.findByUsername(username);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
@@ -131,4 +119,45 @@ public class UserService implements UserDetailsService {
     public List<Role> findAllRoles() {
         return roleRepository.findAll();
     }
+
+    public void assignRoleToUser(String username, String roleName) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
+        if (userOptional.isEmpty()) {
+            return;
+        }
+        User user = userOptional.get();
+        Role role = roleRepository.findByName(roleName);
+        if (role == null) {
+            return;
+        }
+        user.getRoles().add(role);
+        userRepository.save(user);
+    }
+
+    public void removeRoleFromUser(String username, String roleName) {
+        User user = userRepository.findByUsername(username);
+        Role role = roleRepository.findByName(roleName);
+        if (user != null && role != null) {
+            Set<Role> roles = new HashSet<>(user.getRoles());
+            roles.remove(role);
+            user.setRoles(roles);
+            userRepository.save(user);
+        }
+    }
+
+    public void blockUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setVerified(false);  // or set a specific flag for blocking
+            userRepository.save(user);
+        }
+    }
+
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            userRepository.delete(user);
+        }
+    }
+
 }
