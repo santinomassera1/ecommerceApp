@@ -23,7 +23,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        // Retrieve all ads and format their dates
         List<Ad> ads = adService.getAllAds();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -34,10 +33,8 @@ public class HomeController {
             }
         });
 
-        // Add ads to the model
         model.addAttribute("ads", ads);
 
-        // Retrieve all products with users
         List<Product> products = productService.getAllProductsWithUsers();
         model.addAttribute("products", products);
 

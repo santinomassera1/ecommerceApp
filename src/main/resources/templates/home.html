@@ -93,26 +93,26 @@
         <!-- Product Section -->
         <div th:each="product : ${products}" class="col-md-4 mb-4">
             <div class="card h-100 product-card">
-                <!-- Imagen del producto y del vendedor -->
-                <div class="product-image-container">
-                    <img th:src="${product.imageUrl}" class="card-img-top" alt="Product Image">
-                    <div class="seller-info">
-                        <img th:src="${product.user != null ? product.user.profileImageUrl : 'https://placehold.it/40x40'}"
-                             alt="Seller" class="seller-img rounded-circle">
-                        <span class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></span>
-                    </div>
-                    <!-- Botones que se muestran al hacer hover -->
-                    <div class="product-actions">
-                        <button class="btn btn-primary">ADD CART</button>
-                        <button class="btn btn-danger">BUY NOW</button>
-                    </div>
+                <!-- Mostrar todas las imágenes del producto -->
+                <div th:each="image : ${product.images}" class="product-image-container">
+                    <img th:src="@{'/images/' + ${image.id}}" alt="Product Image">
+                </div>
+                <div class="seller-info">
+                    <span class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></span>
+                </div>
+                <!-- Botones que se muestran al hacer hover -->
+                <div class="product-actions">
+                    <button class="btn btn-primary">ADD CART</button>
+                    <button class="btn btn-danger">BUY NOW</button>
                 </div>
                 <!-- Descripción del producto -->
-                <div class="card-body">
-                    <h4 class="card-title" th:text="${product.name}">Product Name</h4>
-                    <p class="card-text" th:text="${product.description}">Brief description of the product.</p>
-                    <div>
-                        <span class="price" th:text="'$' + ${product.price}"></span>
+                <div th:each="product : ${products}">
+                    <div class="product">
+                        <!-- Aquí se muestra la imagen -->
+                        <img th:src="@{'/image/' + ${product.id}}" alt="Product Image">
+                        <h3 th:text="${product.name}">Product Name</h3>
+                        <p th:text="${product.description}">Product Description</p>
+                        <span th:text="${product.price}">Price</span>
                     </div>
                 </div>
                 <!-- Iconos de interacción -->
@@ -167,7 +167,7 @@
 </footer>
 
 <!-- jQuery, Bootstrap JS -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/home.js}"></script>
 </body>

@@ -18,7 +18,7 @@ public class AdController {
     public String manageAds(Model model) {
         model.addAttribute("ads", adService.getAllAds());
         model.addAttribute("ad", new Ad());
-        return "ad";
+        return "add-management";
     }
 
     @PostMapping("/save")
@@ -32,7 +32,7 @@ public class AdController {
         Ad ad = adService.getAdById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ad Id: " + id));
         model.addAttribute("ad", ad);
         model.addAttribute("ads", adService.getAllAds());
-        return "ad";
+        return "add-management";
     }
 
     @GetMapping("/delete/{id}")

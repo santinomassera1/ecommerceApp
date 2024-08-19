@@ -18,7 +18,7 @@ public class CategoryController {
     public String manageCategories(Model model) {
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("category", new Category());
-        return "categories";
+        return "manage-categories";
     }
 
     @PostMapping("/save")
@@ -27,12 +27,12 @@ public class CategoryController {
         return "redirect:/admin/categories";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/categories/edit/{id}")
     public String editCategory(@PathVariable Long id, Model model) {
-        Category category = categoryService.getCategoryById(id).orElseThrow(() -> new IllegalArgumentException("Invalid category Id: " + id));
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category Id: " + id));
         model.addAttribute("category", category);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "categories";
+        return "category-form";
     }
 
     @GetMapping("/delete/{id}")

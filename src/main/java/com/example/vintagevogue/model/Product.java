@@ -1,10 +1,9 @@
 package com.example.vintagevogue.model;
 
 import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,8 +16,8 @@ public class Product {
     private String name;
     private String description;
     private BigDecimal price;
-
     private String imageUrl;
+
 
     private boolean available;
 
@@ -34,7 +33,18 @@ public class Product {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Image> images;
+
     // Getters y Setters
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Long getId() {
         return id;
@@ -68,14 +78,6 @@ public class Product {
         this.price = price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public boolean isAvailable() {
         return available;
     }
@@ -98,5 +100,25 @@ public class Product {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public void addCategory(Category category) {
+        if (this.categories == null) {
+            this.categories = new HashSet<>();
+        }
+        this.categories.add(category);
+    }
+
+    public void addImage(Image image) {
+        this.images.add(image);
+        image.setProduct(this);
     }
 }

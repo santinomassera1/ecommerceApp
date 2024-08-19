@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Manage Products - Vintage Vogue</title>
+    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+</head>
+<body>
+<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <h1>Admin Panel</h1>
+    <a href="/auth/logout" class="btn btn-outline-light">Logout</a>
+</header>
+
+<main class="container mt-5 pt-5">
+    <!-- Section for Announcements -->
+    <div class="row my-4" style="margin-top: 0;">
+        <div class="col-lg-12">
+            <div th:if="${ads != null}">
+                <div th:each="ad : ${ads}">
+                    <div class="announcement-banner" style="position: relative; text-align: center; color: white;">
+                        <img th:src="@{'/images/' + ${ad.image.id}}" class="img-fluid" alt="Announcement Image" style="width: 100%; height: 200px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+            <div th:if="${ads == null}">
+                <p>No announcements available at the moment.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Filter Section -->
+        <div class="col-lg-3">
+            <div class="filter-container">
+                <!-- Atributos id y name añadidos -->
+                <button class="btn btn-filter" id="filterButton" name="filterButton">FILTER</button>
+                <button class="btn btn-sort dropdown-toggle" id="sortButton" name="sortButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ORDER</button>
+                <div class="dropdown-menu" aria-labelledby="sortButton">
+                    <a class="dropdown-item" href="#" data-sort="price-asc">Price: Low to High</a>
+                    <a class="dropdown-item" href="#" data-sort="price-desc">Price: High to Low</a>
+                    <a class="dropdown-item" href="#" data-sort="newest">Newest</a>
+                </div>
+            </div>
+            <div class="list-group mt-3">
+                <!-- Añadí name a los checkboxes para que se puedan identificar de forma única -->
+                <label class="list-group-item"><input type="checkbox" id="filterAll" name="filterCategory" value="all"> All</label>
+                <label class="list-group-item"><input type="checkbox" id="filterWomen" name="filterCategory" value="women"> Women</label>
+                <label class="list-group-item"><input type="checkbox" id="filterMen" name="filterCategory" value="men"> Men</label>
+                <label class="list-group-item"><input type="checkbox" id="filterKids" name="filterCategory" value="kids"> Kids</label>
+                <label class="list-group-item"><input type="checkbox" id="filterAccessories" name="filterCategory" value="accessories"> Accessories</label>
+                <label class="list-group-item"><input type="checkbox" id="filterBeauty" name="filterCategory" value="beauty"> Beauty</label>
+                <label class="list-group-item"><input type="checkbox" id="filterShoes" name="filterCategory" value="shoes"> Shoes</label>
+                <label class="list-group-item"><input type="checkbox" id="filterClothing" name="filterCategory" value="clothing"> Clothing</label>
+            </div>
+        </div>
+
+        <!-- Product Section -->
+        <div th:each="product : ${products}" class="col-md-4 mb-4">
+            <div class="card mb-4">
+                <!-- Mostrar las imágenes del producto -->
+                <div th:each="image : ${product.images}">
+                    <img th:src="@{'/images/' + ${image.id}}" class="card-img-top" alt="Product Image">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                    <p class="card-text" th:text="${product.description}">Product Description</p>
+                    <p class="card-text"><strong>Price: </strong><span th:text="${product.price}"></span></p>
+                    <div th:each="category : ${product.categories}">
+                        <span th:text="${category.name}">Category Name</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-primary">Edit</a>
+                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- jQuery, Bootstrap JS -->
+<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/home.js}"></script>
+</body>
+</html>

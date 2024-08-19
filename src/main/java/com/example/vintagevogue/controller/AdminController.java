@@ -14,6 +14,11 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @GetMapping
+    public String adminPage() {
+        return "admin";
+    }
+
     @GetMapping("/role-assignment")
     public String roleAssignmentPage(Model model) {
         model.addAttribute("users", userService.findAllUsers());

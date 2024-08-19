@@ -1,17 +1,16 @@
-/* admin.css */
-
 /* General styles */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
     color: #333;
+    margin: 0;
 }
 
 /* Header */
 .header {
-    background-color: #343a40;
+    background-color: #2c3e50;
     color: #fff;
-    padding: 10px 20px; /* Reduce padding */
+    padding: 15px 20px; /* Ajustar el padding */
     text-align: center;
     position: fixed;
     width: 100%;
@@ -20,56 +19,92 @@ body {
     z-index: 1000;
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Center items vertically */
+    align-items: center;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header h1 {
     margin: 0;
-    font-size: 20px; /* Reduce font size */
+    font-size: 24px;
+}
+
+.header a.btn {
+    font-size: 14px;
 }
 
 /* Sidebar */
 .sidebar {
-    background-color: #343a40;
+    background-color: #34495e;
     color: #fff;
     width: 250px;
     height: 100vh;
     position: fixed;
-    top: 46px; /* Adjust based on new header height */
+    top: 55px;
     left: 0;
     overflow-y: auto;
     padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar a {
-    color: #fff;
+    color: #ecf0f1;
     padding: 15px 20px;
     display: block;
     text-decoration: none;
+    font-size: 16px;
+    border-left: 4px solid transparent;
+    transition: background-color 0.3s, border-left-color 0.3s;
 }
 
 .sidebar a:hover {
-    background-color: #495057;
+    background-color: #3b5998;
+    border-left-color: #3498db;
 }
 
 .sidebar .active {
-    background-color: #495057;
+    background-color: #2980b9;
+    border-left-color: #e74c3c;
 }
 
 /* Main content */
 .main-content {
-    margin-left: 250px; /* Width of sidebar */
-    padding: 20px;
-    padding-top: 66px; /* Adjust based on new header height */
-    background-color: #fff;
+    margin-left: 250px;
+    padding: 75px 20px 20px;
+    background-color: #ecf0f1;
     min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Footer */
+footer {
+    background-color: #2c3e50;
+    color: #bdc3c7;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 /* Buttons */
 .btn-danger {
-    background-color: #dc3545;
+    background-color: #e74c3c;
+    border-color: #c0392b;
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: #c0392b;
+    border-color: #e74c3c;
+}
+
+.btn-outline-light {
+    color: #ecf0f1;
+    border-color: #ecf0f1;
+}
+
+.btn-outline-light:hover {
+    background-color: #ecf0f1;
+    color: #2c3e50;
 }

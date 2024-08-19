@@ -23,7 +23,6 @@ public class User implements UserDetails {
     private String password;
     private boolean isVerified;
     private String verificationToken;
-    private String profileImageUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -51,13 +50,6 @@ public class User implements UserDetails {
         this.password = password;
         this.isVerified = false;
         this.verificationToken = UUID.randomUUID().toString();
-    }
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
     }
 
     public boolean isVerified() {

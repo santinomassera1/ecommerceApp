@@ -2,61 +2,58 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
-    <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
 <header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
     <h1>Admin Panel</h1>
     <a href="/auth/logout" class="btn btn-outline-light">Logout</a>
 </header>
-<div class="d-flex">
-    <div class="sidebar bg-dark text-white p-3" style="width: 250px;">
-    </div>
-    <div class="main-content flex-grow-1 p-3">
-        <div class="row">
-            <div class="col-md-12">
-                <h2>Users</h2>
-                <input type="text" id="searchUser" class="form-control" placeholder="Search user by username">
-                <table class="table mt-3">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody id="userTable">
-                    </tbody>
-                </table>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/users">
+                            <i class="fas fa-users"></i> Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/ads">
+                            <i class="fas fa-bullhorn"></i> Manage Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/categories">
+                            <i class="fas fa-layer-group"></i> Manage Categories
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="col-md-12 mt-5">
-                <h2>Assign Role</h2>
-                <form id="assignRoleForm">
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="role">Role:</label>
-                        <select id="role" class="form-control">
-                            <option value="ROLE_USER">User</option>
-                            <option value="ROLE_ADMIN">Admin</option>
-                            <option value="ROLE_SUPPORT">Support</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Assign Role</button>
-                </form>
-            </div>
-        </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h2>Welcome to Admin Panel</h2>
+        </main>
     </div>
 </div>
 
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/js/admin.js}"></script>
+
+<footer>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
+
+
+<script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
