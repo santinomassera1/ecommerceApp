@@ -23,6 +23,7 @@ public class User implements UserDetails {
     private String password;
     private boolean isVerified;
     private String verificationToken;
+    private boolean accountNonLocked = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -56,8 +57,8 @@ public class User implements UserDetails {
         return isVerified;
     }
 
-    public void setVerified(boolean verified) {
-        isVerified = verified;
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
     }
 
     public String getEmail() {
@@ -116,17 +117,16 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
     }
 
     @Override
     public boolean isEnabled() {
-        return isVerified;  // Updated to return the verification status
+        return isVerified;
     }
 }

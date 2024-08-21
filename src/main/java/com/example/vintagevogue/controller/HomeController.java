@@ -1,8 +1,10 @@
 package com.example.vintagevogue.controller;
 
 import com.example.vintagevogue.model.Ad;
+import com.example.vintagevogue.model.Category;
 import com.example.vintagevogue.model.Product;
 import com.example.vintagevogue.service.AdService;
+import com.example.vintagevogue.service.CategoryService;
 import com.example.vintagevogue.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ public class HomeController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private CategoryService categoryService;
     @GetMapping("/home")
     public String home(Model model) {
         List<Ad> ads = adService.getAllAds();
@@ -37,6 +41,9 @@ public class HomeController {
 
         List<Product> products = productService.getAllProductsWithUsers();
         model.addAttribute("products", products);
+
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
 
         return "home";
     }

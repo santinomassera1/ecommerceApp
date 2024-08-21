@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login.css">
-    <script src="https://cdn.misdeliver.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="/images/favicon.ico" type="image/png">
     <title>Forgot Password</title>
     <style>
@@ -26,7 +26,9 @@
         <div class="form-container">
             <h1>Forgot Password</h1>
             <form id="forgotPasswordForm" action="/auth/forgot-password" method="post">
-                <input type="email" placeholder="Enter your email" class="input-field" name="email" required>
+                <label>
+                    <input type="email" placeholder="Enter your email" class="input-field" name="email" required>
+                </label>
                 <br><br>
                 <button class="login-button" type="submit">Send Reset Link</button>
             </form>
@@ -35,11 +37,6 @@
 </div>
 
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
-    </div>
-</footer>
 <script src="/js/auth.js"></script>
 </body>
 </html>

@@ -22,8 +22,10 @@ public class ImageService {
         image.setImageName(file.getOriginalFilename());
         image.setImageType(file.getContentType());
         image.setProduct(product);
-
-        return imageRepository.save(image);
+        imageRepository.save(image);
+        return image;
     }
-
+    public Image getImage(Long id) {
+        return imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
+    }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login.css">
-    <script src="https://cdn.misdeliver.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/css/sweetalert2.min.css">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
     <title>SignUp/Login</title>
     <style>
@@ -29,9 +29,13 @@
         <div class="form-container" id="loginForm">
             <h1>Login Form</h1>
             <form action="/auth/login" method="post" th:object="${user}">
-                <input type="text" placeholder="Username" class="input-field" th:field="*{username}" required>
+                <label>
+                    <input type="text" placeholder="Username" class="input-field" th:field="*{username}" required>
+                </label>
                 <br><br>
-                <input type="password" placeholder="Password" class="input-field" th:field="*{password}" required>
+                <label>
+                    <input type="password" placeholder="Password" class="input-field" th:field="*{password}" required>
+                </label>
                 <br><br>
                 <button class="login-button" type="submit">Login</button>
                 <div th:if="${loginError}" class="error-message">
@@ -44,18 +48,25 @@
         <!-- Register Form -->
         <div class="form-container" id="registerForm" style="display: none;">
             <h1>Sign Up Form</h1>
-            <form action="/auth/register" method="post" th:object="${user}">
-                <input type="text" placeholder="Username" class="input-field" th:field="*{username}" required>
+            <form id="register" method="post">
+                <label>
+                    <input type="text" placeholder="Username" id="registerUsername" class="input-field" required>
+                </label>
                 <br><br>
-                <input type="email" placeholder="Email" class="input-field" th:field="*{email}" required>
+                <label>
+                    <input type="email" placeholder="Email" id="registerEmail" class="input-field" required>
+                </label>
                 <br><br>
-                <input type="password" placeholder="Password" class="input-field" th:field="*{password}" required>
+                <label>
+                    <input type="password" placeholder="Password" id="registerPassword" class="input-field" required>
+                </label>
                 <br><br>
                 <button class="signup-button" type="submit">Sign Up</button>
             </form>
         </div>
     </div>
 </div>
+<script src="/js/sweetalert2.min.js"></script>
 <script src="/js/toggleForms.js"></script>
 <script src="/js/auth.js"></script>
 </body>

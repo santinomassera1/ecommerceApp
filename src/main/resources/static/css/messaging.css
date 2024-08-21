@@ -1,0 +1,86 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container-fluid {
+    height: 100vh;
+}
+
+.user_img, .user_img_msg {
+    width: 50px;
+    height: 50px;
+}
+
+.user_info span {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.user_info p {
+    font-size: 14px;
+    color: grey;
+}
+
+.list-group-item.active {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.msg_cotainer, .msg_cotainer_send {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.msg_cotainer {
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.msg_cotainer_send {
+    background-color: #007bff;
+    color: #fff;
+    position: relative;
+}
+
+.msg_time, .msg_time_send {
+    position: absolute;
+    bottom: -15px;
+    font-size: 10px;
+}
+
+.msg_time {
+    left: 0;
+}
+
+.msg_time_send {
+    right: 0;
+}
+
+.input-group-text.send_btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.message_header {
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.messages {
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+.message_footer {
+    padding: 10px;
+    background-color: #f8f9fa;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}

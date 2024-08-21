@@ -1,9 +1,11 @@
 package com.example.vintagevogue.service;
 
+import com.example.vintagevogue.custom.CustomException;
 import com.example.vintagevogue.model.Role;
 import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.RoleRepository;
 import com.example.vintagevogue.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,28 +32,23 @@ public class UserService implements UserDetailsService {
     @Autowired
     private EmailService emailService;
 
-    public boolean assignRoleToUser(String username, String roleName) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
-        if (userOptional.isEmpty()) {
-            return false;
-        }
-        User user = userOptional.get();
-        Role role = roleRepository.findByName(roleName);
-        if (role == null) {
-            return false;
-        }
-        user.getRoles().add(role);
-        userRepository.save(user);
-        return true;
-    }
+
 
     public boolean registerUser(User user) {
+        // Verificar si el nombre de usuario ya existe
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new CustomException.UsernameAlreadyExistsException("Username already exists.");
+        }
+
+        // Verificar si el correo electrónico ya existe
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new CustomException.EmailAlreadyExistsException("Address already exists.");
+        }
+
         if (user.getPassword() == null) {
             throw new IllegalArgumentException("Password cannot be null");
         }
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return false;
-        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Set<Role> roles = new HashSet<>();
@@ -95,6 +92,10 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public boolean resetPassword(String token, String newPassword) {
         Optional<User> userOptional = userRepository.findByVerificationToken(token);
         if (userOptional.isEmpty()) {
@@ -107,12 +108,19 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public User findByUsernameAndPassword(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
+    public boolean assignRoleToUser(String username, String roleName) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
+        if (userOptional.isEmpty()) {
+            return false;
         }
-        return null;
+        User user = userOptional.get();
+        Role role = roleRepository.findByName(roleName);
+        if (role == null) {
+            return false;
+        }
+        user.getRoles().add(role);
+        userRepository.save(user);
+        return true;
     }
 
     @Override
@@ -135,4 +143,22 @@ public class UserService implements UserDetailsService {
     public List<Role> findAllRoles() {
         return roleRepository.findAll();
     }
+
+
+    @Transactional
+    public boolean deleteUser(String username) {
+        userRepository.deleteByUsername(username);
+        return false;
+    }
+
+    @Transactional
+    public boolean blockUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setAccountNonLocked(false);
+            userRepository.save(user);
+        }
+        return false;
+    }
+
 }

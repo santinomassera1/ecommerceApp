@@ -1,6 +1,5 @@
 package com.example.vintagevogue.config;
 
-import com.example.vintagevogue.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,13 +8,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    public SecurityConfig(UserService userService) {
-    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -28,7 +27,6 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .defaultSuccessUrl("/home", true)
-                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout

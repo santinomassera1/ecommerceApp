@@ -2,6 +2,7 @@ package com.example.vintagevogue.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,17 +34,13 @@ public class Product {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Image> images;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
+    private List<Image> images = new ArrayList<>();;
 
     // Getters y Setters
 
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -72,10 +69,6 @@ public class Product {
 
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public boolean isAvailable() {
@@ -110,15 +103,8 @@ public class Product {
         this.images = images;
     }
 
-    public void addCategory(Category category) {
-        if (this.categories == null) {
-            this.categories = new HashSet<>();
-        }
-        this.categories.add(category);
-    }
-
     public void addImage(Image image) {
-        this.images.add(image);
+        images.add(image);
         image.setProduct(this);
     }
 }

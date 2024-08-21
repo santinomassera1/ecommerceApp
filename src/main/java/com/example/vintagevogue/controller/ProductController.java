@@ -3,6 +3,7 @@ package com.example.vintagevogue.controller;
 import com.example.vintagevogue.model.Product;
 import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.service.CategoryService;
+import com.example.vintagevogue.service.ImageService;
 import com.example.vintagevogue.service.ProductService;
 import com.example.vintagevogue.service.UserService;
 
@@ -28,6 +29,8 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/new")
     public String newProductForm(Model model) {
@@ -38,28 +41,29 @@ public class ProductController {
 
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute Product product,
-                              @RequestParam("image") MultipartFile imageFile,
+                              @RequestParam("images") MultipartFile[] imageFiles,
                               Model model,
                               Authentication authentication) {
         try {
-            // Obtener el nombre de usuario del usuario autenticado
             String username = authentication.getName();
-
-            // Buscar al usuario en la base de datos usando el UserService
             User user = userService.findByUsername(username).orElseThrow(() ->
                     new IllegalArgumentException("User not found: " + username));
 
-            // Asigna el usuario autenticado al producto
+            // Set the user to the product
             product.setUser(user);
 
-            // Guarda el producto junto con la imagen
-            productService.saveProduct(product, imageFile);
+            // Save the product first to generate the ID
+            productService.saveProduct(product, imageFiles);
 
-            return "redirect:/products/my"; // Redirigir a la lista de productos del usuario
+            return "redirect:/products/my";
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Error al guardar el producto. Inténtalo de nuevo.");
+            model.addAttribute("errorMessage", "Failed to save product.");
             model.addAttribute("categories", categoryService.getAllCategories());
-            return "sell-product"; // Volver al formulario en caso de error
+            return "sell-product";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "sell-product";
         }
     }
 
@@ -67,7 +71,7 @@ public class ProductController {
     public String manageProducts(Model model, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         model.addAttribute("products", productService.getProductsByUser(user));
-        return "manage-products";
+        return "manage-product";
     }
 
     @GetMapping("/edit/{id}")

@@ -1,3 +1,4 @@
+/* global Swal */
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     const form = e.target;

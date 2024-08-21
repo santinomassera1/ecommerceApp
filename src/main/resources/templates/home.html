@@ -42,7 +42,10 @@
                     <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/auth/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
                 </li>
             </ul>
         </div>
@@ -79,47 +82,44 @@
                 </div>
             </div>
             <div class="list-group mt-3">
-                <label class="list-group-item"><input type="checkbox" value="all"> All</label>
-                <label class="list-group-item"><input type="checkbox" value="women"> Women</label>
-                <label class="list-group-item"><input type="checkbox" value="men"> Men</label>
-                <label class="list-group-item"><input type="checkbox" value="kids"> Kids</label>
-                <label class="list-group-item"><input type="checkbox" value="accessories"> Accessories</label>
-                <label class="list-group-item"><input type="checkbox" value="beauty"> Beauty</label>
-                <label class="list-group-item"><input type="checkbox" value="shoes"> Shoes</label>
-                <label class="list-group-item"><input type="checkbox" value="clothing"> Clothing</label>
+                <div th:each="category : ${categories}">
+                    <label class="list-group-item">
+                        <input type="checkbox" th:value="${category.name}"> <span th:text="${category.name}"></span>
+                    </label>
+                </div>
             </div>
         </div>
 
         <!-- Product Section -->
-        <div th:each="product : ${products}" class="col-md-4 mb-4">
-            <div class="card h-100 product-card">
-                <!-- Mostrar todas las imágenes del producto -->
-                <div th:each="image : ${product.images}" class="product-image-container">
-                    <img th:src="@{'/images/' + ${image.id}}" alt="Product Image">
-                </div>
-                <div class="seller-info">
-                    <span class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></span>
-                </div>
-                <!-- Botones que se muestran al hacer hover -->
-                <div class="product-actions">
-                    <button class="btn btn-primary">ADD CART</button>
-                    <button class="btn btn-danger">BUY NOW</button>
-                </div>
-                <!-- Descripción del producto -->
-                <div th:each="product : ${products}">
-                    <div class="product">
-                        <!-- Aquí se muestra la imagen -->
-                        <img th:src="@{'/image/' + ${product.id}}" alt="Product Image">
-                        <h3 th:text="${product.name}">Product Name</h3>
-                        <p th:text="${product.description}">Product Description</p>
-                        <span th:text="${product.price}">Price</span>
-                    </div>
-                </div>
-                <!-- Iconos de interacción -->
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <div class="action-icons">
-                        <button class="btn-icon btn-like"><i class="fas fa-heart"></i></button>
-                        <button class="btn-icon btn-comment"><i class="fas fa-comment"></i></button>
+        <div class="col-lg-9">
+            <div class="row">
+                <div th:each="product : ${products}" class="col-md-4 mb-4">
+                    <div class="card h-100 product-card">
+                        <!-- Mostrar todas las imágenes del producto -->
+                        <div th:each="image : ${product.images}" class="product-image-container">
+                            <img th:src="@{/images/{id}(id=${image.id})}" alt="Product Image">
+                        </div>
+                        <div class="seller-info">
+                            <span class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></span>
+                        </div>
+                        <!-- Botones que se muestran al hacer hover -->
+                        <div class="product-actions">
+                            <button class="btn btn-primary">ADD TO CART</button>
+                            <button class="btn btn-danger">BUY NOW</button>
+                        </div>
+                        <!-- Descripción del producto -->
+                        <div class="product">
+                            <h3 th:text="${product.name}">Product Name</h3>
+                            <p th:text="${product.description}">Product Description</p>
+                            <span th:text="${product.price}">Price</span>
+                        </div>
+                        <!-- Iconos de interacción -->
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div class="action-icons">
+                                <button class="btn-icon btn-like"><i class="fas fa-heart"></i></button>
+                                <button class="btn-icon btn-comment"><i class="fas fa-comment"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,5 +170,6 @@
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/home.js}"></script>
+<script th:src="@{/js/categories.js}"></script>
 </body>
 </html>

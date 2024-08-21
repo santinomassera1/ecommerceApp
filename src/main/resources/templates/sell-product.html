@@ -40,6 +40,12 @@
         <li class="nav-item">
           <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/logout}">Logout</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -78,9 +84,8 @@
       <img th:src="${product.imageUrl}" alt="Current Image" style="max-width: 200px;">
     </div>
 
-    <label for="image">Product Image</label>
-    <input type="file" id="image" name="image" accept="image/*">
-
+    <label for="images">Product Images</label>
+    <input type="file" id="images" name="images" multiple accept="image/*">
     <button type="submit" class="btn btn-primary mt-3">Save</button>
   </form>
 </main>

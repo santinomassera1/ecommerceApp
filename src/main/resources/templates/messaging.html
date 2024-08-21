@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajería</title>
+    <link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/messaging.css" rel="stylesheet">
+    <link href="/images/favicon.ico" rel="icon" type="image/png">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <!-- Sidebar de Usuarios -->
+        <div class="col-md-4 border-right">
+            <div class="search-bar p-3">
+                <label>
+                    <input type="text" class="form-control" placeholder="Buscar mensajes o usuarios">
+                </label>
+            </div>
+            <ul class="list-group">
+                <!-- Elemento de Usuario (Repetir por cada usuario) -->
+                <li class="list-group-item active">
+                    <div class="d-flex bd-highlight">
+                        <div class="img_cont">
+                            <img src="https://via.placeholder.com/50" class="rounded-circle user_img" alt="Usuario">
+                        </div>
+                        <div class="user_info">
+                            <span>Usuario 1</span>
+                            <p>Último mensaje...</p>
+                        </div>
+                    </div>
+                </li>
+                <!-- Repetir el bloque anterior por más usuarios -->
+            </ul>
+        </div>
+
+        <!-- Área de Mensajes -->
+        <div class="col-md-8">
+            <div class="message_header p-3 border-bottom">
+                <div class="d-flex bd-highlight">
+                    <div class="img_cont">
+                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img" alt="Usuario">
+                    </div>
+                    <div class="user_info">
+                        <span>Usuario 1</span>
+                    </div>
+                </div>
+            </div>
+            <div class="messages p-3">
+                <!-- Ejemplo de un mensaje recibido -->
+                <div class="d-flex justify-content-start mb-4">
+                    <div class="img_cont_msg">
+                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img_msg" alt="Usuario">
+                    </div>
+                    <div class="msg_cotainer">
+                        Hola, ¿cómo estás?
+                        <span class="msg_time">8:40 AM, Hoy</span>
+                    </div>
+                </div>
+                <!-- Ejemplo de un mensaje enviado -->
+                <div class="d-flex justify-content-end mb-4">
+                    <div class="msg_cotainer_send">
+                        Bien, ¿y tú?
+                        <span class="msg_time_send">8:55 AM, Hoy</span>
+                    </div>
+                    <div class="img_cont_msg">
+                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img_msg" alt="Usuario">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer para enviar nuevos mensajes -->
+            <div class="message_footer p-3 border-top">
+                <form id="messageForm">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Escribe un mensaje" id="messageContent">
+                        <div class="input-group-append">
+                            <button type="submit" class="input-group-text send_btn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/messaging.js"></script>
+</body>
+</html>

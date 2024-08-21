@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/ads")
+@RequestMapping("/admin/ad")
 public class AdController {
 
     @Autowired
@@ -18,13 +18,13 @@ public class AdController {
     public String manageAds(Model model) {
         model.addAttribute("ads", adService.getAllAds());
         model.addAttribute("ad", new Ad());
-        return "add-management";
+        return "manage-ad";
     }
 
     @PostMapping("/save")
     public String saveAd(@ModelAttribute Ad ad) {
         adService.saveAd(ad);
-        return "redirect:/admin/ads";
+        return "redirect:/admin/ad";
     }
 
     @GetMapping("/edit/{id}")
@@ -32,12 +32,12 @@ public class AdController {
         Ad ad = adService.getAdById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ad Id: " + id));
         model.addAttribute("ad", ad);
         model.addAttribute("ads", adService.getAllAds());
-        return "add-management";
+        return "manage-ad";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteAd(@PathVariable Long id) {
         adService.deleteAd(id);
-        return "redirect:/admin/ads";
+        return "redirect:/admin/ad";
     }
 }
