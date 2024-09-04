@@ -1,81 +1,91 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensajería</title>
+    <title>Messaging</title>
     <link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/messaging.css" rel="stylesheet">
-    <link href="/images/favicon.ico" rel="icon" type="image/png">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/css/messaging.css}" rel="stylesheet">
+    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
 </head>
-<body>
-<div class="container-fluid">
-    <div class="row no-gutters">
-        <!-- Sidebar de Usuarios -->
-        <div class="col-md-4 border-right">
-            <div class="search-bar p-3">
-                <label>
-                    <input type="text" class="form-control" placeholder="Buscar mensajes o usuarios">
-                </label>
-            </div>
-            <ul class="list-group">
-                <!-- Elemento de Usuario (Repetir por cada usuario) -->
-                <li class="list-group-item active">
-                    <div class="d-flex bd-highlight">
-                        <div class="img_cont">
-                            <img src="https://via.placeholder.com/50" class="rounded-circle user_img" alt="Usuario">
-                        </div>
-                        <div class="user_info">
-                            <span>Usuario 1</span>
-                            <p>Último mensaje...</p>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
+                <span class="brand-name">Vintage Vogue</span>
+            </a>
+            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
+                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
+                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
+            </form>
+            <ul class="navbar-nav d-flex align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-danger" id="notificationCount">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div id="notificationsList">
+                            <a class="dropdown-item" href="#">No new notifications</a>
                         </div>
                     </div>
                 </li>
-                <!-- Repetir el bloque anterior por más usuarios -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutters">
+        <!-- Sidebar for Users -->
+        <div class="col-md-4 border-right">
+            <div class="search-bar p-3">
+                <label>
+                    <input type="text" id="searchInputUser" class="form-control" placeholder="Search for messages or users">
+                </label>
+            </div>
+            <ul class="list-group" id="userList">
+                <!-- User Item (Dynamically populated) -->
             </ul>
         </div>
 
-        <!-- Área de Mensajes -->
+        <!-- Message Area -->
         <div class="col-md-8">
             <div class="message_header p-3 border-bottom">
                 <div class="d-flex bd-highlight">
-                    <div class="img_cont">
-                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img" alt="Usuario">
-                    </div>
                     <div class="user_info">
-                        <span>Usuario 1</span>
+                        <span id="activeUser">Select a user to chat</span>
                     </div>
                 </div>
             </div>
-            <div class="messages p-3">
-                <!-- Ejemplo de un mensaje recibido -->
-                <div class="d-flex justify-content-start mb-4">
-                    <div class="img_cont_msg">
-                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img_msg" alt="Usuario">
-                    </div>
-                    <div class="msg_cotainer">
-                        Hola, ¿cómo estás?
-                        <span class="msg_time">8:40 AM, Hoy</span>
-                    </div>
-                </div>
-                <!-- Ejemplo de un mensaje enviado -->
-                <div class="d-flex justify-content-end mb-4">
-                    <div class="msg_cotainer_send">
-                        Bien, ¿y tú?
-                        <span class="msg_time_send">8:55 AM, Hoy</span>
-                    </div>
-                    <div class="img_cont_msg">
-                        <img src="https://via.placeholder.com/50" class="rounded-circle user_img_msg" alt="Usuario">
-                    </div>
-                </div>
+            <div class="messages p-3" id="messageArea">
+                <!-- Messages will be appended here -->
             </div>
 
-            <!-- Footer para enviar nuevos mensajes -->
+            <!-- Footer for sending new messages -->
             <div class="message_footer p-3 border-top">
                 <form id="messageForm">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Escribe un mensaje" id="messageContent">
+                        <label for="messageContent"></label><input type="text" class="form-control" placeholder="Type a message" id="messageContent">
                         <div class="input-group-append">
                             <button type="submit" class="input-group-text send_btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
@@ -85,9 +95,17 @@
         </div>
     </div>
 </div>
+<footer>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/messaging.js"></script>
+<script src="/js/home.js"></script>
 </body>
 </html>

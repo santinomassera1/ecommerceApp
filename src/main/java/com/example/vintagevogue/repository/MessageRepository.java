@@ -1,12 +1,15 @@
 package com.example.vintagevogue.repository;
 
 import com.example.vintagevogue.model.Message;
-import com.example.vintagevogue.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findBySenderAndRecipient(User sender, User recipient);
-    List<Message> findByRecipient(User recipient);
+
+    List<Message> findByFromUserAndToUserOrderByTimestampAsc(String fromUser, String toUser);
+
+    List<Message> findByToUserAndFromUserOrderByTimestampAsc(String toUser, String fromUser);
 }

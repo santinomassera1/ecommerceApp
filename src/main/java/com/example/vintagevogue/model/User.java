@@ -25,6 +25,11 @@ public class User implements UserDetails {
     private String verificationToken;
     private boolean accountNonLocked = true;
 
+    private String address;
+    private String city;
+    private String country;
+    private String profileImageUrl;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -32,6 +37,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Product> products;
 
     public User() {
         this.isVerified = false;
@@ -53,8 +61,44 @@ public class User implements UserDetails {
         this.verificationToken = UUID.randomUUID().toString();
     }
 
-    public boolean isVerified() {
-        return isVerified;
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setAccountNonLocked(boolean accountNonLocked) {

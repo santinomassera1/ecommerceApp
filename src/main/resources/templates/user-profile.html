@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Vintage Vogue</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/profile.css}" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+</head>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
+                <span class="brand-name">Vintage Vogue</span>
+            </a>
+            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
+                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
+                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
+            </form>
+            <ul class="navbar-nav d-flex align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-danger" id="notificationCount">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div id="notificationsList">
+                            <a class="dropdown-item" href="#">No new notifications</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<body>
+
+<div class="container profile-container mt-5">
+    <div class="row">
+        <!-- Sidebar navigation -->
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('mainContent')">Products</a>
+                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('manageUser')">Manage User</a>
+                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('manageProducts')">Manage Products</a>
+                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('managePassword')">Manage Password</a>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-8">
+            <!-- User Info Section -->
+            <div id="userInfo">
+                <h2>User Profile: <span th:text="${user.username}">Username</span></h2>
+                <p>Email: <span th:text="${user.email}">user@example.com</span></p>
+                <p>Address: <span th:text="${user.address}">1234 Street</span></p>
+                <p>City: <span th:text="${user.city}">City</span></p>
+                <p>Country: <span th:text="${user.country}">Country</span></p>
+                <a class="btn btn-primary" th:href="@{/messages/{userId}(userId=${user.id})}">
+                    <i class="fas fa-envelope"></i> Send Message
+                </a>
+            </div>
+
+            <!-- Products Section -->
+            <div id="mainContent">
+                <h2 th:if="${isOwnProfile}">Your Products</h2>
+                <h2 th:if="${!isOwnProfile}">Products by <span th:text="${user.username}"></span></h2>
+                <div th:if="${user.products.size() == 0}">
+                    <p>No products published yet.</p>
+                </div>
+                <div th:each="product : ${user.products}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                            <p class="card-text" th:text="${product.description}">Description</p>
+                            <p class="card-text"><strong th:text="${product.price}">Price</strong></p>
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning" th:if="${isOwnProfile}">Edit</a>
+                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage User Section, visible only if own profile -->
+            <div id="manageUser" style="display: none;" th:if="${isOwnProfile}">
+                <h3>Edit User Information</h3>
+                <form th:action="@{/profile/update}" method="post">
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" class="form-control" th:value="${user.address}">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" class="form-control" th:value="${user.city}">
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" class="form-control" th:value="${user.country}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Manage Products Section, visible only if own profile -->
+            <div id="manageProducts" style="display: none;" th:if="${isOwnProfile}">
+                <h3>Manage Your Products</h3>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${user.products}">
+                        <td th:text="${product.name}">Product Name</td>
+                        <td th:text="${product.price}">Price</td>
+                        <td th:text="${product.description}">Description</td>
+                        <td>
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning">Edit</a>
+                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(user.products)}">
+                        <td colspan="4">No products found</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Manage Password Section, visible only if own profile -->
+            <div id="managePassword" style="display: none;" th:if="${isOwnProfile}">
+                <h3>Change Password</h3>
+                <form th:action="@{/profile/changePassword}" method="post">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password:</label>
+                        <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password:</label>
+                        <input type="password" id="newPassword" name="newPassword" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </form>
+                <!-- Display success or error messages -->
+                <div th:if="${passwordError}" class="alert alert-danger" th:text="${passwordError}"></div>
+                <div th:if="${passwordSuccess}" class="alert alert-success" th:text="${passwordSuccess}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>About Us</h4>
+            <p>Vintage Vogue is a fashion store specializing in vintage clothing and accessories. Our mission is to bring the best of classic fashion to our customers.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Useful Links</h4>
+            <ul>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/privacy">Privacy Policy</a></li>
+                <li><a href="/terms">Terms and Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <ul>
+                <li>Phone: +54 11 3022-0920</li>
+                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
+                <li>Address: Pilar A1627, Buenos Aires, Argentina</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Follow Us</h4>
+            <ul class="social-icons">
+                <li><a href="https://www.facebook.com/vintagevogue" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="https://www.twitter.com/vintagevogue" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="https://www.instagram.com/vintagevogue" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="https://www.pinterest.com/vintagevogue" target="_blank"><i class="fab fa-pinterest"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- jQuery, Bootstrap JS -->
+<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/profile.js}"></script>
+<script th:src="@{/js/home.js}"></script>
+
+<script>
+    // Function to display the selected section and hide others
+    function showSection(sectionId) {
+        // Hide all sections
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('manageUser').style.display = 'none';
+        document.getElementById('manageProducts').style.display = 'none';
+        document.getElementById('managePassword').style.display = 'none';
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

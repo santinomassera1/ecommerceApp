@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Message {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,14 +12,15 @@ public class Message {
 
     private String content;
 
-    private String fromUser;
-
-    private String toUser;
+    private boolean isRead;
 
     private LocalDateTime timestamp;
 
-    // Getters y Setters
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -36,20 +37,12 @@ public class Message {
         this.content = content;
     }
 
-    public String getFromUser() {
-        return fromUser;
+    public boolean isRead() {
+        return isRead;
     }
 
-    public void setFromUser(String fromUser) {
-        this.fromUser = fromUser;
-    }
-
-    public String getToUser() {
-        return toUser;
-    }
-
-    public void setToUser(String toUser) {
-        this.toUser = toUser;
+    public void setRead(boolean read) {
+        isRead = read;
     }
 
     public LocalDateTime getTimestamp() {
@@ -58,5 +51,13 @@ public class Message {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

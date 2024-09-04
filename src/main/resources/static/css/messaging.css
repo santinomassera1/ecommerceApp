@@ -1,86 +1,112 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+/* messaging.css */
+
+/* Sidebar Styling */
+.search-bar input {
+    border-radius: 20px;
+    margin-bottom: 10px;
 }
 
-.container-fluid {
-    height: 100vh;
+.list-group-item {
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
 }
 
-.user_img, .user_img_msg {
-    width: 50px;
-    height: 50px;
-}
-
-.user_info span {
-    font-size: 20px;
-    font-weight: 500;
-}
-
-.user_info p {
-    font-size: 14px;
-    color: grey;
-}
-
+.list-group-item:hover,
 .list-group-item.active {
     background-color: #007bff;
-    border-color: #007bff;
+    color: white;
 }
 
-.msg_cotainer, .msg_cotainer_send {
-    max-width: 70%;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+.user_info {
+    margin-left: 10px;
 }
 
-.msg_cotainer {
-    background-color: #f8f9fa;
-    position: relative;
+.user_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
 }
 
-.msg_cotainer_send {
-    background-color: #007bff;
-    color: #fff;
-    position: relative;
+.user_img_msg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
-.msg_time, .msg_time_send {
-    position: absolute;
-    bottom: -15px;
-    font-size: 10px;
-}
-
-.msg_time {
-    left: 0;
-}
-
-.msg_time_send {
-    right: 0;
-}
-
-.input-group-text.send_btn {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
+/* Message Area Styling */
 .message_header {
-    background-color: #f8f9fa;
-    padding: 20px;
+    background-color: #f7f7f7;
 }
 
 .messages {
-    height: calc(100vh - 150px);
+    height: 450px;
     overflow-y: auto;
+    background-color: #f7f7f7;
 }
 
-.message_footer {
+.msg_cotainer {
+    background-color: #82ccdd;
+    border-radius: 25px;
     padding: 10px;
-    background-color: #f8f9fa;
+    position: relative;
+    width: auto;
+    max-width: 60%;
+    margin-bottom: 10px;
+}
+
+.msg_cotainer_send {
+    background-color: #78e08f;
+    border-radius: 25px;
+    padding: 10px;
+    position: relative;
+    width: auto;
+    max-width: 60%;
+    margin-bottom: 10px;
+}
+
+.msg_time {
     position: absolute;
-    bottom: 0;
-    width: 100%;
+    left: 0;
+    bottom: -15px;
+    color: #6c757d;
+    font-size: 10px;
+}
+
+.msg_time_send {
+    position: absolute;
+    right: 0;
+    bottom: -15px;
+    color: #6c757d;
+    font-size: 10px;
+}
+
+/* Input Area Styling */
+.message_footer {
+    background-color: #f7f7f7;
+}
+
+.send_btn {
+    background-color: #007bff;
+    color: white;
+    border-radius: 0 25px 25px 0;
+}
+
+.send_btn:hover {
+    background-color: #0069d9;
+}
+
+.input-group-text {
+    border: none;
+    background: none;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #007bff;
+}
+
+input::placeholder {
+    font-style: italic;
+    color: #ced4da;
 }

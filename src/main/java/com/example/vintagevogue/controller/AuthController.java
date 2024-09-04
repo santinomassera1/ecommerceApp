@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,17 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/current-user")
+    public ResponseEntity<Map<String, String>> getCurrentUser(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            Map<String, String> response = new HashMap<>();
+            response.put("username", authentication.getName());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 
     @GetMapping("/login")
     public String login(Model model) {

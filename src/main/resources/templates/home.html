@@ -19,19 +19,11 @@
                 <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
                 <span class="brand-name">Vintage Vogue</span>
             </a>
-            <form class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex">
-                <input class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search">
+            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
+                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
+                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
             </form>
             <ul class="navbar-nav d-flex align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/women}">Women</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/men}">Men</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/kids}">Kids</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/products/new}">Sell</a>
                 </li>
@@ -43,6 +35,18 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge badge-danger" id="notificationCount">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div id="notificationsList">
+                            <a class="dropdown-item" href="#">No new notifications</a>
+                        </div>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/logout}">Logout</a>
@@ -166,7 +170,10 @@
     </div>
 </footer>
 
-<!-- jQuery, Bootstrap JS -->
+<script th:src="@{/vendor/sockjs/sockjs.min.js}"></script>
+<script th:src="@{/vendor/stomp/stomp.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/home.js}"></script>

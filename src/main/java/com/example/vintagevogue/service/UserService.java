@@ -6,6 +6,7 @@ import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.RoleRepository;
 import com.example.vintagevogue.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -32,15 +38,11 @@ public class UserService implements UserDetailsService {
     @Autowired
     private EmailService emailService;
 
-
-
     public boolean registerUser(User user) {
-        // Verificar si el nombre de usuario ya existe
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new CustomException.UsernameAlreadyExistsException("Username already exists.");
         }
 
-        // Verificar si el correo electrónico ya existe
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new CustomException.EmailAlreadyExistsException("Address already exists.");
         }
@@ -88,14 +90,26 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    @Transactional
     public Optional<User> findByUsername(String username) {
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
     }
 
+    @Transactional
+    public List<User> searchUsersByName(String name) {
+        return userRepository.findByUsernameContainingIgnoreCase(name);
+    }
+
+    @Transactional
+    public List<User> searchUsersForMessaging(String username) {
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
+        users.forEach(user -> Hibernate.initialize(user.getProducts()));
+        return users;
+    }
     public boolean resetPassword(String token, String newPassword) {
         Optional<User> userOptional = userRepository.findByVerificationToken(token);
         if (userOptional.isEmpty()) {
@@ -144,7 +158,6 @@ public class UserService implements UserDetailsService {
         return roleRepository.findAll();
     }
 
-
     @Transactional
     public boolean deleteUser(String username) {
         userRepository.deleteByUsername(username);
@@ -161,4 +174,29 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    public String saveProfileImage(MultipartFile image, User user) {
+        try {
+            String folder = "uploads/";
+            byte[] bytes = image.getBytes();
+            Path path = Paths.get(folder + user.getId() + "_" + image.getOriginalFilename());
+            Files.write(path, bytes);
+            return "/uploads/" + user.getId() + "_" + image.getOriginalFilename();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public boolean checkPassword(User user, String currentPassword) {
+        return passwordEncoder.matches(currentPassword, user.getPassword());
+    }
+
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }
