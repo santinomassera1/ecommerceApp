@@ -9,6 +9,7 @@
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/css/cart.css}" rel="stylesheet">
     <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
 </head>
 <body>
@@ -16,7 +17,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
-                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
                 <span class="brand-name">Vintage Vogue</span>
             </a>
             <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
@@ -99,16 +99,28 @@
             <div class="row">
                 <div th:each="product : ${products}" class="col-md-4 mb-4">
                     <div class="card h-100 product-card">
-                        <!-- Mostrar todas las imágenes del producto -->
-                        <div th:each="image : ${product.images}" class="product-image-container">
-                            <img th:src="@{/images/{id}(id=${image.id})}" alt="Product Image">
+                        <!-- Enlace solo en la imagen para redirigir a la vista de detalles del producto -->
+                        <div th:if="${product.images.size() > 0}" class="product-image-container">
+                            <a th:href="@{/products/details/{id}(id=${product.id})}" class="text-decoration-none">
+                                <img th:src="${product.images[0].url}" alt="Product Image" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                            </a>
                         </div>
-                        <div class="seller-info">
-                            <span class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></span>
+                        
+                        <!-- Si no tiene imágenes, mostrar una imagen por defecto -->
+                        <div th:if="${product.images.size() == 0}" class="product-image-container">
+                            <a th:href="@{/products/details/{id}(id=${product.id})}" class="text-decoration-none">
+                                <img th:src="@{/images/default-image.png}" alt="Default Product Image" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                            </a>
+                        </div>
+                         <!-- Enlace al perfil del usuario que publicó el producto, con estilo para que sea visible -->
+                         <div class="seller-info">
+                            <a th:href="@{/profile/{userId}(userId=${product.user.id})}" class="seller-name" th:text="${product.user != null ? product.user.username : 'Unknown Seller'}"></a>
                         </div>
                         <!-- Botones que se muestran al hacer hover -->
                         <div class="product-actions">
-                            <button class="btn btn-primary">ADD TO CART</button>
+                            <form th:action="@{/cart/items/add/{productId}(productId=${product.id})}" method="post">
+                                <button type="submit" class="btn btn-primary">ADD TO CART</button>
+                            </form>
                             <button class="btn btn-danger">BUY NOW</button>
                         </div>
                         <!-- Descripción del producto -->
@@ -170,13 +182,12 @@
     </div>
 </footer>
 
-<script th:src="@{/vendor/sockjs/sockjs.min.js}"></script>
-<script th:src="@{/vendor/stomp/stomp.min.js}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/home.js}"></script>
+<script th:src="@{/js/cart.js}"></script>
+<script th:src="@{/js/notification.js}"></script>
 <script th:src="@{/js/categories.js}"></script>
+<script th:src="@{/js/search.js}"></script>
 </body>
 </html>

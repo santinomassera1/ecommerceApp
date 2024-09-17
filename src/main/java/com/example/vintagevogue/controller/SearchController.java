@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -20,8 +18,8 @@ public class SearchController {
     private SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<List<Object>> search(@RequestParam String query) {
-        List<Object> results = Collections.singletonList(searchService.search(query));
+    public ResponseEntity<List<SearchResultDto>> search(@RequestParam String query) {
+        List<SearchResultDto> results = searchService.search(query);
         return ResponseEntity.ok(results);
     }
 

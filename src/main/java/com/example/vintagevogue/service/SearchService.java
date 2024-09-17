@@ -32,16 +32,20 @@ public class SearchService {
     private List<SearchResultDto> getSearchResultDtos(String keyword) {
         List<SearchResultDto> results = new ArrayList<>();
 
+        // Buscar productos que coincidan con el keyword
         List<Product> products = productRepository.findByNameContaining(keyword);
         for (Product product : products) {
-            results.add(new SearchResultDto(product.getId(), product.getName(), product.getDescription(), product.getPrice(), "product", product.getImageUrl()));
+            // No incluimos imágenes, solo los datos necesarios
+            results.add(new SearchResultDto(product.getId(), product.getName(), product.getDescription(), product.getPrice(), "product", null));
         }
 
+        // Buscar usuarios que coincidan con el keyword
         List<User> users = userRepository.findByRoles_NameAndUsernameContaining("ROLE_USER", keyword);
         for (User user : users) {
             results.add(new SearchResultDto(user.getId(), user.getUsername(), user.getEmail(), null, "user", null));
         }
 
+        // Buscar categorías que coincidan con el keyword
         List<Category> categories = categoryRepository.findByNameContaining(keyword);
         for (Category category : categories) {
             results.add(new SearchResultDto(category.getId(), category.getName(), null, null, "category", null));

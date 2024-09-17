@@ -2,6 +2,7 @@ package com.example.vintagevogue.service;
 
 import com.example.vintagevogue.model.Category;
 import com.example.vintagevogue.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Transactional
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }

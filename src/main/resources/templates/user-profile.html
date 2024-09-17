@@ -95,6 +95,9 @@
                             <h5 class="card-title" th:text="${product.name}">Product Name</h5>
                             <p class="card-text" th:text="${product.description}">Description</p>
                             <p class="card-text"><strong th:text="${product.price}">Price</strong></p>
+                            <div th:each="image : ${product.images}">
+                                <img th:src="@{${image.url}}" alt="Product Image" class="img-fluid">
+                            </div>
                             <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning" th:if="${isOwnProfile}">Edit</a>
                             <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Delete</a>
                         </div>
@@ -128,6 +131,7 @@
                 <table class="table table-bordered">
                     <thead>
                     <tr>
+                        <th>Image</th> <!-- Nueva columna para la imagen -->
                         <th>Product Name</th>
                         <th>Price</th>
                         <th>Description</th>
@@ -136,16 +140,20 @@
                     </thead>
                     <tbody>
                     <tr th:each="product : ${user.products}">
+                        <!-- Mostrar la primera imagen del producto -->
+                        <td th:if="${product.images.size() > 0}">
+                            <img th:src="@{${product.images[0].url}}" alt="Product Image" style="width: 100px; height: 100px; object-fit: cover;">
+                        </td>
                         <td th:text="${product.name}">Product Name</td>
                         <td th:text="${product.price}">Price</td>
                         <td th:text="${product.description}">Description</td>
                         <td>
                             <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning">Edit</a>
-                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger">Delete</a>
+                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Delete</a>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(user.products)}">
-                        <td colspan="4">No products found</td>
+                        <td colspan="5">No products found</td> <!-- Cambiado de 4 a 5 columnas -->
                     </tr>
                     </tbody>
                 </table>
@@ -220,6 +228,7 @@
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/profile.js}"></script>
 <script th:src="@{/js/home.js}"></script>
+<script th:src="@{/js/search.js}"></script>
 
 <script>
     // Function to display the selected section and hide others
@@ -234,6 +243,8 @@
         document.getElementById(sectionId).style.display = 'block';
     }
 </script>
+
+
 
 </body>
 </html>

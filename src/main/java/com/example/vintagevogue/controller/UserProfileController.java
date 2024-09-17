@@ -28,7 +28,9 @@ public class UserProfileController {
             return "error";
         }
 
+        // Asegúrate de que los productos se carguen con sus imágenes
         model.addAttribute("user", user);
+        model.addAttribute("products", user.getProducts()); // Añade los productos asociados
         model.addAttribute("isOwnProfile", true);
         return "user-profile";
     }
@@ -36,14 +38,15 @@ public class UserProfileController {
     @GetMapping("/{userId}")
     public String viewUserProfile(@PathVariable Long userId, Model model) {
         User user = userService.findById(userId).orElse(null);
-
+    
         if (user == null) {
             model.addAttribute("errorMessage", "User not found");
             return "error";
         }
-
+    
         model.addAttribute("user", user);
-        model.addAttribute("isOwnProfile", false); // Este perfil no es el propio
+        model.addAttribute("products", user.getProducts()); // Añade los productos asociados
+        model.addAttribute("isOwnProfile", false);
         return "user-profile";
     }
 
@@ -85,10 +88,10 @@ public class UserProfileController {
 
     @PostMapping("/changePassword")
     public String changePassword(@RequestParam("currentPassword") String currentPassword,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 Authentication authentication,
-                                 Model model) {
+                                    @RequestParam("newPassword") String newPassword,
+                                    @RequestParam("confirmPassword") String confirmPassword,
+                                    Authentication authentication,
+                                    Model model) {
         String username = authentication.getName();
         User user = userService.findByUsername(username).orElse(null);
 

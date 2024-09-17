@@ -19,14 +19,13 @@ public class Product {
     private BigDecimal price;
     private String imageUrl;
 
-
     private boolean available;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
-            name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
+        name = "product_category",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<>();
 
@@ -34,13 +33,18 @@ public class Product {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
-    private List<Image> images = new ArrayList<>();;
+    
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     // Getters y Setters
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public Long getId() {
@@ -71,6 +75,10 @@ public class Product {
         return price;
     }
 
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
     public boolean isAvailable() {
         return available;
     }
@@ -95,16 +103,11 @@ public class Product {
         this.user = user;
     }
 
-    public List<Image> getImages() {
-        return images;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
-    public void addImage(Image image) {
-        images.add(image);
-        image.setProduct(this);
+    public String getImageUrl() {
+        return imageUrl;
     }
 }

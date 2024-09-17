@@ -1,6 +1,7 @@
 let stompClient = null;
 let currentUser = null;
 
+
 function getCurrentUser() {
     return fetch('/auth/current-user')
         .then(response => {
@@ -18,27 +19,66 @@ function getCurrentUser() {
         });
 }
 
+function updateNotificationCount() {
+    fetch('/api/notifications/count')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(count => {
+            const notificationCountElement = document.getElementById('notificationCount');
+            if (notificationCountElement) {
+                notificationCountElement.innerText = count > 0 ? count : '';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching notification count:', error);
+        });
+}
+
 function connect() {
+    if (stompClient && stompClient.connected) {
+        console.log('Already connected');
+        return;
+    }
+
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
+
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
+
+
         stompClient.subscribe('/topic/messages', function (messageOutput) {
-            showMessage(JSON.parse(messageOutput.body));
+            const message = JSON.parse(messageOutput.body);
+            showMessage(message);
+            if (typeof updateNotificationCount === 'function') {
+                updateNotificationCount();
+            } else {
+                console.error("updateNotificationCount no está definido");
+            }
         });
+    }, function (error) {
+        console.error('Error connecting to STOMP:', error);
     });
 }
 
 function sendMessage() {
-    const messageContent = document.getElementById('messageContent').value;
+    const messageContent = document.getElementById('messageContent').value.trim(); // .trim() para evitar espacios vacíos
     const toUser = document.getElementById('activeUser').innerText;
 
     if (messageContent && stompClient && toUser && currentUser) {
+        console.log('Sending message:', messageContent, 'para:', toUser);
+
         stompClient.send("/app/sendMessage", {}, JSON.stringify({
             'content': messageContent,
             'fromUser': currentUser,
             'toUser': toUser
         }));
+
+        document.getElementById('messageContent').value = '';
     }
 }
 
@@ -102,11 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById('messageForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        sendMessage();
-        document.getElementById('messageContent').value = '';  // Clear the input field after sending the message
-    });
+    const messageForm = document.getElementById('messageForm');
+    if (messageForm) {
+        // Asegúrate de que solo se añade un único event listener
+        messageForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            sendMessage();
+        });
+    }
 });
 
 document.getElementById('searchInputUser').addEventListener('input', function() {

@@ -1,21 +1,18 @@
+
 $(document).ready(function () {
-    // Activación del tooltip
     $('[data-toggle="tooltip"]').tooltip();
 
-    // Event listener para el filtro de categorías
     $('.list-group-item input[type="checkbox"]').on('change', function () {
         const selectedCategories = $('.list-group-item input[type="checkbox"]:checked')
             .map(function () { return $(this).val().toLowerCase(); }).get();
         filterProducts(selectedCategories);
     });
 
-    // Event listener para ordenar productos
     $('#sortButton').on('click', '.dropdown-item', function () {
         const sortBy = $(this).data('sort');
         sortProducts(sortBy);
     });
 
-    // Event listener para sugerencias
     $('#searchInput').on('input', function () {
         const query = $(this).val().trim();
 
@@ -41,12 +38,9 @@ $(document).ready(function () {
                         suggestionsBox.append(suggestionItem);
                     });
 
-                    // Añadir el evento click a las sugerencias
                     $('.suggestion-item').on('click', function () {
                         const itemId = $(this).data('id');
                         const itemType = $(this).data('type');
-
-                        // Redirigir a la página correspondiente según el tipo de elemento
                         if (itemType === 'user') {
                             window.location.href = `/profile/${itemId}`;
                         } else if (itemType === 'product') {
@@ -60,7 +54,6 @@ $(document).ready(function () {
         }
     });
 
-    // Event listener para el formulario de búsqueda
     $('#searchForm').on('submit', function (e) {
         e.preventDefault();
         const query = $('#searchInput').val().trim();
@@ -88,10 +81,9 @@ $(document).ready(function () {
         }
     });
 
-    // Función para mostrar resultados de la búsqueda
     function displaySearchResults(results) {
         const $productRow = $('.product-row');
-        $productRow.empty(); // Limpia la pantalla actual de productos
+        $productRow.empty();
 
         if (results.length > 0) {
             results.forEach(function (item) {
@@ -113,7 +105,6 @@ $(document).ready(function () {
         }
     }
 
-    // Función para ordenar productos
     function sortProducts(sortBy) {
         const $productRow = $('.product-row');
         const products = $('.card').get();
@@ -133,7 +124,6 @@ $(document).ready(function () {
         });
     }
 
-    // Función para filtrar productos
     function filterProducts(categories) {
         if (categories.length === 0 || categories.includes('all')) {
             $('.card').show();
@@ -157,7 +147,7 @@ $(document).ready(function () {
             });
     }
 
-    // Inicializar la conexión con StompJS
+
     function connectStompClient() {
         const socket = new SockJS('/ws');
         const stompClient = Stomp.over(socket);
@@ -165,10 +155,9 @@ $(document).ready(function () {
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
 
-            // Suscribirse a la cola de mensajes para recibir notificaciones
             stompClient.subscribe('/topic/messages', function (messageOutput) {
                 showMessage(JSON.parse(messageOutput.body));
-                updateNotificationCount(); // Actualizar el contador de notificaciones
+                updateNotificationCount();
             });
         });
     }

@@ -39,7 +39,7 @@ public class HomeController {
 
         model.addAttribute("ads", ads);
 
-        List<Product> products = productService.getAllProductsWithUsers();
+        List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
 
         List<Category> categories = categoryService.getAllCategories();

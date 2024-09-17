@@ -10,6 +10,16 @@ html, body {
     height: 100%;
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
 
 /* === Header & Navbar === */
@@ -80,6 +90,24 @@ header {
 }
 
 /* === Product Card === */
+a {
+    text-decoration: none;
+    color: inherit; 
+}
+a:hover {
+    text-decoration: none; 
+    color: inherit; 
+}
+.seller-name a {
+    text-decoration: none;
+    color: inherit; 
+}
+
+.seller-name a:hover {
+    text-decoration: none; 
+    color: inherit; 
+}
+
 .product-card {
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -151,6 +179,12 @@ header {
     font-size: 0.9rem;
     padding: 5px 10px;
     border-radius: 20px;
+    margin-bottom: 10px; /* Añade un margen inferior a los botones */
+    margin-right: 10px; /* Añade un margen derecho a los botones */
+}
+
+.product-actions {
+    margin-bottom: 40px; /* Añade un margen inferior a la sección de acciones del producto */
 }
 
 /* === Card Body === */
@@ -291,6 +325,7 @@ footer {
     background-color: #333;
     color: #fff;
     padding: 20px 0;
+    margin-top: 40px; 
 }
 
 .footer-container {

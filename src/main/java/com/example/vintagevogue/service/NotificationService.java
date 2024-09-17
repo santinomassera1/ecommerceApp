@@ -3,6 +3,7 @@ package com.example.vintagevogue.service;
 import com.example.vintagevogue.model.Notification;
 import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.NotificationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,10 @@ public class NotificationService {
         return notificationRepository.findByUserAndIsReadFalse(user);
     }
 
-    public void markAsRead(Notification notification) {
-        notification.setRead(true);
-        notificationRepository.save(notification);
+    @Transactional
+    public void markAsRead(User user) {
+        List<Notification> notifications = notificationRepository.findByUserAndIsReadFalse(user);
+        notifications.forEach(notification -> notification.setRead(true));
+        notificationRepository.saveAll(notifications);
     }
 }

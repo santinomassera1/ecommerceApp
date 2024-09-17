@@ -10,15 +10,9 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Column(name = "image_data", columnDefinition = "LONGBLOB")
-    private byte[] imageData;
+    private String url;
 
-    private String imageName;
-
-    private String imageType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -31,24 +25,12 @@ public class Image {
         this.id = id;
     }
 
-    public byte[] getImageData() {
-        return imageData;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
-
-    public String getImageType() {
-        return imageType;
-    }
-
-    public void setImageType(String imageType) {
-        this.imageType = imageType;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Product getProduct() {

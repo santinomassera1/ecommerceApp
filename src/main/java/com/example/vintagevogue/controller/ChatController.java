@@ -41,8 +41,9 @@ public class ChatController {
     @MessageMapping("/sendMessage")
     @SendTo("/topic/messages")
     public Message sendMessage(Message message) {
-        Message savedMessage = messageService.saveMessage(message);
+        System.out.println("Message received from server: " + message.getContent());
 
+        Message savedMessage = messageService.saveMessage(message);
 
         Notification notification = new Notification();
         notification.setContent("New message from: " + message.getFromUser());
@@ -50,7 +51,6 @@ public class ChatController {
         notification.setTimestamp(LocalDateTime.now());
         notification.setRead(false);
         notificationService.save(notification);
-
         return savedMessage;
     }
 

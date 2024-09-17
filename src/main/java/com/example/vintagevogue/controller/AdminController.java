@@ -3,7 +3,6 @@ package com.example.vintagevogue.controller;
 import com.example.vintagevogue.model.Ad;
 import com.example.vintagevogue.model.Category;
 import com.example.vintagevogue.model.User;
-import com.example.vintagevogue.service.AdService;
 import com.example.vintagevogue.service.CategoryService;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AdService adService;
 
     @Autowired
     private CategoryService categoryService;
