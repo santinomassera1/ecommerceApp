@@ -16,8 +16,14 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
-        emailSender.send(message);
-    }
 
+        try {
+            emailSender.send(message);
+            System.out.println("Email sent successfully to " + to);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error sending email: " + e.getMessage());
+        }
+    }
 }
 

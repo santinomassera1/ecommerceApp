@@ -56,6 +56,21 @@
     <div class="container mt-5">
         <h1>Your Shopping Cart</h1>
     
+        <!-- Mensajes flash para errores y éxitos -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    
         <!-- Verificación de que el carrito y sus items no sean nulos -->
         <div th:if="${cart != null and cart.items != null and cart.items.size() > 0}">
             <table class="table">
@@ -95,7 +110,7 @@
                 <form th:action="@{/cart/items/clear}" method="post">
                     <button type="submit" class="btn btn-danger">Clear Cart</button>
                 </form>
-                <form th:action="@{/checkout}" method="post">
+                <form th:action="@{/purchase}" method="get">
                     <button type="submit" class="btn btn-success">Checkout</button>
                 </form>
             </div>

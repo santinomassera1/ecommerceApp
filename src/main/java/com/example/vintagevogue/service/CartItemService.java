@@ -36,9 +36,14 @@ public class CartItemService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + productId));
 
+        // Validar si el producto está disponible
+        if (!product.isAvailable()) {
+            throw new IllegalStateException("Este producto ya no está disponible para la venta.");
+        }
+
         // Validar si el usuario que intenta agregar el producto es el mismo que lo publicó
         if (product.getUser().getId().equals(user.getId())) {
-            throw new IllegalStateException("You cannot add your own product to the cart.");
+            throw new IllegalStateException("No puedes agregar tu propio producto al carrito.");
         }
 
         // Obtener el carrito del usuario
@@ -81,7 +86,19 @@ public class CartItemService {
             throw new IllegalStateException("User not authorized to remove this cart item");
         }
     
-        cartItemRepository.delete(cartItem);
+        // Obtener el carrito del usuario
+        Cart cart = cartRepository.findByUser(user);
+        
+        if (cart != null) {
+            // Remover el item de la colección del carrito usando ID para comparación
+            // Gracias a orphanRemoval = true, esto eliminará automáticamente el CartItem de la BD
+            cart.getItems().removeIf(item -> item.getId().equals(cartItemId));
+            
+            // Guardar el carrito actualizado
+            cartRepository.save(cart);
+        } else {
+            throw new IllegalStateException("Cart not found for user");
+        }
     }
 
     @Transactional

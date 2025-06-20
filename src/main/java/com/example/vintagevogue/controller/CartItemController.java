@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/cart/items")
@@ -49,54 +50,61 @@ public class CartItemController {
     }
 
     @PostMapping("/add/{productId}")
-    public String addCartItem(@PathVariable Long productId, Authentication authentication, Model model) {
+    public String addCartItem(@PathVariable Long productId, Authentication authentication, RedirectAttributes redirectAttributes) {
         String username = authentication.getName();
         User user = userService.findByUsername(username).orElseThrow(() ->
                 new IllegalArgumentException("User not found: " + username));
         
         try {
             cartItemService.addCartItem(user, productId);
+            redirectAttributes.addFlashAttribute("success", "Producto agregado al carrito exitosamente.");
             return "redirect:/cart";
         } catch (IllegalStateException e) {
-            // Si el usuario intenta agregar su propio producto, mostrar un mensaje de error
-            model.addAttribute("error", e.getMessage());
-            return "cart"; // Reenvía a la vista de carrito con el mensaje de error
+            // Si el producto no está disponible o el usuario intenta agregar su propio producto
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/home";
         } catch (Exception e) {
             // Manejar cualquier otra excepción no esperada
-            model.addAttribute("error", "An unexpected error occurred.");
-            return "cart";
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al agregar el producto.");
+            return "redirect:/home";
         }
     }
 
     @PostMapping("/remove/{cartItemId}")
-    public String removeCartItem(@PathVariable Long cartItemId, Authentication authentication, Model model) {
+    public String removeCartItem(@PathVariable Long cartItemId, Authentication authentication, RedirectAttributes redirectAttributes) {
         String username = authentication.getName();
         User user = userService.findByUsername(username).orElseThrow(() ->
                 new IllegalArgumentException("User not found: " + username));
         
         try {
             cartItemService.removeCartItem(user, cartItemId);
+            redirectAttributes.addFlashAttribute("success", "Producto eliminado del carrito.");
             return "redirect:/cart";
         } catch (IllegalStateException e) {
             // Si el usuario no está autorizado para eliminar el ítem
-            model.addAttribute("error", e.getMessage());
-            return "cart";
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/cart";
         } catch (Exception e) {
             // Manejar cualquier otra excepción no esperada
-            model.addAttribute("error", "An unexpected error occurred.");
-            return "cart";
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado.");
+            return "redirect:/cart";
         }
     }
 
     @PostMapping("/clear")
-    public String clearCart(Authentication authentication) {
+    public String clearCart(Authentication authentication, RedirectAttributes redirectAttributes) {
         String username = authentication.getName();
         User user = userService.findByUsername(username).orElseThrow(() ->
                 new IllegalArgumentException("User not found: " + username));
         
-        // Llamar al servicio para vaciar el carrito
-        cartService.clearCart(user);
-        
-        return "redirect:/cart"; // Redirigir nuevamente a la vista del carrito
+        try {
+            // Llamar al servicio para vaciar el carrito
+            cartService.clearCart(user);
+            redirectAttributes.addFlashAttribute("success", "Carrito vaciado exitosamente.");
+            return "redirect:/cart";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al vaciar el carrito.");
+            return "redirect:/cart";
+        }
     }
 }

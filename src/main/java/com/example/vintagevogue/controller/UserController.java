@@ -5,6 +5,7 @@ import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,13 @@ public class UserController {
     public List<UserDTO> searchUsersForMessaging(@RequestParam("query") String query) {
         List<User> users = userService.searchUsersForMessaging(query);
         return users.stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/profile/{username}")
+    public String getUserProfile(@PathVariable String username, Model model) {
+        User user = userService.getUserWithProducts(username);
+        model.addAttribute("user", user);
+        return "user-profile";
     }
 
 }

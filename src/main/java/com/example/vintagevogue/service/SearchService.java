@@ -32,8 +32,8 @@ public class SearchService {
     private List<SearchResultDto> getSearchResultDtos(String keyword) {
         List<SearchResultDto> results = new ArrayList<>();
 
-        // Buscar productos que coincidan con el keyword
-        List<Product> products = productRepository.findByNameContaining(keyword);
+        // Buscar productos disponibles que coincidan con el keyword
+        List<Product> products = productRepository.findByNameContainingAndAvailableTrue(keyword);
         for (Product product : products) {
             // No incluimos imágenes, solo los datos necesarios
             results.add(new SearchResultDto(product.getId(), product.getName(), product.getDescription(), product.getPrice(), "product", null));

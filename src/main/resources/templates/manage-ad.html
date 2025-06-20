@@ -52,12 +52,12 @@
             </tr>
             </thead>
             <tbody id="adTable">
-            <tr th:each="ad : ${ad}">
+            <tr th:each="ad : ${ads}">
                 <td th:text="${ad.id}"></td>
                 <td th:text="${ad.title}"></td>
                 <td>
-                    <a th:href="@{/admin/ads/edit/{id}(id=${ad.id})}" class="btn btn-warning">Edit</a>
-                    <a th:href="@{/admin/ads/delete/{id}(id=${ad.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/admin/ad/edit/{id}(id=${ad.id})}" class="btn btn-warning">Edit</a>
+                    <a th:href="@{/admin/ad/delete/{id}(id=${ad.id})}" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>

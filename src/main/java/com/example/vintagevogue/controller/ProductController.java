@@ -75,6 +75,11 @@ public class ProductController {
             productService.saveImagesForProduct(productId, imageFiles);
             return "redirect:/profile";  // Redirige al listado de productos del usuario
         } catch (IOException e) {
+            // Obtener el producto para pasarlo al modelo en caso de error
+            Product product = productService.getProductById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + productId));
+            
+            model.addAttribute("product", product);
             model.addAttribute("errorMessage", "Failed to upload images.");
             return "upload-image";
         }

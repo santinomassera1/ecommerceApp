@@ -41,4 +41,27 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     } catch (error) {
         Swal.fire('Error', 'An unexpected error occurred. Please try again later.', 'error');
     }
+
+    document.getElementById("resetPasswordForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        const response = await fetch("/auth/reset-password", {
+            method: "POST",
+            body: new URLSearchParams(formData),
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire("Success", "Your password has been reset successfully!", "success")
+                .then(() => {
+                    window.location.href = "/auth/login";
+                });
+        } else {
+            Swal.fire("Error", result.message, "error");
+        }
+    });
 });

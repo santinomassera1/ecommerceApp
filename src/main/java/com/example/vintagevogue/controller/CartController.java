@@ -37,7 +37,7 @@ public class CartController {
         if (cart != null) {
             BigDecimal totalPrice = cart.getItems().stream()
                     .map(CartItem::getTotalPrice)
-                    .filter(Objects::nonNull) // Filtrar valores nulos
+                    .filter(Objects::nonNull)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             model.addAttribute("totalPrice", totalPrice);
         } else {

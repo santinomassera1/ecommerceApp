@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Mis Pedidos - Vintage Vogue</title>
+    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+    <style>
+        .order-card {
+            transition: transform 0.2s;
+        }
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
+                <span class="brand-name">Vintage Vogue</span>
+            </a>
+            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
+                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
+                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
+            </form>
+            <ul class="navbar-nav d-flex align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/orders/track}"><i class="fas fa-search-location"></i> Seguimiento</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/orders/my-orders}"><i class="fas fa-box"></i> Mis Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-box"></i> Mis Pedidos</h2>
+            <p class="text-muted">Aquí puedes ver todos tus pedidos y hacer seguimiento de cada uno</p>
+        </div>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <a href="?filter=all" class="btn btn-outline-primary">
+                    <i class="fas fa-list"></i> Todos
+                </a>
+                <a href="?filter=pending" class="btn btn-outline-warning">
+                    <i class="fas fa-clock"></i> Pendientes
+                </a>
+                <a href="?filter=shipped" class="btn btn-outline-info">
+                    <i class="fas fa-shipping-fast"></i> Enviados
+                </a>
+                <a href="?filter=delivered" class="btn btn-outline-success">
+                    <i class="fas fa-check-circle"></i> Entregados
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div class="row">
+        <div class="col-12">
+            <div th:if="${orders == null or orders.size() == 0}" class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-box-open fa-5x text-muted"></i>
+                </div>
+                <h4 class="text-muted">No tienes pedidos aún</h4>
+                <p class="text-muted">¿Por qué no exploras nuestros productos?</p>
+                <a th:href="@{/home}" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Ir de Compras
+                </a>
+            </div>
+
+            <div th:if="${orders != null and orders.size() > 0}">
+                <div class="card order-card mb-3" th:each="order : ${orders}">
+                    <div class="card-header bg-light">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-hashtag"></i> 
+                                    <span th:text="${order.trackingNumber}"></span>
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i>
+                                    <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
+                                </small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <span class="badge status-badge"
+                                      th:classappend="${order.status.name() == 'DELIVERED' ? 'badge-success' : 
+                                                      order.status.name() == 'CANCELLED' ? 'badge-danger' : 
+                                                      order.status.name() == 'SHIPPED' ? 'badge-info' : 
+                                                      order.status.name() == 'IN_TRANSIT' ? 'badge-info' :
+                                                      order.status.name() == 'OUT_FOR_DELIVERY' ? 'badge-info' :
+                                                      'badge-warning'}"
+                                      th:text="${order.statusDescription}">
+                                </span>
+                            </div>
+                            <div class="col-md-3 text-right">
+                                <h5 class="text-primary mb-0">$<span th:text="${order.totalAmount}"></span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6>Productos (<span th:text="${order.items.size()}"></span>):</h6>
+                                <div class="d-flex flex-wrap">
+                                    <div th:each="item, itemStat : ${order.items}" class="mr-3 mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <img th:if="${item.product.images != null and item.product.images.size() > 0}"
+                                                 th:src="${item.product.images[0].url}" 
+                                                 alt="Product Image" 
+                                                 class="rounded mr-2"
+                                                 style="width: 40px; height: 40px; object-fit: cover;">
+                                            <div th:if="${item.product.images == null or item.product.images.size() == 0}"
+                                                 class="bg-light d-flex align-items-center justify-content-center rounded mr-2"
+                                                 style="width: 40px; height: 40px;">
+                                                <i class="fas fa-image text-muted small"></i>
+                                            </div>
+                                            <div>
+                                                <small class="font-weight-bold" th:text="${item.product.name}"></small>
+                                                <br>
+                                                <small class="text-muted">x<span th:text="${item.quantity}"></span></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span th:text="${order.shippingAddress != null ? order.shippingAddress : 'Dirección no especificada'}"></span>
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <div class="btn-group-vertical">
+                                    <a th:href="@{'/orders/track/' + ${order.trackingNumber}}" 
+                                       class="btn btn-sm btn-outline-primary mb-1">
+                                        <i class="fas fa-search-location"></i> Ver Seguimiento
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-secondary" 
+                                            th:if="${!order.completed}" 
+                                            onclick="alert('Función de cancelación pendiente de implementar')">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Progreso visual -->
+                        <div class="mt-3">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" 
+                                     th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' : 
+                                                     order.status.name() == 'CANCELLED' ? 'bg-danger' : 
+                                                     order.status.name() == 'CONFIRMED' ? 'bg-success' : 'bg-info'}"
+                                     th:style="'width: ' + ${(order.status.ordinal() + 1) * 100 / 8} + '%'">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-truck"></i> 
+                                <span th:text="${order.status.name() == 'CONFIRMED' ? '✅ Pago confirmado - Preparando envío' : order.statusDescription}"></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlaces útiles -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a th:href="@{/orders/track}" class="btn btn-outline-primary">
+                <i class="fas fa-search-location"></i> Buscar por Número de Seguimiento
+            </a>
+            <a th:href="@{/home}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Continuar Comprando
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-5">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>Sobre Nosotros</h4>
+            <p>Vintage Vogue es una tienda de moda especializada en ropa y accesorios vintage.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Contacto</h4>
+            <ul>
+                <li>Teléfono: +54 11 3022-0920</li>
+                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+</body>
+</html> 

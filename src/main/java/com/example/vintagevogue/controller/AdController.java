@@ -16,7 +16,7 @@ public class AdController {
 
     @GetMapping
     public String manageAds(Model model) {
-        model.addAttribute("ads", adService.getAllAds());
+        model.addAttribute("ads", adService.getAllAds()); // Cambiar "ad" a "ads"
         model.addAttribute("ad", new Ad());
         return "manage-ad";
     }

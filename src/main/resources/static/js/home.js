@@ -1,12 +1,8 @@
-
 $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 
-    $('.list-group-item input[type="checkbox"]').on('change', function () {
-        const selectedCategories = $('.list-group-item input[type="checkbox"]:checked')
-            .map(function () { return $(this).val().toLowerCase(); }).get();
-        filterProducts(selectedCategories);
-    });
+    // El filtrado por categorías está manejado por categories.js
+    // No agregamos listeners aquí para evitar conflictos
 
     $('#sortButton').on('click', '.dropdown-item', function () {
         const sortBy = $(this).data('sort');
@@ -88,29 +84,33 @@ $(document).ready(function () {
         if (results.length > 0) {
             results.forEach(function (item) {
                 let productCard = `
-                <div class="card">
-                    ${item.imageUrl ? `<img class="card-img-top" src="${item.imageUrl}" alt="${item.name}">` : ''}
-                    <div class="card-body">
-                        <h5 class="card-title">${item.name}</h5>
-                        <p class="card-text">${item.description || ''}</p>
-                        ${typeof item.price !== 'undefined' ? `<p class="card-price">$${item.price}</p>` : ''}
-                        <a href="/${item.type}/${item.id}" class="btn btn-primary">View ${item.type}</a>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 product-card">
+                        ${item.imageUrl ? `<img class="card-img-top" src="${item.imageUrl}" alt="${item.name}">` : ''}
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text">${item.description || ''}</p>
+                            ${typeof item.price !== 'undefined' ? `<p class="card-price">$${item.price}</p>` : ''}
+                            <a href="/${item.type}/${item.id}" class="btn btn-primary">View ${item.type}</a>
+                        </div>
                     </div>
                 </div>
             `;
                 $productRow.append(productCard);
             });
         } else {
-            $productRow.append('<p>No results found</p>');
+            $productRow.append('<div class="col-12"><p>No results found</p></div>');
         }
     }
 
     function sortProducts(sortBy) {
         const $productRow = $('.product-row');
-        const products = $('.card').get();
+        const products = $productRow.find('.col-md-4').get();
+        
         products.sort(function (a, b) {
             const priceA = parseFloat($(a).find('.card-price').text().replace('$', '').replace(',', '')) || 0;
             const priceB = parseFloat($(b).find('.card-price').text().replace('$', '').replace(',', '')) || 0;
+            
             if (sortBy === 'price-asc') {
                 return priceA - priceB;
             } else if (sortBy === 'price-desc') {
@@ -119,24 +119,11 @@ $(document).ready(function () {
                 return 0;
             }
         });
+        
+        $productRow.empty();
         $.each(products, function (idx, product) {
             $productRow.append(product);
         });
-    }
-
-    function filterProducts(categories) {
-        if (categories.length === 0 || categories.includes('all')) {
-            $('.card').show();
-        } else {
-            $('.card').each(function () {
-                const productCategory = $(this).find('.card-category').text().trim().toLowerCase();
-                if (categories.includes(productCategory)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
     }
 
     function updateNotificationCount() {
@@ -146,7 +133,6 @@ $(document).ready(function () {
                 document.getElementById('notificationCount').innerText = count;
             });
     }
-
 
     function connectStompClient() {
         const socket = new SockJS('/ws');

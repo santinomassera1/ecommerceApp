@@ -17,6 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
                 <span class="brand-name">Vintage Vogue</span>
             </a>
             <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
@@ -35,6 +36,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/orders/track}"><i class="fas fa-shipping-fast"></i> Seguimiento</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/orders/my-orders}"><i class="fas fa-box"></i> Mis Pedidos</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,6 +64,21 @@
 </header>
 
 <main class="container mt-5 pt-5">
+    <!-- Mensajes flash para errores y éxitos -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
     <!-- Section for Announcements -->
     <div class="row my-4" style="margin-top: 0;">
         <div class="col-lg-12">
@@ -96,9 +118,11 @@
 
         <!-- Product Section -->
         <div class="col-lg-9">
-            <div class="row">
+            <div class="row product-row">
                 <div th:each="product : ${products}" class="col-md-4 mb-4">
-                    <div class="card h-100 product-card">
+                    <div class="card h-100 product-card" 
+                         th:data-categories="${#strings.arrayJoin(product.categories.![name], ',')}"
+                         th:data-price="${product.price}">
                         <!-- Enlace solo en la imagen para redirigir a la vista de detalles del producto -->
                         <div th:if="${product.images.size() > 0}" class="product-image-container">
                             <a th:href="@{/products/details/{id}(id=${product.id})}" class="text-decoration-none">
@@ -121,13 +145,19 @@
                             <form th:action="@{/cart/items/add/{productId}(productId=${product.id})}" method="post">
                                 <button type="submit" class="btn btn-primary">ADD TO CART</button>
                             </form>
-                            <button class="btn btn-danger">BUY NOW</button>
+                            <a th:href="@{/purchase/instant-buy/{productId}(productId=${product.id})}" class="btn btn-danger">BUY NOW</a>
                         </div>
                         <!-- Descripción del producto -->
                         <div class="product">
                             <h3 th:text="${product.name}">Product Name</h3>
                             <p th:text="${product.description}">Product Description</p>
-                            <span th:text="${product.price}">Price</span>
+                            <span class="card-price" th:text="'$' + ${product.price}">Price</span>
+                            <!-- Categorías ocultas para el filtrado -->
+                            <div class="product-categories" style="display: none;">
+                                <span th:each="category : ${product.categories}" 
+                                      th:text="${category.name}" 
+                                      class="category-tag"></span>
+                            </div>
                         </div>
                         <!-- Iconos de interacción -->
                         <div class="card-footer d-flex justify-content-between align-items-center">
@@ -184,10 +214,10 @@
 
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/categories.js}"></script>
 <script th:src="@{/js/home.js}"></script>
 <script th:src="@{/js/cart.js}"></script>
 <script th:src="@{/js/notification.js}"></script>
-<script th:src="@{/js/categories.js}"></script>
 <script th:src="@{/js/search.js}"></script>
 </body>
 </html>

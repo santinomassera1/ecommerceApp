@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Details</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <h1>Support Panel</h1>
+    <a class="nav-link" th:href="@{/logout}">Logout</a>
+</header>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/support">
+                            <i class="fas fa-ticket-alt"></i> View Tickets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/support/new">
+                            <i class="fas fa-plus-circle"></i> Create New Ticket
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h2>Ticket Details</h2>
+            <div class="card p-3">
+                <p><strong>Subject:</strong> <span th:text="${ticket.subject}"></span></p>
+                <p><strong>Description:</strong> <span th:text="${ticket.description}"></span></p>
+                <p><strong>Status:</strong> <span th:text="${ticket.status}"></span></p>
+                <p><strong>Created At:</strong> <span th:text="${ticket.createdAt}"></span></p>
+
+                <!-- Formulario para actualizar el estado del ticket -->
+                <form th:action="@{/support/update-status}" method="post">
+                    <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                    <label for="status">Update Status:</label>
+                    <select class="form-control" name="status" id="status">
+                        <option th:each="s : ${T(com.example.vintagevogue.model.TicketStatus).values()}"
+                                th:value="${s}" th:text="${s}"
+                                th:selected="${s == ticket.status}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-3">Update Status</button>
+                </form>
+
+                <a href="/support" class="btn btn-secondary mt-3">Back</a>
+            </div>
+        </main>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

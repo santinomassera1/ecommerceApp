@@ -1,82 +1,112 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('assignRoleForm');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+    const searchInput = document.getElementById('searchUser');
+    const userTable = document.getElementById('userTable');
 
-            const username = document.getElementById('username').value;
-            const role = document.getElementById('role').value;
-
-            fetch('/admin/assign-role', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, roleName: role })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
+    if (!form || !searchInput || !userTable) {
+        console.error("❌ Error: Uno o más elementos del DOM no fueron encontrados.");
+        return;
     }
 
-    // Code to handle the user table
-    fetch('/admin/users')
-        .then(response => response.json())
-        .then(users => {
-            const userTable = document.getElementById('userTable');
-            if (userTable) {
-                userTable.innerHTML = '';
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.username}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.username}')">Delete</button>
-                            <button class="btn btn-warning btn-sm" onclick="blockUser('${user.username}')">Block</button>
-                        </td>
-                    `;
-                    userTable.appendChild(row);
-                });
+    // Asignar roles a los usuarios
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById('assignUsername')?.value.trim();
+        const role = document.getElementById('assignRole')?.value.trim();
+
+        if (!username || !role) {
+            alert("❌ Error: Debes completar los campos de usuario y rol.");
+            return;
+        }
+
+        $.ajax({
+            url: "/admin/assign-role",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ username: username, roleName: role }),
+            success: function (response) {
+                alert(response.message);
+                loadUsers();
+            },
+            error: function (error) {
+                console.error("❌ Error asignando rol:", error);
+                alert("Error assigning role");
             }
         });
+    });
+
+    // Función para cargar los usuarios en la tabla
+    function loadUsers(query = '') {
+        console.log(`🔍 Buscando usuarios con query: "${query}"`);
+
+        $.get("/admin/search-user?username=" + query, function (users) {
+            console.log("✅ Respuesta del servidor:", users);
+
+            if (!Array.isArray(users)) {
+                console.error("❌ Error: La API no devolvió un array válido de usuarios.");
+                return;
+            }
+
+            userTable.innerHTML = ''; // Limpiar la tabla
+
+            if (users.length === 0) {
+                console.warn("⚠️ No se encontraron usuarios.");
+                userTable.innerHTML = '<tr><td colspan="4">No users found</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                let roles = user.roles ? user.roles.map(role => role.name).join(", ") : "No roles";
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id || 'N/A'}</td>
+                    <td>${user.username || 'N/A'}</td>
+                    <td>${roles}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.username}')">Delete</button>
+                    </td>
+                `;
+                userTable.appendChild(row);
+            });
+        }).fail(function (error) {
+            console.error("❌ Error obteniendo usuarios:", error);
+            alert('Error fetching users');
+        });
+    }
+
+    // Cargar todos los usuarios al inicio
+    loadUsers();
+
+    // Filtrar usuarios en tiempo real
+    searchInput.addEventListener('input', function () {
+        loadUsers(this.value);
+    });
 });
 
-// Function to delete a user
+// Función para eliminar usuario
 function deleteUser(username) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        fetch(`/admin/delete-user?username=${username}`, {
-            method: 'DELETE'
-        }).then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to delete the user.');
-            });
+    if (!username) {
+        console.error("❌ Error: El nombre de usuario es inválido.");
+        return;
     }
-}
 
-// Function to block a user
-function blockUser(username) {
-    if (confirm('Are you sure you want to block this user?')) {
-        fetch(`/admin/block-user?username=${username}`, {
-            method: 'POST'
-        }).then(response => response.json())
+    if (confirm(`¿Estás seguro de que deseas eliminar a ${username}?`)) {
+        fetch("/admin/delete-user", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username: username })
+        })
+            .then(response => response.json())
             .then(data => {
                 alert(data.message);
-                location.reload();
+                loadUsers();
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to block the user.');
+                console.error('❌ Error eliminando usuario:', error);
+                alert('Error deleting user');
             });
     }
 }

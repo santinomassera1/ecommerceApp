@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -34,47 +33,6 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Transactional
-    public void saveProduct(Product product, MultipartFile[] imageFiles) throws IOException {
-        // Cargar categorías desde la base de datos para evitar problemas con entidades detached
-        Set<Category> managedCategories = new HashSet<>();
-        for (Category category : product.getCategories()) {
-            if (category.getId() != null) {
-                Category managedCategory = categoryRepository.findById(category.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid category ID: " + category.getId()));
-                managedCategories.add(managedCategory);
-            } else {
-                // Persistir nueva categoría
-                categoryRepository.save(category);
-                managedCategories.add(category);
-            }
-        }
-        product.setCategories(managedCategories);
-
-        // Guardar el producto primero en la base de datos
-        Product savedProduct = productRepository.save(product);
-
-        List<Image> images = new ArrayList<>();
-        for (MultipartFile imageFile : imageFiles) {
-            if (!imageFile.isEmpty()) {
-                // Guardar la imagen en la carpeta y generar la URL
-                Image image = saveImage(imageFile, savedProduct);
-                images.add(image);
-            }
-        }
-
-        // Asignar la primera imagen como la imagen principal del producto si hay imágenes
-        if (!images.isEmpty()) {
-            savedProduct.setImageUrl(images.get(0).getUrl());
-        }
-
-        // Guardar todas las imágenes asociadas al producto
-        savedProduct.setImages(images);
-
-        // Guardar nuevamente el producto con todas las imágenes
-        productRepository.save(savedProduct);
-    }
-
-    @Transactional
     public void saveProductWithoutImages(Product product) {
         // Cargar categorías desde la base de datos
         Set<Category> managedCategories = new HashSet<>();
@@ -90,6 +48,11 @@ public class ProductService {
             }
         }
         product.setCategories(managedCategories);
+        
+        // Asegurar que los nuevos productos estén disponibles por defecto
+        if (product.getId() == null) {
+            product.setAvailable(true);
+        }
 
         // Guardar el producto sin imágenes
         productRepository.save(product);
@@ -109,7 +72,7 @@ public class ProductService {
                 existingImages.add(image);  // Añadir la imagen a la lista existente
             }
         }
-
+        
         // No necesitas reasignar la colección de imágenes, ya que la has modificado directamente
         productRepository.save(product);  // Guardar el producto con las imágenes añadidas
     }
@@ -118,8 +81,17 @@ public class ProductService {
         // Definir el nombre único para la imagen
         String imageName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
 
+        // Usar la ruta absoluta al directorio static/images dentro del proyecto
+        String projectPath = System.getProperty("user.dir");
+        Path imagesDir = Paths.get(projectPath, "src", "main", "resources", "static", "images");
+        
+        // Crear el directorio de imágenes si no existe
+        if (!Files.exists(imagesDir)) {
+            Files.createDirectories(imagesDir);
+        }
+
         // Definir la ruta donde se guardará la imagen
-        Path imagePath = Paths.get("src/main/resources/static/images", imageName);
+        Path imagePath = imagesDir.resolve(imageName);
 
         // Copiar el archivo a la carpeta
         Files.copy(imageFile.getInputStream(), imagePath);
@@ -133,8 +105,13 @@ public class ProductService {
         return imageRepository.save(image);
     }
 
+    // Métodos actualizados para considerar solo productos disponibles
     public List<Product> getProductsByUser(User user) {
         return productRepository.findByUser(user);
+    }
+    
+    public List<Product> getAvailableProductsByUser(User user) {
+        return productRepository.findByUserAndAvailableTrue(user);
     }
 
     @Transactional
@@ -161,11 +138,39 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+    // Nuevo método para marcar producto como vendido
+    @Transactional
+    public void markProductAsSold(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            product.setAvailable(false);
+            productRepository.save(product);
+        } else {
+            throw new IllegalStateException("Product not found with id: " + productId);
+        }
+    }
+    
+    // Nuevo método para marcar múltiples productos como vendidos
+    @Transactional
+    public void markProductsAsSold(List<Long> productIds) {
+        for (Long productId : productIds) {
+            markProductAsSold(productId);
+        }
+    }
+
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
+    // Método actualizado para obtener solo productos disponibles
     public List<Product> getAllProducts() {
+        return productRepository.findByAvailableTrue();
+    }
+    
+    // Método para obtener todos los productos (incluidos los no disponibles) - para admin
+    public List<Product> getAllProductsIncludingUnavailable() {
         return productRepository.findAll();
     }
 }

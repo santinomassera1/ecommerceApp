@@ -1,6 +1,7 @@
 package com.example.vintagevogue.repository;
 
 import com.example.vintagevogue.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByVerificationToken(String token);
     void deleteByUsername(String username);
     List<User> findByRoles_NameAndUsernameContaining(String roleName, String username);
-    List<User> findByUsernameContainingIgnoreCase(String name);
+    List<User> findByUsernameContainingIgnoreCase(String username);
 }

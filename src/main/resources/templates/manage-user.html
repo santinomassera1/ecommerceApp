@@ -43,34 +43,40 @@
         <!-- Main Content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
             <h1>Manage Users</h1>
+
+            <!-- Search Bar -->
+            <input type="text" id="searchUser" class="form-control mb-3" placeholder="Search User by Username">
+
+            <!-- Users Table -->
             <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Username</th>
+                    <th>Role</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody id="userTable">
-                <!-- User rows will be populated by JavaScript -->
+                <!-- User rows will be populated dynamically with JavaScript -->
                 </tbody>
             </table>
 
             <h2>Assign Roles to Users</h2>
-            <form id="assignRoleForm" th:action="@{/admin/assign-role}" method="post">
+            <form id="assignRoleForm">
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" class="form-control" required>
+                    <label for="assignUsername">Username:</label>
+                    <input type="text" id="assignUsername" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="role">Role:</label>
-                    <select id="role" name="role" class="form-control">
+                    <label for="assignRole">Role:</label>
+                    <select id="assignRole" class="form-control">
                         <option value="ROLE_USER">User</option>
                         <option value="ROLE_ADMIN">Admin</option>
                         <option value="ROLE_SUPPORT">Support</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Assign Role</button>
+                <button type="submit" class="btn btn-primary mt-3">Assign Role</button>
             </form>
         </main>
     </div>
@@ -78,14 +84,87 @@
 
 <!-- Footer -->
 <footer>
-    <div class="footer-bottom">
+    <div class="footer-bottom text-center mt-4">
         <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
     </div>
 </footer>
 
+<!-- Scripts -->
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/js/admin.js}"></script>
-<script th:src="@{/js/search.js}"></script>
+
+<script>
+    $(document).ready(function () {
+        function loadUsers(query = "") {
+            $.get("/admin/search-user?username=" + query, function (data) {
+                let table = $("#userTable");
+                table.empty();
+                data.forEach(user => {
+                    let roles = user.roles ? user.roles.map(role => role.name).join(", ") : "No roles";
+                    table.append(`
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${roles}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" data-username="${user.username}" onclick="deleteUser(this)">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            }).fail(function (error) {
+                console.error("❌ Error obteniendo usuarios:", error);
+            });
+        }
+
+        loadUsers();
+
+        $("#searchUser").on("input", function () {
+            loadUsers($(this).val());
+        });
+
+        $("#assignRoleForm").on("submit", function (e) {
+            e.preventDefault();
+            let username = $("#assignUsername").val();
+            let role = $("#assignRole").val();
+
+            $.ajax({
+                url: "/admin/assign-role",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ username: username, roleName: role }),
+                success: function (response) {
+                    alert(response.message);
+                    loadUsers();
+                },
+                error: function (error) {
+                    console.error("❌ Error asignando rol:", error);
+                    alert("Error assigning role");
+                }
+            });
+        });
+
+        // Eliminar usuario
+        window.deleteUser = function (button) {
+            let username = $(button).attr("data-username");
+            if (confirm(`¿Estás seguro de que deseas eliminar a ${username}?`)) {
+                $.ajax({
+                    url: "/admin/delete-user",
+                    type: "DELETE",
+                    contentType: "application/json",
+                    data: JSON.stringify({ username: username }),
+                    success: function (response) {
+                        alert(response.message);
+                        loadUsers();
+                    },
+                    error: function (error) {
+                        console.error('❌ Error eliminando usuario:', error);
+                        alert('Error deleting user');
+                    }
+                });
+            }
+        };
+    });
+</script>
 </body>
 </html>

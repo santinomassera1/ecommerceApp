@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Gestión de Pedidos - Admin - Vintage Vogue</title>
+    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+    <style>
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .order-table {
+            font-size: 0.9rem;
+        }
+        .status-select {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/home}">
+                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
+                <span class="brand-name">Vintage Vogue - Admin</span>
+            </a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/orders/admin}"><i class="fas fa-box"></i> Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/products}"><i class="fas fa-tshirt"></i> Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/users}"><i class="fas fa-users"></i> Usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-box"></i> Gestión de Pedidos</h2>
+            <p class="text-muted">Administra y actualiza el estado de todos los pedidos</p>
+        </div>
+    </div>
+
+    <!-- Mensajes flash -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card stats-card text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.totalCount}">0</div>
+                    <small>Total Pedidos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.pendingCount}">0</div>
+                    <small>Pendientes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.shippedCount}">0</div>
+                    <small>Enviados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.deliveredCount}">0</div>
+                    <small>Entregados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.cancelledCount}">0</div>
+                    <small>Cancelados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <div class="stats-number" th:text="${stats.confirmedCount}">0</div>
+                    <small>Confirmados</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="btn-group" role="group">
+                <a th:href="@{/orders/admin}" 
+                   class="btn btn-outline-secondary"
+                   th:classappend="${selectedStatus == null ? 'active' : ''}">
+                    <i class="fas fa-list"></i> Todos
+                </a>
+                <a th:href="@{/orders/admin/filter(status=PENDING)}" 
+                   class="btn btn-outline-warning"
+                   th:classappend="${selectedStatus != null and selectedStatus.name() == 'PENDING' ? 'active' : ''}">
+                    <i class="fas fa-clock"></i> Pendientes
+                </a>
+                <a th:href="@{/orders/admin/filter(status=CONFIRMED)}" 
+                   class="btn btn-outline-primary"
+                   th:classappend="${selectedStatus != null and selectedStatus.name() == 'CONFIRMED' ? 'active' : ''}">
+                    <i class="fas fa-check"></i> Confirmados
+                </a>
+                <a th:href="@{/orders/admin/filter(status=SHIPPED)}" 
+                   class="btn btn-outline-info"
+                   th:classappend="${selectedStatus != null and selectedStatus.name() == 'SHIPPED' ? 'active' : ''}">
+                    <i class="fas fa-shipping-fast"></i> Enviados
+                </a>
+                <a th:href="@{/orders/admin/filter(status=DELIVERED)}" 
+                   class="btn btn-outline-success"
+                   th:classappend="${selectedStatus != null and selectedStatus.name() == 'DELIVERED' ? 'active' : ''}">
+                    <i class="fas fa-check-circle"></i> Entregados
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 text-right">
+            <button class="btn btn-outline-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla de pedidos -->
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${orders == null or orders.size() == 0}" class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-box-open fa-5x text-muted"></i>
+                </div>
+                <h4 class="text-muted">No hay pedidos</h4>
+                <p class="text-muted">No se encontraron pedidos con los filtros aplicados</p>
+            </div>
+
+            <div th:if="${orders != null and orders.size() > 0}">
+                <div class="table-responsive">
+                    <table class="table table-hover order-table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Tracking</th>
+                                <th><i class="fas fa-user"></i> Cliente</th>
+                                <th><i class="fas fa-calendar"></i> Fecha</th>
+                                <th><i class="fas fa-shopping-bag"></i> Productos</th>
+                                <th><i class="fas fa-dollar-sign"></i> Total</th>
+                                <th><i class="fas fa-info-circle"></i> Estado</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Dirección</th>
+                                <th><i class="fas fa-cogs"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td>
+                                    <strong th:text="${order.trackingNumber}"></strong>
+                                    <br>
+                                    <small class="text-muted">ID: <span th:text="${order.id}"></span></small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${order.user.username}"></strong>
+                                        <br>
+                                        <small class="text-muted" th:text="${order.user.email}"></small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></div>
+                                    <small class="text-muted" th:text="${#temporals.format(order.orderDate, 'HH:mm')}"></small>
+                                </td>
+                                <td>
+                                    <small>
+                                        <span th:text="${order.items.size()}"></span> producto(s)
+                                        <br>
+                                        <span th:each="item, itemStat : ${order.items}">
+                                            <span th:text="${item.product.name}"></span>
+                                            <span th:unless="${itemStat.last}">, </span>
+                                        </span>
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong class="text-success">$<span th:text="${order.totalAmount}"></span></strong>
+                                </td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${order.status.name() == 'DELIVERED' ? 'badge-success' : 
+                                                          order.status.name() == 'CANCELLED' ? 'badge-danger' : 
+                                                          order.status.name() == 'SHIPPED' ? 'badge-info' : 
+                                                          order.status.name() == 'IN_TRANSIT' ? 'badge-info' :
+                                                          order.status.name() == 'OUT_FOR_DELIVERY' ? 'badge-info' :
+                                                          order.status.name() == 'CONFIRMED' ? 'badge-primary' :
+                                                          'badge-warning'}"
+                                          th:text="${order.statusDescription}">
+                                    </span>
+                                    <br>
+                                    <small th:if="${order.shippedDate != null}" class="text-muted">
+                                        Enviado: <span th:text="${#temporals.format(order.shippedDate, 'dd/MM')}"></span>
+                                    </small>
+                                    <small th:if="${order.deliveredDate != null}" class="text-muted">
+                                        Entregado: <span th:text="${#temporals.format(order.deliveredDate, 'dd/MM')}"></span>
+                                    </small>
+                                </td>
+                                <td>
+                                    <small th:text="${order.shippingAddress ?: 'No especificada'}"></small>
+                                </td>
+                                <td>
+                                    <form th:action="@{/orders/admin/update-status}" method="post" class="d-inline">
+                                        <input type="hidden" name="orderId" th:value="${order.id}">
+                                        <div class="input-group input-group-sm">
+                                            <select name="status" class="custom-select status-select">
+                                                <option th:each="status : ${statuses}" 
+                                                        th:value="${status}" 
+                                                        th:text="${status.displayName}"
+                                                        th:selected="${status == order.status}">
+                                                </option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <textarea name="notes" class="form-control form-control-sm mt-1" 
+                                                  placeholder="Notas opcionales" rows="1"
+                                                  th:text="${order.notes}"></textarea>
+                                    </form>
+                                    <div class="mt-2">
+                                        <a th:href="@{'/orders/track/' + ${order.trackingNumber}}" 
+                                           class="btn btn-sm btn-outline-info" target="_blank">
+                                            <i class="fas fa-external-link-alt"></i> Ver
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-5">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h4>Panel de Administración</h4>
+            <p>Gestión completa de pedidos y entregas de Vintage Vogue.</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Vintage Vogue - Panel de Administración.</p>
+    </div>
+</footer>
+
+<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+    // Auto-submit form on status change
+    $(document).ready(function() {
+        $('.status-select').change(function() {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+</body>
+</html> 

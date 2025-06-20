@@ -1,7 +1,9 @@
 package com.example.vintagevogue.controller;
 
 import com.example.vintagevogue.model.User;
+import com.example.vintagevogue.model.Product;
 import com.example.vintagevogue.service.UserService;
+import com.example.vintagevogue.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,9 @@ public class UserProfileController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ProductService productService;
 
     @GetMapping
     public String getProfile(Model model, Authentication authentication) {
@@ -28,26 +33,37 @@ public class UserProfileController {
             return "error";
         }
 
-        // Asegúrate de que los productos se carguen con sus imágenes
+        // Obtener solo productos disponibles del usuario
+        List<Product> products = productService.getAvailableProductsByUser(user);
+        
         model.addAttribute("user", user);
-        model.addAttribute("products", user.getProducts()); // Añade los productos asociados
+        model.addAttribute("products", products);
         model.addAttribute("isOwnProfile", true);
         return "user-profile";
     }
 
     @GetMapping("/{userId}")
     public String viewUserProfile(@PathVariable Long userId, Model model) {
-        User user = userService.findById(userId).orElse(null);
-    
-        if (user == null) {
-            model.addAttribute("errorMessage", "User not found");
+        try {
+            User user = userService.findById(userId).orElse(null);
+        
+            if (user == null) {
+                model.addAttribute("errorMessage", "User not found");
+                return "error";
+            }
+        
+            // Obtener solo productos disponibles del usuario
+            List<Product> products = productService.getAvailableProductsByUser(user);
+            
+            model.addAttribute("user", user);
+            model.addAttribute("products", products);
+            model.addAttribute("isOwnProfile", false);
+            return "user-profile";
+            
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error accessing user profile: " + e.getMessage());
             return "error";
         }
-    
-        model.addAttribute("user", user);
-        model.addAttribute("products", user.getProducts()); // Añade los productos asociados
-        model.addAttribute("isOwnProfile", false);
-        return "user-profile";
     }
 
     @PostMapping("/update")

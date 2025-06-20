@@ -11,6 +11,7 @@
     <link th:href="@{/css/profile.css}" rel="stylesheet">
     <link th:href="@{/css/home.css}" rel="stylesheet">
 </head>
+<body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container d-flex justify-content-between align-items-center">
@@ -35,6 +36,12 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/orders/track}"><i class="fas fa-shipping-fast"></i> Seguimiento</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/orders/my-orders}"><i class="fas fa-box"></i> Mis Pedidos</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-bell"></i>
@@ -54,7 +61,6 @@
         </div>
     </nav>
 </header>
-<body>
 
 <div class="container profile-container mt-5">
     <div class="row">
@@ -86,10 +92,10 @@
             <div id="mainContent">
                 <h2 th:if="${isOwnProfile}">Your Products</h2>
                 <h2 th:if="${!isOwnProfile}">Products by <span th:text="${user.username}"></span></h2>
-                <div th:if="${user.products.size() == 0}">
+                <div th:if="${products.size() == 0}">
                     <p>No products published yet.</p>
                 </div>
-                <div th:each="product : ${user.products}">
+                <div th:each="product : ${products}">
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${product.name}">Product Name</h5>
@@ -139,7 +145,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="product : ${user.products}">
+                    <tr th:each="product : ${products}">
                         <!-- Mostrar la primera imagen del producto -->
                         <td th:if="${product.images.size() > 0}">
                             <img th:src="@{${product.images[0].url}}" alt="Product Image" style="width: 100px; height: 100px; object-fit: cover;">
@@ -152,7 +158,7 @@
                             <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Delete</a>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(user.products)}">
+                    <tr th:if="${#lists.isEmpty(products)}">
                         <td colspan="5">No products found</td> <!-- Cambiado de 4 a 5 columnas -->
                     </tr>
                     </tbody>
