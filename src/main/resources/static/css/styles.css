@@ -1,0 +1,119 @@
+/* Estilos para anuncios y GIFs */
+.carousel-item {
+    height: 300px;
+    overflow: hidden;
+    background-color: transparent;
+    border-radius: 8px;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-item img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    transition: transform 0.8s ease;
+}
+
+.gif-preview {
+    transition: transform 0.3s ease;
+    animation: pulse 2s infinite alternate;
+}
+
+.gif-preview:hover {
+    transform: scale(1.02);
+    animation-play-state: paused;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.1);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+    }
+}
+
+/* Mejora el aspecto del carrusel */
+#adCarousel {
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Configuración para autoplay del carrusel sin controles */
+.carousel {
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Efecto de transición suave entre slides */
+.carousel-inner {
+    position: relative;
+}
+
+.carousel-item.active {
+    opacity: 1;
+}
+
+.carousel-item:not(.active) {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Añadir un borde sutil al carrusel */
+#adCarousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para los iconos de la barra de navegación */
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: scale(1.1);
+    color: #ffffff !important;
+}
+
+.navbar-nav .nav-link i {
+    font-size: 1.3rem;
+}
+
+/* Tooltip personalizado para los iconos */
+.navbar-nav .nav-link[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+} 

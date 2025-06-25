@@ -1,158 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <title>Seguimiento: <span th:text="${trackingNumber}"></span> - Vintage Vogue</title>
-    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
-    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/css/home.css}" rel="stylesheet">
-    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
-    <style>
-        .timeline {
-            position: relative;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .timeline::after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            background-color: #007bff;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            margin-left: -2px;
-        }
-
-        .timeline-item {
-            padding: 10px 40px;
-            position: relative;
-            background-color: inherit;
-            width: 50%;
-        }
-
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            right: -10px;
-            background-color: white;
-            border: 4px solid #007bff;
-            top: 15px;
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .timeline-item.active::after {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .timeline-item.completed::after {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .timeline-item.current::after {
-            background-color: #007bff;
-            border-color: #007bff;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
-            }
-        }
-
-        .left {
-            left: 0;
-        }
-
-        .right {
-            left: 50%;
-        }
-
-        .right::after {
-            left: -10px;
-        }
-
-        .timeline-content {
-            padding: 20px 30px;
-            background-color: white;
-            position: relative;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .order-summary {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media screen and (max-width: 600px) {
-            .timeline::after {
-                left: 31px;
-            }
-            
-            .timeline-item {
-                width: 100%;
-                padding-left: 70px;
-                padding-right: 25px;
-            }
-            
-            .timeline-item::after { 
-                left: 21px;
-            }
-            
-            .right {
-                left: 0%;
-            }
-        }
-    </style>
+<head th:replace="fragments/header :: header('Seguimiento de Pedido')">
 </head>
 <body>
 
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
-                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
-                <span class="brand-name">Vintage Vogue</span>
-            </a>
-            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
-                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
-                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
-            </form>
-            <ul class="navbar-nav d-flex align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/orders/my-orders}"><i class="fas fa-box"></i> Mis Pedidos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/logout}">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
+<header th:replace="fragments/navbar :: navbar"></header>
 
 <div class="container mt-4">
     <!-- Resumen del pedido -->
@@ -248,7 +100,9 @@
                      th:classappend="${order.status.ordinal() > 2 ? 'completed' : (order.status.ordinal() >= 1 and order.status.ordinal() <= 2 ? 'current' : '')}">
                     <div class="timeline-content">
                         <h6><i class="fas fa-box-open"></i> Preparando Envío</h6>
-                        <p class="text-muted mb-1" th:text="${order.status.ordinal() == 1 ? 'Próximo paso - Preparando tu pedido para el envío' : 'Estamos empacando tu pedido con cuidado'}"></p>
+                        <p class="text-muted mb-1">Estamos preparando tu pedido para enviarlo</p>
+                        <small th:if="${order.status.ordinal() >= 2}" 
+                               th:text="${#temporals.format(order.orderDate.plusHours(1), 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
 
@@ -257,87 +111,178 @@
                      th:classappend="${order.status.ordinal() > 3 ? 'completed' : (order.status.ordinal() == 3 ? 'current' : '')}">
                     <div class="timeline-content">
                         <h6><i class="fas fa-shipping-fast"></i> Enviado</h6>
-                        <p class="text-muted mb-1">Tu pedido está en camino</p>
-                        <small th:if="${order.shippedDate != null}" 
-                               th:text="${#temporals.format(order.shippedDate, 'dd/MM/yyyy HH:mm')}"></small>
+                        <p class="text-muted mb-1">Tu pedido ha sido enviado y está en camino</p>
+                        <small th:if="${order.status.ordinal() >= 3}" 
+                               th:text="${#temporals.format(order.orderDate.plusHours(4), 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
 
-                <!-- En tránsito -->
+                <!-- En Tránsito -->
                 <div class="timeline-item left"
                      th:classappend="${order.status.ordinal() > 4 ? 'completed' : (order.status.ordinal() == 4 ? 'current' : '')}">
                     <div class="timeline-content">
                         <h6><i class="fas fa-truck"></i> En Tránsito</h6>
-                        <p class="text-muted mb-1">Tu pedido está siendo transportado</p>
+                        <p class="text-muted mb-1">Tu pedido está en camino a su destino</p>
+                        <small th:if="${order.status.ordinal() >= 4}" 
+                               th:text="${#temporals.format(order.orderDate.plusHours(6), 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
 
-                <!-- Fuera para entrega -->
+                <!-- Saliendo para Entrega -->
                 <div class="timeline-item right"
                      th:classappend="${order.status.ordinal() > 5 ? 'completed' : (order.status.ordinal() == 5 ? 'current' : '')}">
                     <div class="timeline-content">
-                        <h6><i class="fas fa-map-marker-alt"></i> En Reparto</h6>
-                        <p class="text-muted mb-1">Tu pedido está en tu zona para ser entregado</p>
+                        <h6><i class="fas fa-truck-loading"></i> Saliendo para Entrega</h6>
+                        <p class="text-muted mb-1">Tu pedido está en el vehículo de reparto para entrega final</p>
+                        <small th:if="${order.status.ordinal() >= 5}" 
+                               th:text="${#temporals.format(order.orderDate.plusHours(24), 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
 
                 <!-- Entregado -->
                 <div class="timeline-item left"
-                     th:classappend="${order.status.ordinal() > 6 ? 'completed' : (order.status.ordinal() == 6 ? 'current' : '')}">
+                     th:classappend="${order.status.ordinal() == 6 ? 'completed current' : ''}">
                     <div class="timeline-content">
-                        <h6><i class="fas fa-check-circle text-success"></i> Entregado</h6>
-                        <p class="text-muted mb-1">¡Tu pedido ha sido entregado exitosamente!</p>
-                        <small th:if="${order.deliveredDate != null}" 
-                               th:text="${#temporals.format(order.deliveredDate, 'dd/MM/yyyy HH:mm')}"></small>
+                        <h6><i class="fas fa-check-circle"></i> Entregado</h6>
+                        <p class="text-muted mb-1">Tu pedido ha sido entregado exitosamente</p>
+                        <small th:if="${order.status.ordinal() >= 6}" 
+                               th:text="${#temporals.format(order.orderDate.plusHours(28), 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
             </div>
-
-            <!-- Notas adicionales -->
-            <div th:if="${order.notes != null and !order.notes.trim().isEmpty()}" class="mt-4">
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-sticky-note"></i> Notas:</h6>
-                    <p th:text="${order.notes}" class="mb-0"></p>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Botones de acción -->
-    <div class="text-center mt-4 mb-5">
-        <a th:href="@{/orders/track}" class="btn btn-outline-primary">
-            <i class="fas fa-search"></i> Buscar Otro Pedido
-        </a>
-        <a th:href="@{/orders/my-orders}" class="btn btn-outline-secondary">
-            <i class="fas fa-list"></i> Ver Todos Mis Pedidos
-        </a>
-        <a th:href="@{/home}" class="btn btn-primary">
-            <i class="fas fa-home"></i> Volver al Inicio
-        </a>
+    <!-- Enlaces útiles -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a th:href="@{/orders/my-orders}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Volver a Mis Pedidos
+            </a>
+            <a th:href="@{/home}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Continuar Comprando
+            </a>
+        </div>
     </div>
 </div>
 
-<footer>
-    <div class="footer-container">
-        <div class="footer-section">
-            <h4>Sobre Nosotros</h4>
-            <p>Vintage Vogue es una tienda de moda especializada en ropa y accesorios vintage.</p>
-        </div>
-        <div class="footer-section">
-            <h4>Contacto</h4>
-            <ul>
-                <li>Teléfono: +54 11 3022-0920</li>
-                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
-    </div>
-</footer>
+<footer th:replace="fragments/footer :: footer"></footer>
 
-<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/js/search.js}"></script>
+<!-- Scripts -->
+<div th:replace="fragments/footer :: scripts"></div>
+
+<style>
+    .timeline {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .timeline::after {
+        content: '';
+        position: absolute;
+        width: 4px;
+        background-color: #007bff;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        margin-left: -2px;
+    }
+
+    .timeline-item {
+        padding: 10px 40px;
+        position: relative;
+        background-color: inherit;
+        width: 50%;
+    }
+
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        right: -10px;
+        background-color: white;
+        border: 4px solid #007bff;
+        top: 15px;
+        border-radius: 50%;
+        z-index: 1;
+    }
+
+    .timeline-item.active::after {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .timeline-item.completed::after {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .timeline-item.current::after {
+        background-color: #007bff;
+        border-color: #007bff;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        }
+    }
+
+    .left {
+        left: 0;
+    }
+
+    .right {
+        left: 50%;
+    }
+
+    .right::after {
+        left: -10px;
+    }
+
+    .timeline-content {
+        padding: 20px 30px;
+        background-color: white;
+        position: relative;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    @media screen and (max-width: 600px) {
+        .timeline::after {
+            left: 31px;
+        }
+        
+        .timeline-item {
+            width: 100%;
+            padding-left: 70px;
+            padding-right: 25px;
+        }
+        
+        .timeline-item::after { 
+            left: 21px;
+        }
+        
+        .right {
+            left: 0%;
+        }
+    }
+</style>
 </body>
 </html> 

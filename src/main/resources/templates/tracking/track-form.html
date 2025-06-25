@@ -1,48 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <title>Seguimiento de Pedido - Vintage Vogue</title>
-    <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
-    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/css/home.css}" rel="stylesheet">
-    <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+<head th:replace="fragments/header :: header('Seguimiento de Pedido')">
 </head>
 <body>
 
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
-                <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
-                <span class="brand-name">Vintage Vogue</span>
-            </a>
-            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
-                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
-                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
-            </form>
-            <ul class="navbar-nav d-flex align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/products/new}">Sell</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}"><i class="fas fa-shopping-cart"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/profile}"><i class="fas fa-user"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/messages}"><i class="fas fa-envelope"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/orders/my-orders}"><i class="fas fa-box"></i> Mis Pedidos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/logout}">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
+<header th:replace="fragments/navbar :: navbar"></header>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -110,36 +72,9 @@
     </div>
 </div>
 
-<footer class="mt-5">
-    <div class="footer-container">
-        <div class="footer-section">
-            <h4>Sobre Nosotros</h4>
-            <p>Vintage Vogue es una tienda de moda especializada en ropa y accesorios vintage.</p>
-        </div>
-        <div class="footer-section">
-            <h4>Enlaces Útiles</h4>
-            <ul>
-                <li><a href="/about">Sobre Nosotros</a></li>
-                <li><a href="/contact">Contacto</a></li>
-                <li><a href="/privacy">Política de Privacidad</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h4>Contacto</h4>
-            <ul>
-                <li>Teléfono: +54 11 3022-0920</li>
-                <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
-                <li>Dirección: Pilar A1627, Buenos Aires, Argentina</li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
-    </div>
-</footer>
+<footer th:replace="fragments/footer :: footer"></footer>
 
-<script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/js/search.js}"></script>
+<!-- Scripts -->
+<div th:replace="fragments/footer :: scripts"></div>
 </body>
 </html> 
