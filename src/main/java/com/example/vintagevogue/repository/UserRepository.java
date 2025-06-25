@@ -1,7 +1,6 @@
 package com.example.vintagevogue.repository;
 
 import com.example.vintagevogue.model.User;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

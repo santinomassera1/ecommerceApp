@@ -1,8 +1,7 @@
 package com.example.vintagevogue.service;
 
 import com.example.vintagevogue.model.*;
-import com.example.vintagevogue.repository.OrderRepository;
-import com.example.vintagevogue.repository.OrderItemRepository;
+import com.example.vintagevogue.repository.OrderRepository; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +15,6 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
 
     @Autowired
     private EmailService emailService;

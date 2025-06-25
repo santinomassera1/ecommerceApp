@@ -7,6 +7,32 @@
     <link th:href="@{/css/home.css}" rel="stylesheet">
     <link th:href="@{/css/cart.css}" rel="stylesheet">
     <link th:href="@{/images/favicon.ico}" rel="icon" type="image/png">
+    <style>
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            margin-top: .25rem;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        .payment-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -55,41 +81,82 @@
 
 
 <div class="container mt-5">
-    <h1>Bank Transfer</h1>
-    <p>Please make the transfer to the following bank details</p>
+    <h1>Información de Pago</h1>
 
-    <!-- Datos de la cuenta -->
-    <pre th:text="${accountDetails}"></pre>
-
-    <hr>
-
-    <!-- Formulario para datos de transferencia del usuario -->
-    <form th:action="@{/purchase/process-bank-transfer}" method="post">
-        <div class="form-group">
-            <label for="shippingAddress"><i class="fas fa-map-marker-alt"></i> Dirección de Envío</label>
-            <textarea id="shippingAddress" name="shippingAddress" class="form-control" rows="3" 
-                      placeholder="Ingresa tu dirección completa para el envío" required></textarea>
+    <!-- Formulario para datos de pago y envío -->
+    <form id="paymentForm" th:action="@{/purchase/process-bank-transfer}" method="post" novalidate>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="payment-card">
+                    <div class="card-header">
+                        <i class="fas fa-map-marker-alt"></i> Dirección de Envío
+                    </div>
+                    <div class="form-group">
+                        <label for="shippingAddress">Dirección Completa</label>
+                        <textarea id="shippingAddress" name="shippingAddress" class="form-control" rows="3" 
+                                placeholder="Ingresa tu dirección completa para el envío" required></textarea>
+                        <div class="invalid-feedback">
+                            Por favor ingresa una dirección de envío.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="payment-card">
+                    <div class="card-header">
+                        <i class="fas fa-credit-card"></i> Datos de Pago
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber">Número de Tarjeta</label>
+                        <input type="text" id="accountNumber" name="accountNumber" class="form-control" 
+                               placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+                        <div class="invalid-feedback">
+                            Por favor ingresa un número de tarjeta válido (16 dígitos).
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="expirationDate">Fecha de Expiración</label>
+                                <input type="text" id="expirationDate" name="expirationDate" class="form-control" 
+                                       placeholder="MM/YY" maxlength="5" required>
+                                <div class="invalid-feedback">
+                                    Ingresa una fecha válida (MM/YY).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="securityCode">Código de Seguridad</label>
+                                <input type="password" id="securityCode" name="securityCode" class="form-control" 
+                                       placeholder="CVC" maxlength="3" required>
+                                <div class="invalid-feedback">
+                                    Ingresa un código de 3 dígitos.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardholderName">Nombre del Titular</label>
+                        <input type="text" id="cardholderName" name="cardholderName" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor ingresa el nombre del titular de la tarjeta.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <hr>
-        <h5>Datos de Transferencia</h5>
-        
-        <div class="form-group">
-            <label for="accountNumber">Account Number</label>
-            <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Confirmar Compra</button>
         </div>
-        <div class="form-group">
-            <label for="expirationDate">Expiration Date</label>
-            <input type="text" id="expirationDate" name="expirationDate" class="form-control" placeholder="MM/YY" required>
-        </div>
-        <div class="form-group">
-            <label for="securityCode">Security Code</label>
-            <input type="password" id="securityCode" name="securityCode" class="form-control" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Confirmar Compra y Crear Pedido</button>
     </form>
 </div>
+
 <footer>
     <div class="footer-container">
         <div class="footer-section">
@@ -127,6 +194,7 @@
         <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
     </div>
 </footer>
+
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/home.js}"></script>
@@ -134,5 +202,113 @@
 <script th:src="@{/js/notification.js}"></script>
 <script th:src="@{/js/categories.js}"></script>
 <script th:src="@{/js/search.js}"></script>
+
+<script>
+    // Validación del formulario
+    document.getElementById('paymentForm').addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Validar dirección de envío
+        const shippingAddress = document.getElementById('shippingAddress');
+        if (!shippingAddress.value.trim()) {
+            shippingAddress.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            shippingAddress.classList.remove('is-invalid');
+        }
+        
+        // Validar número de tarjeta (solo números, 16 dígitos)
+        const accountNumber = document.getElementById('accountNumber');
+        const cardNumber = accountNumber.value.replace(/\s/g, '');
+        if (!/^\d{16}$/.test(cardNumber)) {
+            accountNumber.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            accountNumber.classList.remove('is-invalid');
+        }
+        
+        // Validar fecha de expiración (formato MM/YY)
+        const expirationDate = document.getElementById('expirationDate');
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expirationDate.value)) {
+            expirationDate.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            // Verificar que la fecha no esté expirada
+            const [month, year] = expirationDate.value.split('/');
+            const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1, 1);
+            const today = new Date();
+            
+            if (expiryDate < today) {
+                expirationDate.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                expirationDate.classList.remove('is-invalid');
+            }
+        }
+        
+        // Validar código de seguridad (3 dígitos)
+        const securityCode = document.getElementById('securityCode');
+        if (!/^\d{3}$/.test(securityCode.value)) {
+            securityCode.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            securityCode.classList.remove('is-invalid');
+        }
+        
+        // Validar nombre del titular
+        const cardholderName = document.getElementById('cardholderName');
+        if (!cardholderName.value.trim()) {
+            cardholderName.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            cardholderName.classList.remove('is-invalid');
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+    
+    // Formatear número de tarjeta automáticamente
+    document.getElementById('accountNumber').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 16) {
+            value = value.slice(0, 16);
+        }
+        
+        // Añadir espacios cada 4 dígitos
+        let formattedValue = '';
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += ' ';
+            }
+            formattedValue += value[i];
+        }
+        
+        e.target.value = formattedValue;
+    });
+    
+    // Formatear fecha de expiración automáticamente
+    document.getElementById('expirationDate').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 0) {
+            // Limitar el mes a valores entre 01 y 12
+            let month = parseInt(value.substring(0, 2));
+            if (value.length === 1 && month > 1) {
+                value = '0' + value;
+            } else if (month > 12) {
+                value = '12' + value.substring(2);
+            }
+            
+            // Añadir la barra después del mes
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+        }
+        
+        e.target.value = value;
+    });
+</script>
 </body>
 </html>

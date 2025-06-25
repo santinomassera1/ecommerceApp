@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <title>Forgot Password</title>
+    <title>Recuperar Contraseña</title>
     <style>
         .button-1, .button-2, .login-button, .signup-button {
             cursor: pointer;
@@ -18,19 +18,19 @@
 <div class="container">
     <div class="box-1">
         <div class="content-holder">
-            <h2>Forgot Your Password?</h2>
-            <button class="button-1" onclick="window.location.href='/auth/register'">Sign up</button>
+            <h2>¿Olvidaste tu Contraseña?</h2>
+            <button class="button-1" onclick="window.location.href='/auth/register'">Registrarse</button>
         </div>
     </div>
     <div class="box-2">
         <div class="form-container">
-            <h1>Forgot Password</h1>
+            <h1>Recuperar Contraseña</h1>
             <form id="forgotPasswordForm" action="/auth/forgot-password" method="post">
                 <label>
-                    <input type="email" placeholder="Enter your email" class="input-field" name="email" required>
+                    <input type="email" placeholder="Ingresa tu correo electrónico" class="input-field" name="email" required>
                 </label>
                 <br><br>
-                <button class="login-button" type="submit">Send Reset Link</button>
+                <button class="login-button" type="submit">Enviar Enlace de Recuperación</button>
             </form>
         </div>
     </div>

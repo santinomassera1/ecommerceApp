@@ -33,7 +33,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
                 Swal.fire('Error', result.message, 'error');
             }
         } else if (response.status === 409) {
-
             Swal.fire('Error', result.message, 'error');
         } else {
             Swal.fire('Error', 'An unexpected error occurred. Please try again later.', 'error');
@@ -41,8 +40,12 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     } catch (error) {
         Swal.fire('Error', 'An unexpected error occurred. Please try again later.', 'error');
     }
+});
 
-    document.getElementById("resetPasswordForm").addEventListener("submit", async function (event) {
+// Mover el event listener del resetPasswordForm fuera del listener del registerForm
+const resetPasswordForm = document.getElementById("resetPasswordForm");
+if (resetPasswordForm) {
+    resetPasswordForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
         const formData = new FormData(this);
@@ -64,4 +67,4 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             Swal.fire("Error", result.message, "error");
         }
     });
-});
+}

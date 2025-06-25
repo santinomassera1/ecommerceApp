@@ -7,12 +7,12 @@ function toggleForms() {
     if (loginForm.style.display === 'none') {
         loginForm.style.display = 'block';
         registerForm.style.display = 'none';
-        button1.textContent = 'Sign up';
-        button2.textContent = 'Login';
+        button1.textContent = 'Registrarse';
+        button2.textContent = 'Iniciar Sesión';
     } else {
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
-        button1.textContent = 'Login';
-        button2.textContent = 'Sign up';
+        button1.textContent = 'Iniciar Sesión';
+        button2.textContent = 'Registrarse';
     }
 }

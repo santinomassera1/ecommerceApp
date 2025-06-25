@@ -1,67 +1,124 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Form - Vintage Vogue</title>
+    <title>Formulario de Categoría - Vintage Vogue</title>
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .content-wrapper {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px 15px;
+            height: auto;
+        }
+        .btn {
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 <header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Admin Panel</h1>
-    <a href="/auth/logout" class="btn btn-outline-light">Logout</a>
+    <h1>Panel de Administración</h1>
+    <a href="/logout" class="btn btn-outline-light">Cerrar Sesión</a>
 </header>
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/admin/manage-user}">
-                    <i class="fas fa-users"></i> Manage Users
+                    <i class="fas fa-users"></i> Gestionar Usuarios
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-ad}">
-                    <i class="fas fa-bullhorn"></i> Manage Announcements
+                <a class="nav-link" th:href="@{/admin/ad}">
+                    <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-categories}">
-                    <i class="fas fa-layer-group"></i> Manage Categories
+                <a class="nav-link active" th:href="@{/admin/manage-categories}">
+                    <i class="fas fa-layer-group"></i> Gestionar Categorías
                 </a>
             </li>
         </ul>
     </div>
 </nav>
-<main class="container mt-5" style="margin-top: 80px;">
-    <h1 th:text="${category.id != null} ? 'Edit Category' : 'Add New Category'">Category Form</h1>
 
-    <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
-        <div class="form-group">
-            <label for="name">Category Name:</label>
-            <input type="text" id="name" name="name" th:field="*{name}" class="form-control" placeholder="Enter category name" required>
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4" th:text="${category.id != null} ? 'Editar Categoría' : 'Añadir Nueva Categoría'">Formulario de Categoría</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
+                            <input type="hidden" th:field="*{id}" />
+                            <div class="form-group">
+                                <label for="name" class="font-weight-bold">Nombre de Categoría:</label>
+                                <input type="text" id="name" name="name" th:field="*{name}" class="form-control" 
+                                       placeholder="Ingrese nombre de categoría" required>
+                            </div>
+
+                            <div class="d-flex">
+                                <button type="submit" class="btn btn-primary mr-2">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <a th:href="@{/admin/manage-categories}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver a Categorías
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save"></i> Save
-        </button>
-        <a th:href="@{/admin/manage-categories}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Categories
-        </a>
-    </form>
-</main>
+    </div>
+</div>
 
 <footer>
     <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
     </div>
 </footer>
 
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/admin.js}"></script>
-<script th:src="@{/js/search.js}"></script>
 </body>
 </html>

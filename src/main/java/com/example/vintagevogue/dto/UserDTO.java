@@ -13,6 +13,7 @@ public class UserDTO {
     private String city;
     private String country;
     private List<String> roles; // Incluimos los roles del usuario
+    private String roleName; // Campo para asignar un rol específico
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -48,4 +49,7 @@ public class UserDTO {
 
     public List<String> getRoles() { return roles; }
     public void setRoles(List<String> roles) { this.roles = roles; }
+    
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
 }

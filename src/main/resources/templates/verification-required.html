@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/sweetalert2.min.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <title>Verificación Requerida</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .verification-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .verification-icon {
+            font-size: 60px;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="verification-box">
+        <div class="verification-icon">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <h1>Verificación de Email Requerida</h1>
+        <p>Para acceder a esta sección, necesitas verificar tu dirección de correo electrónico.</p>
+        <p>Por favor, revisa tu bandeja de entrada y haz clic en el enlace de verificación que te hemos enviado.</p>
+        <p>Si no has recibido el email, puedes solicitar uno nuevo haciendo clic en el botón de abajo.</p>
+        
+        <form id="resendVerificationForm" action="/auth/resend-verification" method="post">
+            <button type="submit" class="btn-primary">Reenviar Email de Verificación</button>
+        </form>
+        
+        <p style="margin-top: 20px;">
+            <a href="/auth/login">Volver a la página de inicio de sesión</a>
+        </p>
+    </div>
+</div>
+
+<script src="/js/sweetalert2.min.js"></script>
+<script>
+    document.getElementById('resendVerificationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch('/auth/resend-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                Swal.fire('Éxito', 'Se ha enviado un nuevo email de verificación. Por favor revisa tu bandeja de entrada.', 'success');
+            } else {
+                Swal.fire('Error', result.message || 'No se pudo enviar el email de verificación.', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'Ha ocurrido un error al procesar tu solicitud.', 'error');
+        }
+    });
+</script>
+</body>
+</html> 

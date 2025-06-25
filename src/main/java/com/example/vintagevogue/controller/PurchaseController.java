@@ -5,8 +5,8 @@ import com.example.vintagevogue.model.CartItem;
 import com.example.vintagevogue.model.Order;
 import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.service.CartService;
-import com.example.vintagevogue.service.EmailService;
 import com.example.vintagevogue.service.OrderService;
+import com.example.vintagevogue.service.ProductService;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -29,11 +31,10 @@ public class PurchaseController {
     private UserService userService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private OrderService orderService;
-
+    
+    @Autowired
+    private ProductService productService;
 
     // Mostrar la página de compra
     @GetMapping
@@ -93,21 +94,37 @@ public class PurchaseController {
     public String processBankTransfer(@RequestParam("accountNumber") String accountNumber,
                                       @RequestParam("expirationDate") String expirationDate,
                                       @RequestParam("securityCode") String securityCode,
+                                      @RequestParam("cardholderName") String cardholderName,
                                       @RequestParam(value = "shippingAddress", required = false) String shippingAddress,
                                       Authentication authentication, Model model) {
         String username = authentication.getName();
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
-        // Agregar los detalles de la compra al modelo ANTES de procesar la compra
-        Cart cart = cartService.getCartByUser(user);
-        List<CartItem> cartItems = cartService.getCartItemsByUser(user);
-        BigDecimal total = cartService.calculateCartTotal(cart);
+        // Validar datos de la tarjeta
+        if (!validateCardDetails(accountNumber, expirationDate, securityCode, cardholderName)) {
+            model.addAttribute("error", "Los datos de la tarjeta son inválidos. Por favor, verifica la información.");
+            model.addAttribute("accountDetails", getBankAccountDetails());
+            return "bank-transfer"; // Volver al formulario con mensaje de error
+        }
 
-        // CREAR LA ORDEN DE ENTREGA
+        // Validar dirección de envío
         if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
             shippingAddress = "Dirección no especificada";
         }
+
+        // Agregar los detalles de la compra al modelo ANTES de procesar la compra
+        Cart cart = cartService.getCartByUser(user);
+        List<CartItem> cartItems = cartService.getCartItemsByUser(user);
+        
+        // Verificar que el carrito no esté vacío
+        if (cartItems.isEmpty()) {
+            return "redirect:/home?error=El+carrito+está+vacío";
+        }
+        
+        BigDecimal total = cartService.calculateCartTotal(cart);
+
+        // CREAR LA ORDEN DE ENTREGA
         Order order = orderService.createOrderFromCart(user, cartItems, shippingAddress);
 
         // PROCESAR LA COMPRA (esto marca productos como vendidos y limpia el carrito)
@@ -120,6 +137,48 @@ public class PurchaseController {
 
         // Redirigir a la vista de confirmación final
         return "order-confirmation";
+    }
+    
+    /**
+     * Valida los datos de la tarjeta de crédito
+     */
+    private boolean validateCardDetails(String accountNumber, String expirationDate, String securityCode, String cardholderName) {
+        // Validar número de tarjeta (16 dígitos)
+        String cardNumber = accountNumber.replaceAll("\\s", "");
+        if (!cardNumber.matches("\\d{16}")) {
+            return false;
+        }
+        
+        // Validar fecha de expiración (formato MM/YY)
+        if (!expirationDate.matches("^(0[1-9]|1[0-2])/\\d{2}$")) {
+            return false;
+        }
+        
+        // Verificar que la fecha no esté expirada
+        try {
+            String[] parts = expirationDate.split("/");
+            int month = Integer.parseInt(parts[0]);
+            int year = Integer.parseInt(parts[1]) + 2000; // Convertir a año de 4 dígitos
+            
+            Calendar expiryDate = Calendar.getInstance();
+            expiryDate.set(Calendar.YEAR, year);
+            expiryDate.set(Calendar.MONTH, month - 1); // Calendar.MONTH es 0-indexed
+            expiryDate.set(Calendar.DAY_OF_MONTH, 1);
+            
+            if (expiryDate.getTime().before(new Date())) {
+                return false; // Tarjeta expirada
+            }
+        } catch (Exception e) {
+            return false; // Error al parsear la fecha
+        }
+        
+        // Validar código de seguridad (3 dígitos)
+        if (!securityCode.matches("\\d{3}")) {
+            return false;
+        }
+        
+        // Validar nombre del titular
+        return cardholderName != null && !cardholderName.trim().isEmpty();
     }
 
     // Datos de la cuenta bancaria (pueden cargarse desde configuración)
@@ -160,11 +219,16 @@ public class PurchaseController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         try {
-            // Procesar compra instantánea (marca el producto como vendido)
-            cartService.processInstantPurchase(user, productId);
+            // Verificar si el producto pertenece al usuario actual
+            if (productService.isProductOwnedByUser(productId, user)) {
+                return "redirect:/home?error=No+puedes+comprar+tu+propio+producto";
+            }
             
-            // Redirigir a la página de confirmación de compra instantánea
-            return "redirect:/purchase/instant-success/" + productId;
+            // Añadir el producto al carrito en lugar de procesarlo instantáneamente
+            cartService.addItemToCart(user, productId, 1);
+            
+            // Redirigir a la página de compra normal
+            return "redirect:/purchase";
         } catch (Exception e) {
             // En caso de error, redirigir al home con mensaje de error
             return "redirect:/home?error=" + e.getMessage();

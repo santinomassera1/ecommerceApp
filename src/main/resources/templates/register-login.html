@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" href="/css/sweetalert2.min.css">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <title>SignUp/Login</title>
+    <title>Registro/Iniciar Sesión</title>
     <style>
         .button-1, .button-2, .login-button, .signup-button {
             cursor: pointer;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
         }
     </style>
 </head>
@@ -18,50 +34,58 @@
 <div class="container">
     <div class="box-1">
         <div class="content-holder">
-            <h2>Welcome to Vintage Vogue!</h2>
-            <button class="button-1" onclick="toggleForms()">Sign up</button>
-            <button class="button-2" onclick="toggleForms()">Login</button>
+            <h2>¡Bienvenido a Vintage Vogue!</h2>
+            <button class="button-1" onclick="toggleForms()">Registrarse</button>
+            <button class="button-2" onclick="toggleForms()">Iniciar Sesión</button>
         </div>
     </div>
 
     <div class="box-2">
+        <!-- Mensajes de verificación -->
+        <div th:if="${verificationSuccess == true}" class="alert alert-success">
+            <p th:text="${message}">¡Tu cuenta ha sido verificada exitosamente!</p>
+        </div>
+        <div th:if="${verificationSuccess == false}" class="alert alert-danger">
+            <p th:text="${message}">El enlace de verificación no es válido.</p>
+        </div>
+        
         <!-- Login Form -->
         <div class="form-container" id="loginForm">
-            <h1>Login Form</h1>
+            <h1>Iniciar Sesión</h1>
             <form action="/auth/login" method="post" th:object="${user}">
                 <label>
-                    <input type="text" placeholder="Username" class="input-field" th:field="*{username}" required>
+                    <input type="text" placeholder="Usuario" class="input-field" th:field="*{username}" required>
                 </label>
                 <br><br>
                 <label>
-                    <input type="password" placeholder="Password" class="input-field" th:field="*{password}" required>
+                    <input type="password" placeholder="Contraseña" class="input-field" th:field="*{password}" required>
                 </label>
                 <br><br>
-                <button class="login-button" type="submit">Login</button>
+                <button class="login-button" type="submit">Iniciar Sesión</button>
                 <div th:if="${loginError}" class="error-message">
-                    <p th:text="${loginError}">Invalid username or password</p>
+                    <p th:text="${loginError}">Usuario o contraseña inválidos</p>
                 </div>
-                <a href="/auth/forgot-password" class="forgot-password-link">Forgot your password?</a>
+                <a href="/auth/forgot-password" class="forgot-password-link">¿Olvidaste tu contraseña?</a>
             </form>
         </div>
 
         <!-- Register Form -->
         <div class="form-container" id="registerForm" style="display: none;">
-            <h1>Sign Up Form</h1>
-            <form id="register" method="post">
+            <h1>Formulario de Registro</h1>
+            <form id="registerForm" method="post">
                 <label>
-                    <input type="text" placeholder="Username" id="registerUsername" class="input-field" required>
+                    <input type="text" placeholder="Usuario" id="registerUsername" class="input-field" required>
                 </label>
                 <br><br>
                 <label>
-                    <input type="email" placeholder="Email" id="registerEmail" class="input-field" required>
+                    <input type="email" placeholder="Correo electrónico" id="registerEmail" class="input-field" required>
                 </label>
                 <br><br>
                 <label>
-                    <input type="password" placeholder="Password" id="registerPassword" class="input-field" required>
+                    <input type="password" placeholder="Contraseña" id="registerPassword" class="input-field" required>
                 </label>
                 <br><br>
-                <button class="signup-button" type="submit">Sign Up</button>
+                <button class="signup-button" type="submit">Registrarse</button>
             </form>
         </div>
     </div>

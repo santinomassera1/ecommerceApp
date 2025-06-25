@@ -40,7 +40,7 @@ $(document).ready(function () {
                         if (itemType === 'user') {
                             window.location.href = `/profile/${itemId}`;
                         } else if (itemType === 'product') {
-                            window.location.href = `/products/${itemId}`;
+                            window.location.href = `/products/details/${itemId}`;
                         } else if (itemType === 'category') {
                             window.location.href = `/categories/${itemId}`;
                         }
@@ -91,7 +91,7 @@ $(document).ready(function () {
                             <h5 class="card-title">${item.name}</h5>
                             <p class="card-text">${item.description || ''}</p>
                             ${typeof item.price !== 'undefined' ? `<p class="card-price">$${item.price}</p>` : ''}
-                            <a href="/${item.type}/${item.id}" class="btn btn-primary">View ${item.type}</a>
+                            <a href="${item.type === 'product' ? `/products/details/${item.id}` : `/${item.type}/${item.id}`}" class="btn btn-primary">View ${item.type}</a>
                         </div>
                     </div>
                 </div>
@@ -149,4 +149,23 @@ $(document).ready(function () {
     }
 
     connectStompClient();
+
+    // Inicializar el carrusel de anuncios con autoplay
+    const adCarousel = document.getElementById('adCarousel');
+    if (adCarousel) {
+        // Inicializar carrusel con Bootstrap
+        $(adCarousel).carousel({
+            interval: 5000,  // Cambiar cada 5 segundos
+            pause: false,    // No pausar al pasar el ratón
+            wrap: true,      // Continuar desde el principio al llegar al final
+            keyboard: false  // Deshabilitar control por teclado
+        });
+    }
 });
+
+/**
+ * Función para manejar la navegación a detalles del producto
+ */
+function goToProductDetail(productId) {
+    window.location.href = '/product/' + productId;
+}

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel</title>
+    <title>Panel de Administración</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
 <header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Admin Panel</h1>
-    <a class="nav-link" th:href="@{/logout}">Logout</a>
+    <h1>Panel de Administración</h1>
+    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
 
 </header>
 
@@ -22,17 +22,17 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/manage-user}">
-                            <i class="fas fa-users"></i> Manage Users
+                            <i class="fas fa-users"></i> Gestionar Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/ad">
-                            <i class="fas fa-bullhorn"></i> Manage Announcements
+                            <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/manage-categories">
-                            <i class="fas fa-layer-group"></i> Manage Categories
+                            <i class="fas fa-layer-group"></i> Gestionar Categorías
                         </a>
                     </li>
                 </ul>
@@ -41,7 +41,7 @@
 
         <!-- Main content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h2>Welcome to Admin Panel</h2>
+            <h2>Bienvenido al Panel de Administración</h2>
         </main>
     </div>
 </div>
@@ -49,7 +49,7 @@
 
 <footer>
     <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
     </div>
 </footer>
 

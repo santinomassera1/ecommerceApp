@@ -1,5 +1,6 @@
 package com.example.vintagevogue.config;
 
+import com.example.vintagevogue.security.EmailVerificationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,18 +9,24 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final EmailVerificationFilter emailVerificationFilter;
+
+    public SecurityConfig(EmailVerificationFilter emailVerificationFilter) {
+        this.emailVerificationFilter = emailVerificationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/register", "/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/auth/**", "/register", "/login", "/css/**", "/js/**", "/images/**", "/vendor/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/support/**").hasRole("SUPP")
                         .requestMatchers("/profile/**").authenticated()
@@ -33,7 +40,8 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/auth/login?logout=true")
                         .permitAll()
-                );
+                )
+                .addFilterBefore(emailVerificationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

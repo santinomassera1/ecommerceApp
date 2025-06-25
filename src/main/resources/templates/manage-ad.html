@@ -1,54 +1,274 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Announcements</title>
+    <title>Gestionar Anuncios</title>
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .content-wrapper {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px 15px;
+            height: auto;
+        }
+        .btn {
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: 500;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+        }
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .file-input-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-container input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .upload-progress {
+            height: 5px;
+            background-color: #f3f3f3;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .upload-status {
+            margin-top: 5px;
+            display: none;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
 <header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Admin Panel</h1>
-    <a class="nav-link" th:href="@{/logout}">Logout</a>
+    <h1>Panel de Administración</h1>
+    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
 </header>
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/admin/manage-user}">
-                    <i class="fas fa-users"></i> Manage Users
+                    <i class="fas fa-users"></i> Gestionar Usuarios
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" th:href="@{/admin/ad}">
-                    <i class="fas fa-bullhorn"></i> Manage Announcements
+                    <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/admin/manage-categories}">
-                    <i class="fas fa-layer-group"></i> Manage Categories
+                    <i class="fas fa-layer-group"></i> Gestionar Categorías
                 </a>
             </li>
         </ul>
     </div>
 </nav>
 
-<div class="main-content flex-grow-1 p-3">
-    <h2>Manage Announcements</h2>
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Gestionar Anuncios</h1>
+                </div>
+                
+                <!-- Mensajes de alerta -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${success}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <!-- Section for Creating/Editing Ads -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Crear/Editar Anuncio</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/ad/save}" th:object="${ad}" method="post" enctype="multipart/form-data" id="adForm">
+                            <input type="hidden" th:field="*{id}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="title" class="font-weight-bold">Título:</label>
+                                        <input type="text" id="title" name="title" th:field="*{title}" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description" class="font-weight-bold">Descripción:</label>
+                                        <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="startDate" class="font-weight-bold">Fecha de Inicio:</label>
+                                        <input type="datetime-local" id="startDate" name="startDate" th:field="*{startDate}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="endDate" class="font-weight-bold">Fecha de Fin:</label>
+                                        <input type="datetime-local" id="endDate" name="endDate" th:field="*{endDate}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Imagen del Anuncio:</label>
+                                        <div class="input-group">
+                                            <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="URL directa de la imagen o GIF (debe terminar en .jpg, .png, .gif, etc.)">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-secondary" id="extractUrlBtn" title="Intentar extraer URL directa">
+                                                    <i class="fas fa-magic"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#helpModal">
+                                                    <i class="fas fa-question-circle"></i>
+                                                </button>
+                                                <span class="input-group-text file-input-container">
+                                                    <i class="fas fa-upload"></i>
+                                                    <input type="file" id="imageFile" name="imageFile" accept="image/*, .gif" onchange="handleFileUpload(this)">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">
+                                            Ingrese una URL directa a la imagen (ej: https://ejemplo.com/imagen.gif) o suba un archivo.<br>
+                                            <strong>No use URLs de búsqueda de Google</strong> - Haga clic derecho en la imagen y seleccione "Copiar dirección de imagen".<br>
+                                            Si pegó una URL de Google, haga clic en <i class="fas fa-magic"></i> para intentar extraer la URL directa o
+                                            <a href="#" data-toggle="modal" data-target="#helpModal">ver ayuda</a>.
+                                        </small>
+                                        <div class="upload-progress" id="uploadProgress"></div>
+                                        <div class="upload-status" id="uploadStatus"></div>
+                                    </div>
+                                    <div class="preview-container">
+                                        <img id="imagePreview" th:class="${ad.imageUrl != null && ad.imageUrl.endsWith('.gif')} ? 'image-preview gif-preview' : 'image-preview'" th:src="${ad.imageUrl}" th:if="${ad.imageUrl != null && !ad.imageUrl.isEmpty()}" alt="Vista previa">
+                                        <p id="noImageText" class="text-muted" th:if="${ad.imageUrl == null || ad.imageUrl.isEmpty()}">No hay imagen seleccionada</p>
+                                    </div>
+                                    
+                                    <!-- Sección para usar GIF de ejemplo -->
+                                    <div class="form-group mt-3">
+                                        <label class="font-weight-bold">O use un GIF de ejemplo:</label>
+                                        <div class="row">
+                                            <div class="col-6 col-md-4 mb-2">
+                                                <img src="/images/sample.gif" class="img-thumbnail gif-preview sample-gif" 
+                                                     style="cursor: pointer; height: 100px; object-fit: cover;"
+                                                     onclick="useExampleGif('/images/sample.gif')" 
+                                                     alt="GIF de ejemplo">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Guardar Anuncio
+                                </button>
+                                <a th:href="@{/admin/ad}" class="btn btn-secondary ml-2">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
     <!-- Section for Searching Ads -->
-    <div class="mb-4">
-        <h3>Search Announcements</h3>
-        <label for="searchAd"></label><input type="text" id="searchAd" class="form-control" placeholder="Search announcements by title">
-        <table class="table mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Anuncios Existentes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="text" id="searchAd" class="form-control" placeholder="Buscar anuncios por título">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Title</th>
-                <th>Actions</th>
+                                    <th>Título</th>
+                                    <th>Imagen</th>
+                                    <th>Fechas</th>
+                                    <th style="width: 200px;">Acciones</th>
             </tr>
             </thead>
             <tbody id="adTable">
@@ -56,52 +276,325 @@
                 <td th:text="${ad.id}"></td>
                 <td th:text="${ad.title}"></td>
                 <td>
-                    <a th:href="@{/admin/ad/edit/{id}(id=${ad.id})}" class="btn btn-warning">Edit</a>
-                    <a th:href="@{/admin/ad/delete/{id}(id=${ad.id})}" class="btn btn-danger">Delete</a>
+                                        <img th:if="${ad.imageUrl != null && !ad.imageUrl.isEmpty()}" 
+                                             th:src="${ad.imageUrl}" alt="Imagen de anuncio" 
+                                             style="max-height: 50px; max-width: 100px;">
+                                        <span th:if="${ad.imageUrl == null || ad.imageUrl.isEmpty()}" class="text-muted">Sin imagen</span>
+                                    </td>
+                                    <td>
+                                        <small th:text="${ad.startDate != null ? #temporals.format(ad.startDate, 'dd/MM/yyyy HH:mm') : 'No definida'}"></small>
+                                        <br>
+                                        <small th:text="${ad.endDate != null ? #temporals.format(ad.endDate, 'dd/MM/yyyy HH:mm') : 'No definida'}"></small>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/ad/edit/{id}(id=${ad.id})}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <a th:href="@{/admin/ad/delete/{id}(id=${ad.id})}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este anuncio?');">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </a>
                 </td>
             </tr>
+                                <tr th:if="${ads.empty}">
+                                    <td colspan="5" class="text-center">No hay anuncios disponibles</td>
+                                </tr>
             </tbody>
         </table>
     </div>
-
-    <!-- Section for Creating/Editing Ads -->
-    <div class="mb-4">
-        <h3>Create/Edit Announcement</h3>
-        <form th:action="@{/admin/ad/save}" th:object="${ad}" method="post">
-            <input type="hidden" th:field="*{id}">
-            <div class="form-group">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" th:field="*{title}" class="form-control" required>
             </div>
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" th:field="*{description}" class="form-control"></textarea>
             </div>
-            <div class="form-group">
-                <label for="imageUrl">Image URL:</label>
-                <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" class="form-control">
             </div>
-            <div class="form-group">
-                <label for="startDate">Start Date:</label>
-                <input type="datetime-local" id="startDate" name="startDate" th:field="*{startDate}" class="form-control">
             </div>
-            <div class="form-group">
-                <label for="endDate">End Date:</label>
-                <input type="datetime-local" id="endDate" name="endDate" th:field="*{endDate}" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Announcement</button>
-        </form>
     </div>
 </div>
 
 <footer>
     <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
     </div>
 </footer>
 
 <script th:src="@{/vendor/jquery/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/admin.js}"></script>
+<script>
+    // Función para manejar la vista previa de la imagen
+    function handleFileUpload(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            const file = input.files[0];
+            const fileName = file.name.toLowerCase();
+            const fileSize = file.size / 1024 / 1024; // tamaño en MB
+            
+            // Validar tamaño de archivo
+            if (fileSize > 10) {
+                showUploadStatus('El archivo es demasiado grande. El tamaño máximo es 10MB.', 'error');
+                input.value = '';
+                return;
+            }
+            
+            // Validar tipo de archivo
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type) && !fileName.endsWith('.gif')) {
+                showUploadStatus('Formato de archivo no válido. Use JPG, PNG, WEBP o GIF.', 'error');
+                input.value = '';
+                return;
+            }
+            
+            // Mostrar progreso de carga simulado
+            showUploadProgress(0);
+            const interval = setInterval(() => {
+                const progress = parseInt(document.getElementById('uploadProgress').style.width || '0');
+                if (progress < 90) {
+                    showUploadProgress(progress + 10);
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+            
+            reader.onload = function(e) {
+                // Mostrar la vista previa
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                
+                // Aplicar clase especial si es un GIF
+                if (fileName.endsWith('.gif')) {
+                    imagePreview.classList.add('gif-preview');
+                } else {
+                    imagePreview.classList.remove('gif-preview');
+                }
+                
+                // Ocultar el texto de "no hay imagen"
+                document.getElementById('noImageText').style.display = 'none';
+                
+                // Limpiar el campo de URL para evitar confusiones
+                document.getElementById('imageUrl').value = '';
+                
+                // Completar barra de progreso
+                showUploadProgress(100);
+                showUploadStatus('Archivo cargado correctamente', 'success');
+                
+                // Ocultar barra después de un tiempo
+                setTimeout(() => {
+                    document.getElementById('uploadProgress').style.width = '0%';
+                    setTimeout(() => {
+                        document.getElementById('uploadStatus').style.display = 'none';
+                    }, 500);
+                }, 2000);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Función para mostrar el progreso de carga
+    function showUploadProgress(percent) {
+        const progressBar = document.getElementById('uploadProgress');
+        progressBar.style.width = percent + '%';
+    }
+    
+    // Función para mostrar mensajes de estado
+    function showUploadStatus(message, type) {
+        const statusDiv = document.getElementById('uploadStatus');
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+        
+        if (type === 'error') {
+            statusDiv.style.color = '#dc3545';
+        } else {
+            statusDiv.style.color = '#28a745';
+        }
+    }
+
+    // Actualizar vista previa cuando cambia la URL
+    document.getElementById('imageUrl').addEventListener('input', function() {
+        const url = this.value.trim();
+        const imagePreview = document.getElementById('imagePreview');
+        const noImageText = document.getElementById('noImageText');
+        
+        if (url) {
+            // Validar que sea una URL de imagen directa
+            const isValidImageUrl = /\.(jpeg|jpg|gif|png|webp|svg|bmp)(\?.*)?$/i.test(url);
+            
+            if (!isValidImageUrl) {
+                showUploadStatus('La URL no parece ser una imagen directa. Debe terminar en .jpg, .png, .gif, etc.', 'error');
+                return;
+            }
+            
+            // Verificar si es una URL de Google
+            if (url.includes('google.com/url') || url.includes('googleusercontent.com')) {
+                showUploadStatus('No use URLs de Google. Haga clic derecho en la imagen original y seleccione "Copiar dirección de imagen".', 'error');
+                return;
+            }
+            
+            imagePreview.onerror = function() {
+                showUploadStatus('No se pudo cargar la imagen. Verifique que la URL sea correcta.', 'error');
+                imagePreview.style.display = 'none';
+                noImageText.style.display = 'block';
+            };
+            
+            imagePreview.onload = function() {
+                showUploadStatus('Imagen cargada correctamente', 'success');
+                setTimeout(() => {
+                    document.getElementById('uploadStatus').style.display = 'none';
+                }, 3000);
+            };
+            
+            imagePreview.src = url;
+            imagePreview.style.display = 'block';
+            noImageText.style.display = 'none';
+            
+            // Aplicar clase especial si es un GIF
+            if (url.toLowerCase().endsWith('.gif')) {
+                imagePreview.classList.add('gif-preview');
+            } else {
+                imagePreview.classList.remove('gif-preview');
+            }
+        } else {
+            imagePreview.style.display = 'none';
+            noImageText.style.display = 'block';
+        }
+    });
+
+    // Filtrar anuncios
+    document.getElementById('searchAd').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#adTable tr');
+        
+        rows.forEach(row => {
+            if (row.cells && row.cells.length > 1) {
+                const title = row.cells[1].textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    });
+    
+    // Cerrar alertas automáticamente después de 5 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const closeBtn = alert.querySelector('button.close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+            });
+        }, 5000);
+    });
+
+    // Botón para extraer URL directa
+    document.getElementById('extractUrlBtn').addEventListener('click', function() {
+        const urlInput = document.getElementById('imageUrl');
+        const currentUrl = urlInput.value.trim();
+        
+        if (!currentUrl) {
+            showUploadStatus('Ingrese una URL primero', 'error');
+            return;
+        }
+        
+        try {
+            const directUrl = extractDirectImageUrl(currentUrl);
+            if (directUrl && directUrl !== currentUrl) {
+                urlInput.value = directUrl;
+                // Disparar el evento input para actualizar la vista previa
+                urlInput.dispatchEvent(new Event('input'));
+                showUploadStatus('URL directa extraída correctamente', 'success');
+            } else {
+                showUploadStatus('No se pudo extraer una URL directa', 'error');
+            }
+        } catch (e) {
+            console.error('Error al procesar la URL:', e);
+            showUploadStatus('Error al procesar la URL', 'error');
+        }
+    });
+
+    // Función para usar un GIF de ejemplo
+    function useExampleGif(gifPath) {
+        const imagePreview = document.getElementById('imagePreview');
+        const noImageText = document.getElementById('noImageText');
+        const imageUrlInput = document.getElementById('imageUrl');
+        
+        // Establecer la URL del GIF de ejemplo
+        imageUrlInput.value = gifPath;
+        
+        // Actualizar la vista previa
+        imagePreview.src = gifPath;
+        imagePreview.style.display = 'block';
+        imagePreview.classList.add('gif-preview');
+        noImageText.style.display = 'none';
+        
+        showUploadStatus('GIF de ejemplo seleccionado', 'success');
+    }
+</script>
+
+<!-- Modal de ayuda para URLs de imágenes -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">Cómo obtener la URL directa de una imagen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>Importante:</strong> Para que los anuncios se muestren correctamente, necesita usar la URL directa de la imagen o GIF.
+                </div>
+                
+                <h6 class="font-weight-bold">¿Qué es una URL directa?</h6>
+                <p>Una URL directa es una dirección que apunta directamente al archivo de imagen y generalmente termina en .jpg, .png, .gif, etc.</p>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-check-circle"></i> Ejemplos de URLs directas (correctas)
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>https://ejemplo.com/imagen.jpg</li>
+                            <li>https://ejemplo.com/carpeta/mi-gif-animado.gif</li>
+                            <li>https://cdn.ejemplo.com/productos/123456.png</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-times-circle"></i> Ejemplos de URLs incorrectas
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>https://www.google.com/url?sa=i&url=https%3A%2F%2F...</li>
+                            <li>https://www.google.com/search?q=gif+animado&tbm=isch...</li>
+                            <li>https://ejemplo.com/pagina-con-imagen.html</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h6 class="font-weight-bold">Cómo obtener la URL directa:</h6>
+                <ol>
+                    <li>Encuentre la imagen que desea usar en Google u otro sitio</li>
+                    <li>Haga clic derecho sobre la imagen</li>
+                    <li>Seleccione "Copiar dirección de imagen" o "Copy image address"</li>
+                    <li>Pegue la URL en el campo de texto</li>
+                </ol>
+                
+                <div class="text-center mb-3">
+                    <img src="/images/sample.gif" alt="Cómo copiar la dirección de imagen" class="img-fluid border" style="max-height: 300px;">
+                </div>
+                
+                <p>Si aún tiene problemas, puede subir directamente un archivo haciendo clic en el botón de carga.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

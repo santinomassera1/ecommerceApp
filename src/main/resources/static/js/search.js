@@ -23,7 +23,7 @@ document.getElementById("searchInput").addEventListener("input", function() {
                     // Redirigir según el tipo de resultado
                     suggestion.addEventListener("click", function() {
                         if (item.type === "product") {
-                            window.location.href = `/product/details/${item.id}`;
+                            window.location.href = `/products/details/${item.id}`;
                         } else if (item.type === "user") {
                             window.location.href = `/profile/${item.id}`;
                         } else if (item.type === "category") {

@@ -152,6 +152,14 @@ public class User implements UserDetails {
         this.verificationToken = verificationToken;
     }
 
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
     @Override
     public String getPassword() {
         return password;

@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -65,7 +64,12 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String username) {
         if (username == null || username.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+            List<User> users = userService.findAllUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            List<UserDTO> userDTOs = users.stream().map(UserDTO::new).toList();
+            return ResponseEntity.ok(userDTOs);
         }
 
         List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
@@ -92,13 +96,13 @@ public class AdminController {
     @PostMapping(value = "/assign-role", consumes = "application/json", produces = "application/json")  // 💡 Forzar JSON
     @ResponseBody
     public ResponseEntity<String> assignRole(@RequestBody UserDTO userDTO) {
-        System.out.println("📌 Recibido: " + userDTO.getUsername() + " - " + userDTO.getEmail());
+        System.out.println("📌 Recibido: " + userDTO.getUsername() + " - " + userDTO.getRoleName());
 
-        boolean success = userService.assignRoleToUser(userDTO.getUsername(), userDTO.getEmail()); // Asegúrate de que `getEmail()` contiene el rol o cámbialo
+        boolean success = userService.assignRoleToUser(userDTO.getUsername(), userDTO.getRoleName());
         if (success) {
-            return ResponseEntity.ok("{\"message\":\"Role assigned successfully\"}");
+            return ResponseEntity.ok("{\"message\":\"Rol asignado correctamente\"}");
         } else {
-            return ResponseEntity.badRequest().body("{\"message\":\"Error assigning role\"}");
+            return ResponseEntity.badRequest().body("{\"message\":\"Error al asignar rol\"}");
         }
     }
 
@@ -109,9 +113,9 @@ public class AdminController {
         System.out.println(" Eliminando usuario: " + userDTO.getUsername()); // Debugging
         boolean success = userService.deleteUser(userDTO.getUsername());
         if (success) {
-            return ResponseEntity.ok("{\"message\":\"User deleted successfully\"}");
+            return ResponseEntity.ok("{\"message\":\"Usuario eliminado correctamente\"}");
         } else {
-            return ResponseEntity.badRequest().body("{\"message\":\"Error deleting user\"}");
+            return ResponseEntity.badRequest().body("{\"message\":\"Error al eliminar usuario\"}");
         }
     }
 
@@ -120,14 +124,14 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<String> blockUser(@RequestParam String username) {
         if (username == null || username.isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\":\"Invalid username\"}");
+            return ResponseEntity.badRequest().body("{\"message\":\"Nombre de usuario inválido\"}");
         }
 
         boolean success = userService.blockUser(username);
         if (success) {
-            return ResponseEntity.ok("{\"message\":\"User blocked successfully\"}");
+            return ResponseEntity.ok("{\"message\":\"Usuario bloqueado correctamente\"}");
         } else {
-            return ResponseEntity.badRequest().body("{\"message\":\"Error blocking user\"}");
+            return ResponseEntity.badRequest().body("{\"message\":\"Error al bloquear usuario\"}");
         }
     }
 
@@ -135,6 +139,15 @@ public class AdminController {
     @GetMapping("/categories/new")
     public String newCategory(Model model) {
         model.addAttribute("category", new Category());
+        return "category-form";
+    }
+
+    /** 📝 Editar categoría existente */
+    @GetMapping("/categories/edit/{id}")
+    public String editCategory(@PathVariable("id") Long id, Model model) {
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no válida con ID: " + id));
+        model.addAttribute("category", category);
         return "category-form";
     }
 

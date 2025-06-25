@@ -78,6 +78,51 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/verify")
+    public String verifyEmail(@RequestParam String token, Model model) {
+        boolean verified = userService.verifyEmail(token);
+        if (verified) {
+            model.addAttribute("verificationSuccess", true);
+            model.addAttribute("message", "¡Tu cuenta ha sido verificada exitosamente! Ahora puedes iniciar sesión.");
+        } else {
+            model.addAttribute("verificationSuccess", false);
+            model.addAttribute("message", "El enlace de verificación no es válido o ha expirado.");
+        }
+        model.addAttribute("user", new User());
+        return "register-login";
+    }
+
+    @GetMapping("/verification-required")
+    public String verificationRequired(Model model) {
+        model.addAttribute("user", new User());
+        return "verification-required";
+    }
+
+    @PostMapping("/resend-verification")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> resendVerification(Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            response.put("success", false);
+            response.put("message", "Usuario no autenticado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        
+        String username = authentication.getName();
+        boolean sent = userService.resendVerificationEmail(username);
+        
+        if (sent) {
+            response.put("success", true);
+            response.put("message", "Email de verificación enviado correctamente");
+        } else {
+            response.put("success", false);
+            response.put("message", "No se pudo enviar el email de verificación");
+        }
+        
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/forgot-password")
     public String forgotPassword(Model model) {
         model.addAttribute("user", new User());
@@ -91,10 +136,10 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         if (success) {
             response.put("success", true);
-            response.put("message", "Reset email sent successfully");
+            response.put("message", "Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña");
         } else {
             response.put("success", false);
-            response.put("message", "Email not found");
+            response.put("message", "No se encontró ninguna cuenta con ese correo electrónico");
         }
         return ResponseEntity.ok(response);
     }
@@ -112,16 +157,16 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         if (!newPassword.equals(confirmPassword)) {
             response.put("success", false);
-            response.put("message", "Passwords do not match");
+            response.put("message", "Las contraseñas no coinciden");
             return ResponseEntity.ok(response);
         }
         boolean success = userService.resetPassword(token, newPassword);
         if (success) {
             response.put("success", true);
-            response.put("message", "Password reset successful");
+            response.put("message", "Tu contraseña ha sido restablecida exitosamente");
         } else {
             response.put("success", false);
-            response.put("message", "Invalid token");
+            response.put("message", "El enlace de restablecimiento no es válido o ha expirado");
         }
         return ResponseEntity.ok(response);
     }

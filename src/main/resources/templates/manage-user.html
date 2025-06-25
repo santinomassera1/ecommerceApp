@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +7,35 @@
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <title>Manage Users</title>
+    <title>Gestión de Usuarios</title>
+    <style>
+        .suggestions-container {
+            position: relative;
+        }
+        .suggestions-list {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            z-index: 1000;
+            display: none;
+        }
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
 <header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Admin Panel</h1>
-    <a class="nav-link" th:href="@{/logout}">Logout</a>
+    <h1>Panel de Administración</h1>
+    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
 </header>
 
 <div class="container-fluid" style="margin-top: 80px;">
@@ -23,17 +46,17 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/manage-user}">
-                            <i class="fas fa-users"></i> Manage Users
+                            <i class="fas fa-users"></i> Gestionar Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/ad}">
-                            <i class="fas fa-bullhorn"></i> Manage Announcements
+                            <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/manage-categories}">
-                            <i class="fas fa-layer-group"></i> Manage Categories
+                            <i class="fas fa-layer-group"></i> Gestionar Categorías
                         </a>
                     </li>
                 </ul>
@@ -42,19 +65,19 @@
 
         <!-- Main Content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h1>Manage Users</h1>
+            <h1>Gestión de Usuarios</h1>
 
             <!-- Search Bar -->
-            <input type="text" id="searchUser" class="form-control mb-3" placeholder="Search User by Username">
+            <input type="text" id="searchUser" class="form-control mb-3" placeholder="Buscar usuario por nombre">
 
             <!-- Users Table -->
             <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Username</th>
-                    <th>Role</th>
-                    <th>Actions</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody id="userTable">
@@ -62,21 +85,22 @@
                 </tbody>
             </table>
 
-            <h2>Assign Roles to Users</h2>
+            <h2>Asignar Roles a Usuarios</h2>
             <form id="assignRoleForm">
-                <div class="form-group">
-                    <label for="assignUsername">Username:</label>
-                    <input type="text" id="assignUsername" class="form-control" required>
+                <div class="form-group suggestions-container">
+                    <label for="assignUsername">Nombre de Usuario:</label>
+                    <input type="text" id="assignUsername" class="form-control" autocomplete="off" required>
+                    <div id="userSuggestions" class="suggestions-list"></div>
                 </div>
                 <div class="form-group">
-                    <label for="assignRole">Role:</label>
+                    <label for="assignRole">Rol:</label>
                     <select id="assignRole" class="form-control">
-                        <option value="ROLE_USER">User</option>
-                        <option value="ROLE_ADMIN">Admin</option>
-                        <option value="ROLE_SUPPORT">Support</option>
+                        <option value="ROLE_USER">Usuario</option>
+                        <option value="ROLE_ADMIN">Administrador</option>
+                        <option value="ROLE_SUPPORT">Soporte</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Assign Role</button>
+                <button type="submit" class="btn btn-primary mt-3">Asignar Rol</button>
             </form>
         </main>
     </div>
@@ -85,7 +109,7 @@
 <!-- Footer -->
 <footer>
     <div class="footer-bottom text-center mt-4">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
     </div>
 </footer>
 
@@ -100,14 +124,14 @@
                 let table = $("#userTable");
                 table.empty();
                 data.forEach(user => {
-                    let roles = user.roles ? user.roles.map(role => role.name).join(", ") : "No roles";
+                    let roles = user.roles ? user.roles.map(role => role.name).join(", ") : "Sin roles";
                     table.append(`
                         <tr>
                             <td>${user.id}</td>
                             <td>${user.username}</td>
                             <td>${roles}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm" data-username="${user.username}" onclick="deleteUser(this)">Delete</button>
+                                <button class="btn btn-danger btn-sm" data-username="${user.username}" onclick="deleteUser(this)">Eliminar</button>
                             </td>
                         </tr>
                     `);
@@ -117,10 +141,46 @@
             });
         }
 
+        // Cargar sugerencias de usuarios para el campo de asignación de roles
+        function loadUserSuggestions(query = "") {
+            $.get("/admin/search-user?username=" + query, function (data) {
+                let suggestionsList = $("#userSuggestions");
+                suggestionsList.empty();
+                
+                if (data.length > 0) {
+                    suggestionsList.show();
+                    data.forEach(user => {
+                        let item = $(`<div class="suggestion-item">${user.username}</div>`);
+                        item.on('click', function() {
+                            $("#assignUsername").val(user.username);
+                            suggestionsList.hide();
+                        });
+                        suggestionsList.append(item);
+                    });
+                } else {
+                    suggestionsList.hide();
+                }
+            }).fail(function (error) {
+                console.error("❌ Error obteniendo sugerencias de usuarios:", error);
+            });
+        }
+
         loadUsers();
 
         $("#searchUser").on("input", function () {
             loadUsers($(this).val());
+        });
+
+        // Manejar el input en el campo de nombre de usuario para mostrar sugerencias
+        $("#assignUsername").on("input", function() {
+            loadUserSuggestions($(this).val());
+        });
+
+        // Ocultar las sugerencias cuando se hace clic fuera del campo
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.suggestions-container').length) {
+                $("#userSuggestions").hide();
+            }
         });
 
         $("#assignRoleForm").on("submit", function (e) {
@@ -139,7 +199,7 @@
                 },
                 error: function (error) {
                     console.error("❌ Error asignando rol:", error);
-                    alert("Error assigning role");
+                    alert("Error al asignar rol");
                 }
             });
         });
@@ -159,7 +219,7 @@
                     },
                     error: function (error) {
                         console.error('❌ Error eliminando usuario:', error);
-                        alert('Error deleting user');
+                        alert('Error al eliminar usuario');
                     }
                 });
             }

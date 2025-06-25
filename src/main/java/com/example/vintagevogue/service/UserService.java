@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -48,31 +47,99 @@ public class UserService implements UserDetailsService {
      * Register a new user with default role USER.
      */
     public boolean registerUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new CustomException.UsernameAlreadyExistsException("Username already exists.");
-        }
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new CustomException.EmailAlreadyExistsException("Address already exists.");
-        }
-        if (user.getPassword() == null) {
-            throw new IllegalArgumentException("Password cannot be null");
-        }
+        try {
+            if (userRepository.existsByUsername(user.getUsername())) {
+                throw new CustomException.UsernameAlreadyExistsException("Username already exists.");
+            }
+            if (userRepository.existsByEmail(user.getEmail())) {
+                throw new CustomException.EmailAlreadyExistsException("Address already exists.");
+            }
+            if (user.getPassword() == null) {
+                throw new IllegalArgumentException("Password cannot be null");
+            }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Set.of(roleRepository.findByName("ROLE_USER")));
-        userRepository.save(user);
-        sendVerificationEmail(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            if (userRole == null) {
+                System.out.println("Error: ROLE_USER not found in database");
+                return false;
+            }
+            
+            user.setRoles(Set.of(userRole));
+            userRepository.save(user);
+            
+            try {
+                sendVerificationEmail(user);
+            } catch (Exception e) {
+                System.out.println("Error sending verification email: " + e.getMessage());
+                e.printStackTrace();
+                // Continue with registration even if email fails
+            }
 
-        return true;
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error in registerUser: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     private void sendVerificationEmail(User user) {
-        String subject = "Email Verification";
+        String subject = "Verificación de Correo Electrónico - Vintage Vogue";
         String confirmationUrl = "http://localhost:8080/auth/verify?token=" + user.getVerificationToken();
-        String message = "Click the link to verify your email: " + confirmationUrl;
+        String message = "Hola " + user.getUsername() + ",\n\n" +
+                         "Gracias por registrarte en Vintage Vogue. Para verificar tu correo electrónico, haz clic en el siguiente enlace:\n\n" +
+                         confirmationUrl + "\n\n" +
+                         "Si no te has registrado en Vintage Vogue, por favor ignora este mensaje.\n\n" +
+                         "Saludos,\n" +
+                         "El equipo de Vintage Vogue";
         emailService.sendSimpleEmail(user.getEmail(), subject, message);
     }
 
+    /**
+     * Verifica el correo electrónico del usuario usando el token de verificación.
+     */
+    public boolean verifyEmail(String token) {
+        Optional<User> userOptional = userRepository.findByVerificationToken(token);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setVerified(true);
+            user.setVerificationToken(null); // Invalidar el token después de usarlo
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Reenvía el email de verificación al usuario.
+     */
+    public boolean resendVerificationEmail(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return false;
+        }
+        
+        // Si ya está verificado, no es necesario reenviar
+        if (user.isVerified()) {
+            return true;
+        }
+        
+        // Generar un nuevo token de verificación
+        user.setVerificationToken(UUID.randomUUID().toString());
+        userRepository.save(user);
+        
+        // Enviar el email de verificación
+        try {
+            sendVerificationEmail(user);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error sending verification email: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
@@ -105,8 +172,14 @@ public class UserService implements UserDetailsService {
 
         // Enviar email con el nuevo token
         String resetUrl = "http://localhost:8080/auth/reset-password?token=" + resetToken.getToken();
-        String subject = "Reset Password";
-        String message = "Click the link to reset your password: " + resetUrl;
+        String subject = "Restablecimiento de Contraseña - Vintage Vogue";
+        String message = "Hola " + user.getUsername() + ",\n\n" +
+                         "Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" +
+                         resetUrl + "\n\n" +
+                         "Si no has solicitado este cambio, por favor ignora este mensaje o contacta a nuestro equipo de soporte.\n\n" +
+                         "Este enlace expirará en 24 horas.\n\n" +
+                         "Saludos,\n" +
+                         "El equipo de Vintage Vogue";
         emailService.sendSimpleEmail(user.getEmail(), subject, message);
 
         return true;

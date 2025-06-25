@@ -164,6 +164,21 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    /**
+     * Verifica si un producto pertenece a un usuario específico.
+     * @param productId ID del producto a verificar
+     * @param user Usuario a verificar
+     * @return true si el producto pertenece al usuario, false en caso contrario
+     */
+    public boolean isProductOwnedByUser(Long productId, User user) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            return product.getUser() != null && product.getUser().getId().equals(user.getId());
+        }
+        return false;
+    }
+
     // Método actualizado para obtener solo productos disponibles
     public List<Product> getAllProducts() {
         return productRepository.findByAvailableTrue();

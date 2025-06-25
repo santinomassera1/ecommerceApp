@@ -111,3 +111,137 @@ footer {
     background-color: #ecf0f1;
     color: #2c3e50;
 }
+
+/* Estilos para la gestión de anuncios */
+.content-wrapper {
+    margin-left: 250px;
+    padding: 20px;
+    margin-top: 60px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 20px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.preview-container {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.file-input-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.file-input-container input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+/* Animaciones para GIFs */
+.gif-preview {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.gif-preview:hover {
+    transform: scale(1.05);
+    border: 2px solid #007bff;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Estilos para GIFs de ejemplo */
+.sample-gif {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.sample-gif:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.sample-gif.selected {
+    border-color: #28a745;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+/* Mejoras para la sección de carga de archivos */
+.file-input-container {
+    transition: all 0.2s ease;
+}
+
+.file-input-container:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.upload-progress {
+    height: 5px;
+    width: 0%;
+    background-color: #007bff;
+    transition: width 0.3s ease-in-out;
+    margin-top: 5px;
+    border-radius: 3px;
+}
+
+.upload-status {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Animación para las alertas */
+.alert {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

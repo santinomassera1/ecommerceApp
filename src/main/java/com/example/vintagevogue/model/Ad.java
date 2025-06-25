@@ -12,8 +12,13 @@ public class Ad {
     private Long id;
 
     private String title;
+    
+    @Column(columnDefinition = "TEXT")
     private String description;
+    
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
+    
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String formattedDate;
