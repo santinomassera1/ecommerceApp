@@ -2,37 +2,71 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Administración</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Vintage Vogue</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <a th:href="@{/admin}" class="d-flex align-items-center text-decoration-none">
+                <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
     <h1>Panel de Administración</h1>
-    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
-
+            </a>
+        </div>
+        <div class="header-nav">
+            <a class="nav-link" th:href="@{/admin}">
+                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            </a>
+            <a class="nav-link" th:href="@{/admin/manage-user}">
+                <i class="fas fa-users me-1"></i> Usuarios
+            </a>
+            <a class="nav-link" th:href="@{/admin/manage-product}">
+                <i class="fas fa-box me-1"></i> Productos
+            </a>
+        </div>
+        <div>
+            <a class="nav-link me-2" th:href="@{/home}">
+                <i class="fas fa-store me-1"></i> Ver Tienda
+            </a>
+            <a class="nav-link" th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+            </a>
+        </div>
 </header>
 
-<div class="container-fluid mt-4">
+    <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <nav class="col-md-2 d-none d-md-block sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/admin}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/manage-user}">
                             <i class="fas fa-users"></i> Gestionar Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/ad">
+                            <a class="nav-link" th:href="@{/admin/manage-ad}">
                             <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/manage-categories">
+                            <a class="nav-link" th:href="@{/admin/manage-categories}">
                             <i class="fas fa-layer-group"></i> Gestionar Categorías
+                        </a>
+                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/manage-product}">
+                                <i class="fas fa-box"></i> Gestionar Productos
                         </a>
                     </li>
                 </ul>
@@ -41,23 +75,132 @@
 
         <!-- Main content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h2>Bienvenido al Panel de Administración</h2>
-        </main>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Dashboard</h2>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Usuarios</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(userService.findAllUsers())}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Categorías</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(categoryService.getAllCategories())}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-layer-group fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Anuncios</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(adService.getAllAds())}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-bullhorn fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
     </div>
 </div>
 
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Productos</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(productService.getAllProductsIncludingUnavailable())}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-box fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+                <!-- Recent Activity -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-history me-1"></i>
+                        Actividad Reciente
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <div th:if="${#lists.isEmpty(userService.findRecentUsers(5)) && #lists.isEmpty(productService.getAllProducts())}" class="text-center text-muted py-3">
+                                <i class="fas fa-info-circle me-1"></i> No hay actividad reciente
+                            </div>
+                            
+                            <!-- Usuarios recientes -->
+                            <div th:each="user : ${userService.findRecentUsers(5)}" class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Nuevo usuario registrado</h6>
+                                    <small th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</small>
+                                </div>
+                                <p class="mb-1">Usuario: <span th:text="${user.username}">username</span> se ha registrado en la plataforma.</p>
+                            </div>
+                            
+                            <!-- Productos recientes -->
+                            <div th:each="product : ${productService.getAllProducts()}" class="list-group-item" th:if="${productStat.index < 5}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Producto disponible</h6>
+                                    <small>Activo</small>
+                                </div>
+                                <p class="mb-1">
+                                    <span th:text="${product.name}">Nombre del producto</span> - 
+                                    <span th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')}">0.00</span>$
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Vintage Vogue</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Panel de Administración v1.0</p>
+                </div>
+            </div>
     </div>
 </footer>
-
 
 <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/admin.js"></script>
-<script src="/js/search.js"></script>
 </body>
 </html>
 

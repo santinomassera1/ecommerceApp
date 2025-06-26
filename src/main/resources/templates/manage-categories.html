@@ -8,132 +8,128 @@
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .content-wrapper {
-            margin-left: 250px;
-            padding: 20px;
-            margin-top: 60px;
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            padding: 20px;
-        }
-        .card-body {
-            padding: 30px;
-        }
-        .btn {
-            border-radius: 5px;
-            padding: 8px 16px;
-            font-weight: 500;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-        .table {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .table th {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Panel de Administración</h1>
-    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
-</header>
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
-    <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-user}">
-                    <i class="fas fa-users"></i> Gestionar Usuarios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/ad}">
-                    <i class="fas fa-bullhorn"></i> Gestionar Anuncios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/admin/manage-categories}">
-                    <i class="fas fa-layer-group"></i> Gestionar Categorías
-                </a>
-            </li>
-        </ul>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/admin}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Administración</h1>
+        </a>
     </div>
-</nav>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/admin}">
+            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-user}">
+            <i class="fas fa-users me-1"></i> Usuarios
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-product}">
+            <i class="fas fa-box me-1"></i> Productos
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
+</header>
 
-<div class="content-wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Gestionar Categorías</h1>
-                    <a class="btn btn-success" th:href="@{/admin/categories/new}">
-                        <i class="fas fa-plus"></i> Añadir Nueva Categoría
-                    </a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-user}">
+                            <i class="fas fa-users"></i> Gestionar Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-ad}">
+                            <i class="fas fa-bullhorn"></i> Gestionar Anuncios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/manage-categories}">
+                            <i class="fas fa-layer-group"></i> Gestionar Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-product}">
+                            <i class="fas fa-box"></i> Gestionar Productos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2>Gestión de Categorías</h2>
+                <a class="btn btn-success" th:href="@{/admin/categories/new}">
+                    <i class="fas fa-plus"></i> Añadir Nueva Categoría
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-layer-group me-1"></i>
+                    Categorías Disponibles
                 </div>
-                
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Nombre de Categoría</th>
-                                    <th style="width: 200px;">Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="category : ${categories}">
-                                    <td th:text="${category.name}">Nombre de Categoría</td>
-                                    <td>
-                                        <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i> Editar
-                                        </a>
-                                        <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría?');">
-                                            <i class="fas fa-trash"></i> Eliminar
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr th:if="${categories.empty}">
-                                    <td colspan="2" class="text-center">No hay categorías disponibles</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Nombre de Categoría</th>
+                                <th style="width: 200px;">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="category : ${categories}">
+                                <td th:text="${category.name}">Nombre de Categoría</td>
+                                <td>
+                                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría?');">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${categories.empty}">
+                                <td colspan="2" class="text-center">No hay categorías disponibles</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Administración v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 

@@ -5,41 +5,102 @@
 </head>
 <body>
     <!-- Fragmento del pie de página -->
-    <footer th:fragment="footer" class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h4>Sobre Nosotros</h4>
-                <p>Vintage Vogue es una tienda de moda especializada en ropa y accesorios vintage. Nuestra misión es llevar lo mejor de la moda clásica a nuestros clientes.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Enlaces Útiles</h4>
-                <ul>
-                    <li><a href="/about">Sobre Nosotros</a></li>
-                    <li><a href="/contact">Contacto</a></li>
-                    <li><a href="/privacy">Política de Privacidad</a></li>
-                    <li><a href="/terms">Términos y Condiciones</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Contacto</h4>
-                <ul>
-                    <li>Teléfono: +54 11 3022-0920</li>
-                    <li>Email: <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a></li>
-                    <li>Dirección: Pilar A1627, Buenos Aires, Argentina</li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Síguenos</h4>
-                <ul class="social-icons">
-                    <li><a href="https://www.facebook.com/vintagevogue" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                    <li><a href="https://www.twitter.com/vintagevogue" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="https://www.instagram.com/vintagevogue" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                    <li><a href="https://www.pinterest.com/vintagevogue" target="_blank"><i class="fab fa-pinterest"></i></a></li>
-                </ul>
+    <footer th:fragment="footer" class="footer mt-4">
+        <div class="footer-top py-4">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- Logo y descripción -->
+                    <div class="col-lg-5 col-md-6">
+                        <div class="footer-brand mb-2">
+                            <h3 class="text-white mb-0">Vintage Vogue</h3>
+                        </div>
+                        <p class="footer-text mb-3">Vintage Vogue es una tienda de moda especializada en ropa y accesorios vintage. Nuestra misión es llevar lo mejor de la moda clásica a nuestros clientes.</p>
+                        <div class="footer-social">
+                            <a href="https://www.facebook.com/vintagevogue" class="social-icon" target="_blank" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.twitter.com/vintagevogue" class="social-icon" target="_blank" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://www.instagram.com/vintagevogue" class="social-icon" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.pinterest.com/vintagevogue" class="social-icon" target="_blank" aria-label="Pinterest">
+                                <i class="fab fa-pinterest"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Enlaces útiles -->
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-heading">Enlaces Útiles</h5>
+                        <ul class="footer-links">
+                            <li><a href="/about"><i class="fas fa-angle-right me-1"></i> Sobre Nosotros</a></li>
+                            <li><a href="/contact"><i class="fas fa-angle-right me-1"></i> Contacto</a></li>
+                            <li><a href="/privacy"><i class="fas fa-angle-right me-1"></i> Privacidad</a></li>
+                            <li><a href="/terms"><i class="fas fa-angle-right me-1"></i> Términos y Condiciones</a></li>
+                            <li><a href="/faq"><i class="fas fa-angle-right me-1"></i> Preguntas Frecuentes</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Contacto -->
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="footer-heading">Contacto</h5>
+                        <ul class="footer-contact-info">
+                            <li>
+                                <i class="fas fa-map-marker-alt contact-icon"></i>
+                                <div>
+                                    <span>Dirección</span>
+                                    <p class="mb-0">Pilar A1627, Buenos Aires, Argentina</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone-alt contact-icon"></i>
+                                <div>
+                                    <span>Teléfono</span>
+                                    <p class="mb-0">+54 11 3022-0920</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope contact-icon"></i>
+                                <div>
+                                    <span>Email</span>
+                                    <p class="mb-0">
+                                        <a href="mailto:info@vintagevogue.com">info@vintagevogue.com</a>
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+        
+        <!-- Barra inferior del footer -->
+        <div class="footer-bottom py-2">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright mb-0">
+                            &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue. Todos los derechos reservados.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="footer-payment">
+                            <span class="me-2">Métodos de pago:</span>
+                            <i class="fab fa-cc-visa payment-icon"></i>
+                            <i class="fab fa-cc-mastercard payment-icon"></i>
+                            <i class="fab fa-cc-amex payment-icon"></i>
+                            <i class="fab fa-cc-paypal payment-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botón para volver arriba -->
+        <div class="back-to-top" id="backToTop">
+            <i class="fas fa-angle-up"></i>
         </div>
     </footer>
 
@@ -51,6 +112,32 @@
         <script th:src="@{/vendor/stomp/stomp.min.js}"></script>
         <script th:src="@{/js/notification.js}"></script>
         <script th:src="@{/js/search.js}"></script>
+        <script th:src="@{/js/navbar.js}"></script>
+        <script>
+            // Script para el botón de volver arriba
+            document.addEventListener('DOMContentLoaded', function() {
+                const backToTopBtn = document.getElementById('backToTop');
+                
+                if (backToTopBtn) {
+                    // Mostrar/ocultar botón al hacer scroll
+                    window.addEventListener('scroll', function() {
+                        if (window.scrollY > 300) {
+                            backToTopBtn.classList.add('show');
+                        } else {
+                            backToTopBtn.classList.remove('show');
+                        }
+                    });
+                    
+                    // Acción al hacer clic en el botón
+                    backToTopBtn.addEventListener('click', function() {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+            });
+        </script>
     </div>
 </body>
 </html> 

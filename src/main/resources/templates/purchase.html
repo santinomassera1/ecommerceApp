@@ -1,62 +1,185 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="fragments/header :: header('Confirmación de Compra')">
+<head th:replace="~{fragments/header :: header('Confirmación de Compra')}">
 </head>
 <body>
 
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
-<div class="container mt-5">
-    <h1>Confirmar tu Compra</h1>
-
-    <!-- Verificación de que haya items para comprar -->
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h2 class="card-title mb-0 d-flex align-items-center">
+                        <i class="fas fa-clipboard-check text-primary me-2"></i>
+                        Confirmar tu Compra
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Carrito vacío -->
+                    <div th:if="${cartItems == null or cartItems.size() == 0}" class="text-center py-5">
+                        <div class="empty-cart-container">
+                            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                            <h3>Tu carrito está vacío</h3>
+                            <p class="text-muted mb-4">No hay productos para confirmar la compra.</p>
+                            <a th:href="@{/home}" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag me-2"></i> Continuar Comprando
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Productos en la compra -->
     <div th:if="${cartItems != null and cartItems.size() > 0}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Imagen</th>
-                <th>Precio</th>
-                <th>Total</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item : ${cartItems}">
-                <td th:text="${item.product.name}">Nombre del Producto</td>
-                <td>
-                    <div th:if="${item.product.images != null and item.product.images.size() > 0}">
-                        <img th:src="${item.product.images[0].url}" alt="Imagen del Producto" class="img-fluid" style="width: 100px; height: 100px; object-fit: cover;">
+                        <div class="purchase-items">
+                            <div th:each="item : ${cartItems}" class="purchase-item d-flex align-items-center py-3 border-bottom">
+                                <!-- Imagen del producto -->
+                                <div class="purchase-item-image me-3">
+                                    <img th:if="${item.product.images != null and item.product.images.size() > 0}"
+                                         th:src="${item.product.images[0].url}" 
+                                         alt="Imagen del Producto" 
+                                         class="img-fluid rounded"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                    <img th:if="${item.product.images == null or item.product.images.size() == 0}"
+                                         th:src="@{/images/default-image.png}" 
+                                         alt="Imagen Predeterminada" 
+                                         class="img-fluid rounded"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                                
+                                <!-- Información del producto -->
+                                <div class="purchase-item-details flex-grow-1">
+                                    <h5 class="mb-1" th:text="${item.product.name}">Nombre del Producto</h5>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="purchase-item-price">
+                                            <span class="text-muted">Precio: </span>
+                                            <span class="fw-bold" th:text="'$' + ${item.product.price}">Precio</span>
+                                            <span th:if="${item.quantity > 1}" class="text-muted" th:text="' x ' + ${item.quantity}"></span>
+                                        </div>
+                                        <div class="purchase-item-total">
+                                            <span class="text-muted">Total: </span>
+                                            <span class="fw-bold text-primary" th:text="'$' + ${item.totalPrice}">Total</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div th:if="${item.product.images == null or item.product.images.size() == 0}">
-                        <img th:src="@{/images/default-image.png}" alt="Imagen Predeterminada" class="img-fluid" style="width: 100px; height: 100px; object-fit: cover;">
+                </div>
+            </div>
+            
+            <!-- Información de envío -->
+            <div class="card shadow-sm mb-4" th:if="${cartItems != null and cartItems.size() > 0}">
+                <div class="card-header bg-white py-3">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-truck text-primary me-2"></i>
+                        Información de Envío
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Dirección de envío:</strong></p>
+                        <p class="text-muted" th:if="${user != null}">
+                            <span th:text="${user.address}">Dirección</span>,
+                            <span th:text="${user.city}">Ciudad</span>,
+                            <span th:text="${user.country}">País</span>
+                        </p>
+                        <p class="text-muted" th:if="${user == null}">
+                            Por favor, <a th:href="@{/profile}">actualiza tu perfil</a> con tu dirección de envío.
+                        </p>
                     </div>
-                </td>
-                <td th:text="'$' + ${item.product.price}">Precio del Producto</td>
-                <td th:text="'$' + ${item.totalPrice}">Precio Total</td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="total-price">
-            <h3>Total: <span th:text="'$' + ${total}"></span></h3>
+                    <div class="mb-0">
+                        <p class="mb-1"><strong>Tiempo estimado de entrega:</strong></p>
+                        <p class="text-muted mb-0">3-5 días hábiles después de la confirmación del pago</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Botón para confirmar la compra -->
-        <div class="confirm-purchase">
+        <!-- Resumen del pedido -->
+        <div class="col-lg-4" th:if="${cartItems != null and cartItems.size() > 0}">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h3 class="card-title mb-0">Resumen del Pedido</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span th:text="'$' + ${total}">$0.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Envío</span>
+                        <span>Gratis</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <strong>Total</strong>
+                        <strong class="text-primary" th:text="'$' + ${total}">$0.00</strong>
+                    </div>
+                    
+                    <!-- Métodos de pago -->
+                    <div class="payment-methods mb-4">
+                        <h5 class="mb-3">Método de Pago</h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
+                            <label class="form-check-label" for="creditCard">
+                                <i class="far fa-credit-card me-2"></i> Tarjeta de Crédito/Débito
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="paypal">
+                            <label class="form-check-label" for="paypal">
+                                <i class="fab fa-paypal me-2"></i> PayPal
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer">
+                            <label class="form-check-label" for="bankTransfer">
+                                <i class="fas fa-university me-2"></i> Transferencia Bancaria
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de confirmación -->
             <form th:action="@{/purchase/confirm}" method="post">
-                <button type="submit" class="btn btn-success">Confirmar Compra</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-check-circle me-2"></i> Confirmar y Pagar
+                        </button>
             </form>
+                    
+                    <div class="text-center mt-3">
+                        <a th:href="@{/cart}" class="btn btn-link text-muted">
+                            <i class="fas fa-arrow-left me-1"></i> Volver al Carrito
+                        </a>
+                    </div>
         </div>
     </div>
 
-    <!-- Si el carrito está vacío -->
-    <div th:if="${cartItems == null or cartItems.size() == 0}">
-        <p>Tu carrito está vacío. <a th:href="@{/home}">Continuar Comprando</a></p>
+            <!-- Información de seguridad -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Compra Segura</h5>
+                    <div class="d-flex mb-3">
+                        <i class="fab fa-cc-visa me-2 text-primary fa-2x"></i>
+                        <i class="fab fa-cc-mastercard me-2 text-primary fa-2x"></i>
+                        <i class="fab fa-cc-amex me-2 text-primary fa-2x"></i>
+                        <i class="fab fa-cc-paypal me-2 text-primary fa-2x"></i>
+                    </div>
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-lock me-2"></i> Tus datos están protegidos con encriptación SSL
+                    </p>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-shield-alt me-2"></i> Garantía de devolución de 30 días
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 </body>
 </html>

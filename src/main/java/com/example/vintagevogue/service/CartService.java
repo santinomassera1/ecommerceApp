@@ -99,10 +99,8 @@ public class CartService {
                 .orElse(null);
 
         if (existingItem != null) {
-            // Incrementar la cantidad si ya existe en el carrito
-            existingItem.setQuantity(existingItem.getQuantity() + quantity);
-            BigDecimal updatedTotalPrice = product.getPrice().multiply(BigDecimal.valueOf(existingItem.getQuantity()));
-            existingItem.setTotalPrice(updatedTotalPrice);
+            // Si el producto ya está en el carrito, lanzar una excepción
+            throw new IllegalStateException("Este producto ya está en tu carrito.");
         } else {
             // Si no está en el carrito, agregarlo como un nuevo CartItem
             CartItem cartItem = new CartItem();
@@ -110,12 +108,15 @@ public class CartService {
             cartItem.setUser(user); // Asigna el usuario al CartItem si es obligatorio
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
+            // Calcular el precio total correctamente
             BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
             cartItem.setTotalPrice(totalPrice);
 
             cart.getItems().add(cartItem);
+            cartItemRepository.save(cartItem); // Guardar el nuevo item
         }
 
+        // Guardar el carrito actualizado
         cartRepository.save(cart);
     }
 

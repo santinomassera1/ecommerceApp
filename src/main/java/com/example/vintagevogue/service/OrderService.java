@@ -253,6 +253,9 @@ public class OrderService {
         
         // Mensajes personalizados según el estado
         switch (newStatus) {
+            case PENDING:
+                body.append("Hemos recibido tu pedido y está pendiente de confirmación.\n");
+                break;
             case CONFIRMED:
                 body.append("¡Excelente! Hemos confirmado tu pedido y estamos preparándolo para el envío.\n");
                 break;

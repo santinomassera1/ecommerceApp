@@ -60,8 +60,13 @@ public class CartItemController {
             redirectAttributes.addFlashAttribute("success", "Producto agregado al carrito exitosamente.");
             return "redirect:/cart";
         } catch (IllegalStateException e) {
-            // Si el producto no está disponible o el usuario intenta agregar su propio producto
+            // Si el producto no está disponible, el usuario intenta agregar su propio producto,
+            // o el producto ya está en el carrito
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+            // Si el error es que el producto ya está en el carrito, redirigir al carrito
+            if (e.getMessage().contains("ya está en tu carrito")) {
+                return "redirect:/cart";
+            }
             return "redirect:/home";
         } catch (Exception e) {
             // Manejar cualquier otra excepción no esperada

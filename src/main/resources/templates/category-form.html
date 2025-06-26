@@ -8,112 +8,116 @@
     <link th:href="@{/vendor/fontawesome/css/all.min.css}" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .content-wrapper {
-            margin-left: 250px;
-            padding: 20px;
-            margin-top: 60px;
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            padding: 20px;
-        }
-        .card-body {
-            padding: 30px;
-        }
-        .form-group {
-            margin-bottom: 25px;
-        }
-        .form-control {
-            border-radius: 5px;
-            padding: 10px 15px;
-            height: auto;
-        }
-        .btn {
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-    </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Panel de Administración</h1>
-    <a href="/logout" class="btn btn-outline-light">Cerrar Sesión</a>
-</header>
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
-    <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-user}">
-                    <i class="fas fa-users"></i> Gestionar Usuarios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/ad}">
-                    <i class="fas fa-bullhorn"></i> Gestionar Anuncios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/admin/manage-categories}">
-                    <i class="fas fa-layer-group"></i> Gestionar Categorías
-                </a>
-            </li>
-        </ul>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/admin}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Administración</h1>
+        </a>
     </div>
-</nav>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/admin}">
+            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-user}">
+            <i class="fas fa-users me-1"></i> Usuarios
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-product}">
+            <i class="fas fa-box me-1"></i> Productos
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
+</header>
 
-<div class="content-wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4" th:text="${category.id != null} ? 'Editar Categoría' : 'Añadir Nueva Categoría'">Formulario de Categoría</h1>
-                <div class="card">
-                    <div class="card-body">
-                        <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
-                            <input type="hidden" th:field="*{id}" />
-                            <div class="form-group">
-                                <label for="name" class="font-weight-bold">Nombre de Categoría:</label>
-                                <input type="text" id="name" name="name" th:field="*{name}" class="form-control" 
-                                       placeholder="Ingrese nombre de categoría" required>
-                            </div>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-user}">
+                            <i class="fas fa-users"></i> Gestionar Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-ad}">
+                            <i class="fas fa-bullhorn"></i> Gestionar Anuncios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/manage-categories}">
+                            <i class="fas fa-layer-group"></i> Gestionar Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-product}">
+                            <i class="fas fa-box"></i> Gestionar Productos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-                            <div class="d-flex">
-                                <button type="submit" class="btn btn-primary mr-2">
-                                    <i class="fas fa-save"></i> Guardar
-                                </button>
-                                <a th:href="@{/admin/manage-categories}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Volver a Categorías
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2 th:text="${category.id != null} ? 'Editar Categoría' : 'Añadir Nueva Categoría'">Formulario de Categoría</h2>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-layer-group me-1"></i>
+                    Datos de la Categoría
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+                        <div class="form-group">
+                            <label for="name" class="font-weight-bold">Nombre de Categoría:</label>
+                            <input type="text" id="name" name="name" th:field="*{name}" class="form-control" 
+                                   placeholder="Ingrese nombre de categoría" required>
+                        </div>
+
+                        <div class="d-flex mt-3">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                            <a th:href="@{/admin/manage-categories}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver a Categorías
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Administración v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 

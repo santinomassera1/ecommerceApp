@@ -1,82 +1,156 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="fragments/header :: header('Carrito de Compras')">
+<head th:replace="~{fragments/header :: header('Carrito de Compras')}">
 </head>
 <body>
-    <header th:replace="fragments/navbar :: navbar"></header>
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
 
-    <div class="container mt-5">
-        <h1>Tu Carrito de Compras</h1>
-    
+    <div class="container mt-5 mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h2 class="card-title mb-0 d-flex align-items-center">
+                            <i class="fas fa-shopping-cart text-primary me-2"></i>
+                            Tu Carrito de Compras
+                        </h2>
+                    </div>
+                    <div class="card-body">
         <!-- Mensajes flash para errores y éxitos -->
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
             <span th:text="${error}"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
             <span th:text="${success}"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    
+                        <!-- Carrito vacío -->
+                        <div th:if="${cart == null or cart.items == null or cart.items.size() == 0}" class="text-center py-5">
+                            <div class="empty-cart-container">
+                                <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                                <h3>Tu carrito está vacío</h3>
+                                <p class="text-muted mb-4">¡Parece que aún no has añadido productos a tu carrito!</p>
+                                <a th:href="@{/home}" class="btn btn-primary">
+                                    <i class="fas fa-shopping-bag me-2"></i> Continuar Comprando
+                                </a>
+                            </div>
         </div>
     
-        <!-- Verificación de que el carrito y sus items no sean nulos -->
+                        <!-- Productos en el carrito -->
         <div th:if="${cart != null and cart.items != null and cart.items.size() > 0}">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="item : ${cart.items}">
-                        <td th:text="${item.product.name}">Nombre del Producto</td>
-                        <td>
-                            <div th:if="${item.product.images != null and item.product.images.size() > 0}">
-                                <img th:src="${item.product.images[0].url}" alt="Imagen del Producto" class="img-fluid" style="width: 100px; height: 100px; object-fit: cover;">
+                            <div class="cart-items">
+                                <div th:each="item : ${cart.items}" class="cart-item d-flex align-items-center py-3 border-bottom">
+                                    <!-- Imagen del producto -->
+                                    <div class="cart-item-image me-3">
+                                        <img th:if="${item.product.images != null and item.product.images.size() > 0}"
+                                             th:src="${item.product.images[0].url}" 
+                                             alt="Imagen del Producto" 
+                                             class="img-fluid rounded"
+                                             style="width: 100px; height: 100px; object-fit: cover;">
+                                        <img th:if="${item.product.images == null or item.product.images.size() == 0}"
+                                             th:src="@{/images/default-image.png}" 
+                                             alt="Imagen Predeterminada" 
+                                             class="img-fluid rounded"
+                                             style="width: 100px; height: 100px; object-fit: cover;">
+                                    </div>
+                                    
+                                    <!-- Información del producto -->
+                                    <div class="cart-item-details flex-grow-1">
+                                        <h5 class="mb-1" th:text="${item.product.name}">Nombre del Producto</h5>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="cart-item-price">
+                                                <span class="text-muted">Precio: </span>
+                                                <span class="fw-bold" th:text="'$' + ${item.product.price}">Precio</span>
+                                                <span th:if="${item.quantity > 1}" class="text-muted" th:text="' x ' + ${item.quantity}"></span>
+                                            </div>
+                                            <div class="cart-item-total">
+                                                <span class="text-muted">Total: </span>
+                                                <span class="fw-bold text-primary" th:text="'$' + ${item.totalPrice}">Total</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botón de eliminar -->
+                                    <div class="cart-item-actions ms-3">
+                                        <form th:action="@{/cart/items/remove/{cartItemId}(cartItemId=${item.id})}" method="post">
+                                            <button class="btn btn-outline-danger btn-sm" type="submit">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div th:if="${item.product.images == null or item.product.images.size() == 0}">
-                                <img th:src="@{/images/default-image.png}" alt="Imagen Predeterminada" class="img-fluid" style="width: 100px; height: 100px; object-fit: cover;">
+                            
+                            <!-- Botones de acción -->
+                            <div class="cart-actions d-flex justify-content-between align-items-center mt-4">
+                                <form th:action="@{/cart/items/clear}" method="post">
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash me-2"></i> Vaciar Carrito
+                                    </button>
+                                </form>
+                                <a th:href="@{/home}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Seguir Comprando
+                                </a>
                             </div>
-                        </td>
-                        <td th:text="'$' + ${item.product.price}">Precio del Producto</td>
-                        <td th:text="'$' + ${item.totalPrice}">Precio Total</td>
-                        <td>
-                            <form th:action="@{/cart/items/remove/{cartItemId}(cartItemId=${item.id})}" method="post">
-                                <button class="btn btn-danger" type="submit">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="total-price">
-                <h3>Precio Total: <span th:text="'$' + ${totalPrice}"></span></h3>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="cart-actions">
-                <form th:action="@{/cart/items/clear}" method="post">
-                    <button type="submit" class="btn btn-danger">Vaciar Carrito</button>
-                </form>
+            
+            <!-- Resumen del pedido -->
+            <div class="col-lg-4" th:if="${cart != null and cart.items != null and cart.items.size() > 0}">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title mb-0">Resumen del Pedido</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span th:text="'$' + ${totalPrice}">$0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Envío</span>
+                            <span>Gratis</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <strong>Total</strong>
+                            <strong class="text-primary" th:text="'$' + ${totalPrice}">$0.00</strong>
+                        </div>
                 <form th:action="@{/purchase}" method="get">
-                    <button type="submit" class="btn btn-success">Finalizar Compra</button>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-check-circle me-2"></i> Finalizar Compra
+                            </button>
                 </form>
             </div>
         </div>
 
-        <div th:if="${cart == null or cart.items == null or cart.items.size() == 0}">
-            <p>Tu carrito está vacío</p>
+                <!-- Información adicional -->
+                <div class="card shadow-sm mt-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Información de Pago</h5>
+                        <div class="d-flex mb-3">
+                            <i class="fab fa-cc-visa me-2 text-primary fa-2x"></i>
+                            <i class="fab fa-cc-mastercard me-2 text-primary fa-2x"></i>
+                            <i class="fab fa-cc-amex me-2 text-primary fa-2x"></i>
+                            <i class="fab fa-cc-paypal me-2 text-primary fa-2x"></i>
+                        </div>
+                        <p class="text-muted small mb-0">Aceptamos todas las principales tarjetas de crédito y débito. Los pagos son procesados de forma segura.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 <script th:src="@{/js/cart.js}"></script>
 </body>
 </html>

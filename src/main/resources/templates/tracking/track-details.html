@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="fragments/header :: header('Seguimiento de Pedido')">
+<head th:replace="~{fragments/header :: header('Seguimiento de Pedido')}">
 </head>
 <body>
 
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <div class="container mt-4">
     <!-- Resumen del pedido -->
@@ -166,10 +166,10 @@
     </div>
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 
 <style>
     .timeline {

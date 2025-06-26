@@ -56,10 +56,6 @@ public class PurchaseController {
 
     @PostMapping("/confirm")
     public String confirmPurchase(Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
-
         // Redirigir a la selección del método de pago
         return "redirect:/purchase/bank-transfer";
     }
@@ -237,11 +233,7 @@ public class PurchaseController {
     
     @GetMapping("/instant-success/{productId}")
     public String showInstantPurchaseSuccess(@PathVariable Long productId, Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
-        // Aquí podríamos obtener información del producto comprado si es necesario
         // Para simplificar, solo mostramos un mensaje de éxito
         model.addAttribute("confirmationMessage", "¡Compra instantánea realizada exitosamente!");
         model.addAttribute("paymentMethod", "instant");

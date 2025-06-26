@@ -1,58 +1,167 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header('Vender Producto')">
+<head th:replace="~{fragments/header :: header('Vender Producto')}">
 </head>
 <body>
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <main class="container mt-5 sell-product-container">
-  <h1 th:if="${product.id == null}">Añadir Nuevo Producto</h1>
-  <h1 th:if="${product.id != null}">Editar Producto</h1>
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0" th:if="${product.id == null}"><i class="fas fa-tag me-2"></i>Publicar Nuevo Producto</h2>
+          <h2 class="mb-0" th:if="${product.id != null}"><i class="fas fa-edit me-2"></i>Editar Producto</h2>
+        </div>
+        <div class="card-body">
+          <!-- Mostrar mensaje de error si existe -->
+          <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+          </div>
 
-  <!-- Mostrar mensaje de error si existe -->
-  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-    <span th:text="${errorMessage}"></span>
-  </div>
+          <!-- Formulario para guardar producto -->
+          <form th:action="@{/products/saveProduct}" method="post" th:object="${product}" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{id}" />
+            
+            <div class="row">
+              <!-- Columna izquierda: Detalles del producto -->
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label for="name" class="form-label fw-bold">Nombre del Producto</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-shopping-bag"></i></span>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" required 
+                           placeholder="Ej: Chaqueta Vintage Años 80">
+                  </div>
+                  <div class="invalid-feedback">Por favor ingresa un nombre para tu producto.</div>
+                </div>
 
-  <!-- Formulario para guardar producto -->
-  <form th:action="@{/products/saveProduct}" method="post" th:object="${product}" enctype="multipart/form-data">
-    <div class="form-group">
-      <label for="name">Nombre</label>
-      <input type="text" id="name" th:field="*{name}" class="form-control" required>
-    </div>
+                <div class="mb-4">
+                  <label for="description" class="form-label fw-bold">Descripción Detallada</label>
+                  <textarea id="description" th:field="*{description}" class="form-control" rows="5" required
+                            placeholder="Describe tu producto: material, estado, talla, etc."></textarea>
+                  <div class="invalid-feedback">Por favor ingresa una descripción para tu producto.</div>
+                  <small class="text-muted">Una buena descripción aumenta las posibilidades de venta.</small>
+                </div>
 
-    <div class="form-group">
-      <label for="description">Descripción</label>
-      <textarea id="description" th:field="*{description}" class="form-control" required></textarea>
-    </div>
+                <div class="mb-4">
+                  <label for="price" class="form-label fw-bold">Precio ($)</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                    <input type="number" id="price" th:field="*{price}" class="form-control" required min="0" step="0.01"
+                           placeholder="0.00">
+                  </div>
+                  <div class="invalid-feedback">Por favor ingresa un precio válido.</div>
+                </div>
+              </div>
+              
+              <!-- Columna derecha: Categorías e imágenes -->
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label fw-bold">Categorías</label>
+                  <div class="categories-container border rounded p-3" style="max-height: 150px; overflow-y: auto;">
+                    <div class="form-check mb-2" th:each="category : ${categories}">
+                      <input class="form-check-input" type="checkbox" th:field="*{categories}" th:value="${category.id}" 
+                             th:id="'category-' + ${category.id}">
+                      <label class="form-check-label" th:for="'category-' + ${category.id}" th:text="${category.name}"></label>
+                    </div>
+                  </div>
+                  <small class="text-muted">Selecciona al menos una categoría.</small>
+                </div>
 
-    <div class="form-group">
-      <label for="price">Precio</label>
-      <input type="number" id="price" th:field="*{price}" class="form-control" required>
-    </div>
+                <div class="mb-4">
+                  <label for="imageFiles" class="form-label fw-bold">Imágenes del Producto</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-images"></i></span>
+                    <input type="file" id="imageFiles" name="imageFiles" class="form-control" multiple accept="image/*" required>
+                  </div>
+                  <div class="invalid-feedback">Por favor sube al menos una imagen.</div>
+                  <small class="text-muted">Puedes seleccionar múltiples imágenes (máximo 5).</small>
+                  
+                  <!-- Vista previa de imágenes -->
+                  <div id="imagePreviewContainer" class="d-flex flex-wrap mt-2">
+                    <!-- Las vistas previas se mostrarán aquí -->
+                  </div>
+                </div>
+                
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="available" th:field="*{available}" checked>
+                  <label class="form-check-label fw-bold" for="available">Disponible para la venta</label>
+                </div>
+              </div>
+            </div>
 
-    <div class="form-group">
-      <label>Categorías</label>
-      <div th:each="category : ${categories}">
-        <label>
-          <input type="checkbox" th:field="*{categories}" th:value="${category.id}">
-          <span th:text="${category.name}"></span>
-        </label>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <a th:href="@{/profile}" class="btn btn-outline-secondary me-md-2">
+                <i class="fas fa-times me-1"></i> Cancelar
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Publicar Producto
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-
-    <div class="form-group">
-      <label for="available">Disponible</label>
-      <input type="checkbox" id="available" th:field="*{available}">
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Guardar Producto</button>
-  </form>
+  </div>
 </main>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+<script>
+  // Vista previa de imágenes
+  document.getElementById('imageFiles').addEventListener('change', function(event) {
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    previewContainer.innerHTML = '';
+    
+    if (this.files.length > 5) {
+      alert('Solo puedes subir un máximo de 5 imágenes.');
+      this.value = '';
+      return;
+    }
+    
+    Array.from(this.files).forEach(file => {
+      if (!file.type.match('image.*')) {
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'position-relative m-2';
+        
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'img-thumbnail';
+        img.style.width = '100px';
+        img.style.height = '100px';
+        img.style.objectFit = 'cover';
+        
+        previewDiv.appendChild(img);
+        previewContainer.appendChild(previewDiv);
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  });
+  
+  // Validación del formulario
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      const form = document.querySelector('.needs-validation');
+      form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
 </body>
 </html>

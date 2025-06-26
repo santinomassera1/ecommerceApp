@@ -35,6 +35,13 @@ public class CartController {
         
         Cart cart = cartService.getCartByUser(user);
         if (cart != null) {
+            cart.getItems().forEach(item -> {
+                BigDecimal correctTotalPrice = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+                if (!correctTotalPrice.equals(item.getTotalPrice())) {
+                    item.setTotalPrice(correctTotalPrice);
+                }
+            });
+            
             BigDecimal totalPrice = cart.getItems().stream()
                     .map(CartItem::getTotalPrice)
                     .filter(Objects::nonNull)

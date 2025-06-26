@@ -8,7 +8,7 @@
 html, body {
     height: 100%;
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
@@ -110,9 +110,19 @@ header {
 }
 
 .btn-filter, .btn-sort {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #000;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+}
+
+.btn-filter:hover, .btn-sort:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
 }
 
 /* === Product Card === */
@@ -135,33 +145,31 @@ a:hover {
 }
 
 .product-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    position: relative;
 }
 
 .product-card:hover {
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Contenedor de la imagen del producto y vendedor */
 .product-image-container {
-    position: relative;
-    width: 100%;
+    height: 200px;
     overflow: hidden;
+    position: relative;
 }
 
 .product-image-container img {
-    width: 100%;
-    height: auto;
     object-fit: cover;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.5s ease;
 }
 
 .product-image-container .seller-info {
@@ -215,27 +223,36 @@ a:hover {
 
 /* === Card Body === */
 .product-card .card-body {
-    padding: 15px;
-    text-align: center;
+    padding: 1.25rem;
 }
 
 .product-card .card-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.product-card .card-title a {
+    color: #212529;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.product-card .card-title a:hover {
+    color: #007bff;
 }
 
 .product-card .card-text {
+    color: #6c757d;
     font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
-.product-card .price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #28a745;
+.product-card .card-price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #212529;
 }
 
 .product-card .old-price {
@@ -314,13 +331,9 @@ a:hover {
 
 /* === Card Footer & Action Icons === */
 .card-footer {
-    background-color: white;
-    border-top: none;
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.25rem;
 }
 
 .card-footer .action-icons {
@@ -427,4 +440,284 @@ footer {
     font-size: 1.5rem;
     color: white;
     margin-left: 15px;
+}
+
+/* Estilos para los carruseles de productos */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    height: 200px;
+}
+
+.product-image-container img {
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image-container img {
+    transform: scale(1.05);
+}
+
+/* Estilos para los indicadores del carrusel */
+.carousel-indicators {
+    bottom: 0;
+    margin-bottom: 0;
+}
+
+.carousel-indicators li {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-indicators .active {
+    background-color: #fff;
+}
+
+/* Estilos para los controles del carrusel */
+.carousel-control-prev, .carousel-control-next {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .carousel-control-prev,
+.product-card:hover .carousel-control-next {
+    opacity: 0.8;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    padding: 10px;
+}
+
+/* Estilos para la página de detalles del producto */
+#productImageCarousel .carousel-item {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.thumbnail-img {
+    transition: opacity 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.thumbnail-img:hover {
+    opacity: 0.8;
+    border-color: #007bff;
+}
+
+/* Estilos para la sección de filtros */
+.filter-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.filter-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.list-group-item {
+    border: 1px solid #eee;
+    margin-bottom: 5px;
+    border-radius: 4px !important;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.list-group-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.sort-option {
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.sort-option:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.sort-option i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Estilos para el filtro de precio */
+.price-slider {
+    padding: 10px 5px;
+}
+
+.custom-range {
+    margin-bottom: 10px;
+}
+
+/* Vista de lista */
+.product-row.list-view .product-item {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+}
+
+.product-row.list-view .product-card {
+    flex-direction: row;
+}
+
+.product-row.list-view .product-image-container {
+    width: 200px;
+    height: 200px;
+}
+
+.product-row.list-view .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Estado vacío */
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .filter-section {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .product-row.list-view .product-card {
+        flex-direction: column;
+    }
+    
+    .product-row.list-view .product-image-container {
+        width: 100%;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.product-item {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Badges de vendedor y categorías */
+.seller-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.seller-name {
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.seller-name:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.category-badge {
+    position: absolute;
+    bottom: 200px;
+    right: 10px;
+    z-index: 10;
+    padding: 5px;
+}
+
+.category-badge .badge {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #333;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-badges .badge {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+/* Botones de acción */
+.product-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #495057;
+    border: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    background-color: #fff;
+    color: #007bff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-like:hover {
+    color: #dc3545;
+}
+
+/* Animación para el botón de like */
+@keyframes likeAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.btn-like.liked {
+    animation: likeAnimation 0.5s ease;
+}
+
+.btn-like .fas.fa-heart {
+    color: #dc3545;
+}
+
+.btn-comment {
+    text-decoration: none;
 }

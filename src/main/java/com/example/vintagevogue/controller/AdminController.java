@@ -3,10 +3,12 @@ package com.example.vintagevogue.controller;
 import com.example.vintagevogue.dto.UserDTO;
 import com.example.vintagevogue.model.Ad;
 import com.example.vintagevogue.model.Category;
+import com.example.vintagevogue.model.Product;
 import com.example.vintagevogue.model.User;
 import com.example.vintagevogue.repository.UserRepository;
 import com.example.vintagevogue.service.AdService;
 import com.example.vintagevogue.service.CategoryService;
+import com.example.vintagevogue.service.ProductService;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -32,9 +35,17 @@ public class AdminController {
 
     @Autowired
     private AdService adService;
+    
+    @Autowired
+    private ProductService productService;
 
     @GetMapping
-    public String adminPage() {
+    public String adminPage(Model model) {
+        // Inyectar servicios en el modelo para acceso desde Thymeleaf
+        model.addAttribute("userService", userService);
+        model.addAttribute("categoryService", categoryService);
+        model.addAttribute("adService", adService);
+        model.addAttribute("productService", productService);
         return "admin";
     }
 
@@ -57,6 +68,70 @@ public class AdminController {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
         return "manage-categories";
+    }
+
+    @GetMapping("/manage-product")
+    public String manageProducts(Model model) {
+        List<Product> products = productService.getAllProductsIncludingUnavailable();
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "manage-product";
+    }
+
+    @PostMapping("/products/mark-as-sold")
+    @ResponseBody
+    public ResponseEntity<String> markProductAsSold(@RequestParam Long productId) {
+        try {
+            Optional<Product> productOptional = productService.getProductById(productId);
+            if (productOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"message\":\"Producto no encontrado\"}");
+            }
+            
+            productService.markProductAsSold(productId);
+            return ResponseEntity.ok("{\"message\":\"Producto marcado como vendido correctamente\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"message\":\"Error al marcar el producto como vendido: " + e.getMessage() + "\"}");
+        }
+    }
+    
+    @PostMapping("/products/mark-as-available")
+    @ResponseBody
+    public ResponseEntity<String> markProductAsAvailable(@RequestParam Long productId) {
+        try {
+            Optional<Product> productOptional = productService.getProductById(productId);
+            if (productOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"message\":\"Producto no encontrado\"}");
+            }
+            
+            Product product = productOptional.get();
+            product.setAvailable(true);
+            productService.saveProductWithoutImages(product);
+            return ResponseEntity.ok("{\"message\":\"Producto marcado como disponible correctamente\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"message\":\"Error al marcar el producto como disponible: " + e.getMessage() + "\"}");
+        }
+    }
+    
+    @PostMapping("/products/delete")
+    @ResponseBody
+    public ResponseEntity<String> deleteProduct(@RequestParam Long productId) {
+        try {
+            Optional<Product> productOptional = productService.getProductById(productId);
+            if (productOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"message\":\"Producto no encontrado\"}");
+            }
+            
+            productService.deleteProduct(productId);
+            return ResponseEntity.ok("{\"message\":\"Producto eliminado correctamente\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"message\":\"Error al eliminar el producto: " + e.getMessage() + "\"}");
+        }
     }
 
     /**  Buscar usuarios por username */
@@ -103,6 +178,19 @@ public class AdminController {
             return ResponseEntity.ok("{\"message\":\"Rol asignado correctamente\"}");
         } else {
             return ResponseEntity.badRequest().body("{\"message\":\"Error al asignar rol\"}");
+        }
+    }
+    
+    @PostMapping(value = "/remove-role", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> removeRole(@RequestBody UserDTO userDTO) {
+        System.out.println("📌 Removiendo rol: " + userDTO.getUsername() + " - " + userDTO.getRoleName());
+
+        boolean success = userService.removeRoleFromUser(userDTO.getUsername(), userDTO.getRoleName());
+        if (success) {
+            return ResponseEntity.ok("{\"message\":\"Rol removido correctamente\"}");
+        } else {
+            return ResponseEntity.badRequest().body("{\"message\":\"Error al remover rol. El usuario no tiene ese rol o no existe.\"}");
         }
     }
 

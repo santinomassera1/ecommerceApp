@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -229,6 +231,38 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * Remove a role from a user.
+     */
+    @Transactional
+    public boolean removeRoleFromUser(String username, String roleName) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+        
+        User user = userOptional.get();
+        Role role = roleRepository.findByName(roleName);
+        
+        if (role == null) {
+            return false;
+        }
+        
+        // Verificar si el usuario tiene el rol antes de intentar eliminarlo
+        boolean hasRole = user.getRoles().stream()
+                .anyMatch(r -> r.getName().equals(roleName));
+                
+        if (!hasRole) {
+            return false;
+        }
+        
+        // Remover el rol del usuario
+        user.getRoles().removeIf(r -> r.getName().equals(roleName));
+        userRepository.save(user);
+        
+        return true;
+    }
+
+    /**
      * Spring Security method for loading user details.
      */
     @Override
@@ -334,5 +368,16 @@ public class UserService implements UserDetailsService {
             Hibernate.initialize(user.getProducts()); // Asegurar que la colección está cargada
         }
         return user;
+    }
+
+    /**
+     * Find the most recently registered users.
+     * @param limit The maximum number of users to return
+     * @return List of the most recently registered users
+     */
+    public List<User> findRecentUsers(int limit) {
+        return userRepository.findAll(
+            PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"))
+        ).getContent();
     }
 }

@@ -60,20 +60,22 @@ public class CartItemService {
         CartItem existingItem = cartItemRepository.findByUserAndProduct(user, product).orElse(null);
 
         if (existingItem != null) {
-            // Si el producto ya está en el carrito, incrementar la cantidad
-            existingItem.setQuantity(existingItem.getQuantity() + 1);
-            existingItem.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(existingItem.getQuantity())));
-            cartItemRepository.save(existingItem);
+            // Si el producto ya está en el carrito, lanzar una excepción
+            throw new IllegalStateException("Este producto ya está en tu carrito.");
         } else {
             // Si el producto no está en el carrito, agregarlo
             CartItem cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setProduct(product);
             cartItem.setQuantity(1);
+            // Establecer el precio total igual al precio del producto para cantidad 1
             cartItem.setTotalPrice(product.getPrice());
             cartItem.setCart(cart); 
             cartItemRepository.save(cartItem);
         }
+        
+        // Guardar el carrito actualizado
+        cartRepository.save(cart);
     }
 
     @Transactional

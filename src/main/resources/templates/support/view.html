@@ -1,32 +1,86 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ticket Details</title>
+    <title>Detalles del Ticket - Vintage Vogue</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <style>
+        .response {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .response-support {
+            background-color: #e3f2fd;
+            border-left: 4px solid #0d6efd;
+        }
+        .response-user {
+            background-color: #f8f9fa;
+            border-left: 4px solid #6c757d;
+        }
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .response-content {
+            white-space: pre-line;
+        }
+        .priority-high {
+            color: #dc3545;
+        }
+        .priority-medium {
+            color: #fd7e14;
+        }
+        .priority-low {
+            color: #198754;
+        }
+    </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Support Panel</h1>
-    <a class="nav-link" th:href="@{/logout}">Logout</a>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/support}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Soporte</h1>
+        </a>
+    </div>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/support}">
+            <i class="fas fa-ticket-alt me-1"></i> Tickets
+        </a>
+        <a class="nav-link" th:href="@{/support/new}">
+            <i class="fas fa-plus-circle me-1"></i> Nuevo Ticket
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
 </header>
 
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="/support">
-                            <i class="fas fa-ticket-alt"></i> View Tickets
+                            <i class="fas fa-ticket-alt"></i> Ver Tickets
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/support/new">
-                            <i class="fas fa-plus-circle"></i> Create New Ticket
+                            <i class="fas fa-plus-circle"></i> Crear Nuevo Ticket
                         </a>
                     </li>
                 </ul>
@@ -35,35 +89,169 @@
 
         <!-- Main content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h2>Ticket Details</h2>
-            <div class="card p-3">
-                <p><strong>Subject:</strong> <span th:text="${ticket.subject}"></span></p>
-                <p><strong>Description:</strong> <span th:text="${ticket.description}"></span></p>
-                <p><strong>Status:</strong> <span th:text="${ticket.status}"></span></p>
-                <p><strong>Created At:</strong> <span th:text="${ticket.createdAt}"></span></p>
-
-                <!-- Formulario para actualizar el estado del ticket -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2>Detalles del Ticket #<span th:text="${ticket.id}"></span></h2>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/support" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Información del Ticket
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h5 class="mb-1">Asunto</h5>
+                                <p class="border-bottom pb-2" th:text="${ticket.subject}"></p>
+                            </div>
+                            <div class="mb-3">
+                                <h5 class="mb-1">Descripción</h5>
+                                <p class="border-bottom pb-2" th:text="${ticket.description}"></p>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <h5 class="mb-1">Estado</h5>
+                                    <div class="pb-2">
+                                        <span th:if="${ticket.status.name() == 'OPEN'}" class="badge bg-warning">Abierto</span>
+                                        <span th:if="${ticket.status.name() == 'IN_PROGRESS'}" class="badge bg-info">En Progreso</span>
+                                        <span th:if="${ticket.status.name() == 'RESOLVED'}" class="badge bg-success">Resuelto</span>
+                                        <span th:if="${ticket.status.name() == 'CLOSED'}" class="badge bg-secondary">Cerrado</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="mb-1">Prioridad</h5>
+                                    <div class="pb-2">
+                                        <span th:if="${ticket.priority == 1}" class="priority-high">
+                                            <i class="fas fa-exclamation-circle"></i> Alta
+                                        </span>
+                                        <span th:if="${ticket.priority == 2}" class="priority-medium">
+                                            <i class="fas fa-exclamation"></i> Media
+                                        </span>
+                                        <span th:if="${ticket.priority == 3}" class="priority-low">
+                                            <i class="fas fa-info-circle"></i> Baja
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="mb-1">Fecha de Creación</h5>
+                                    <p class="pb-2" th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                                </div>
+                            </div>
+                            <div class="mb-3" th:if="${ticket.category != null}">
+                                <h5 class="mb-1">Categoría</h5>
+                                <p class="pb-2" th:text="${ticket.category}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Respuestas del ticket -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-comments me-1"></i>
+                            Conversación
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${responses.empty}" class="text-center py-4">
+                                <p class="text-muted">No hay respuestas todavía</p>
+                            </div>
+                            
+                            <div th:each="response : ${responses}" 
+                                 th:class="${response.fromSupport ? 'response response-support' : 'response response-user'}">
+                                <div class="response-header">
+                                    <div>
+                                        <strong th:text="${response.user.username}"></strong>
+                                        <span th:if="${response.fromSupport}" class="badge bg-primary ms-2">Soporte</span>
+                                    </div>
+                                    <div class="text-muted" th:text="${#temporals.format(response.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
+                                </div>
+                                <div class="response-content" th:text="${response.content}"></div>
+                            </div>
+                            
+                            <!-- Formulario para añadir respuesta -->
+                            <form th:action="@{/support/{id}/respond(id=${ticket.id})}" method="post" class="mt-4">
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">Añadir respuesta:</label>
+                                    <textarea id="content" name="content" class="form-control" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-1"></i> Enviar Respuesta
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- Actualizar estado -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-cogs me-1"></i>
+                            Actualizar Estado
+                        </div>
+                        <div class="card-body">
                 <form th:action="@{/support/update-status}" method="post">
                     <input type="hidden" name="ticketId" th:value="${ticket.id}">
-                    <label for="status">Update Status:</label>
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Nuevo Estado:</label>
                     <select class="form-control" name="status" id="status">
                         <option th:each="s : ${T(com.example.vintagevogue.model.TicketStatus).values()}"
-                                th:value="${s}" th:text="${s}"
+                                                th:value="${s}" 
+                                                th:text="${s.name() == 'OPEN' ? 'Abierto' : (s.name() == 'IN_PROGRESS' ? 'En Progreso' : (s.name() == 'RESOLVED' ? 'Resuelto' : 'Cerrado'))}"
                                 th:selected="${s == ticket.status}">
                         </option>
                     </select>
-                    <button type="submit" class="btn btn-primary mt-3">Update Status</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save me-1"></i> Actualizar Estado
+                                </button>
                 </form>
-
-                <a href="/support" class="btn btn-secondary mt-3">Back</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Actualizar prioridad -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-flag me-1"></i>
+                            Actualizar Prioridad
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/support/{id}/priority(id=${ticket.id})}" method="post">
+                                <div class="mb-3">
+                                    <label for="priority" class="form-label">Prioridad:</label>
+                                    <select class="form-control" name="priority" id="priority">
+                                        <option value="1" th:selected="${ticket.priority == 1}">Alta</option>
+                                        <option value="2" th:selected="${ticket.priority == 2}">Media</option>
+                                        <option value="3" th:selected="${ticket.priority == 3}">Baja</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save me-1"></i> Actualizar Prioridad
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Soporte v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 

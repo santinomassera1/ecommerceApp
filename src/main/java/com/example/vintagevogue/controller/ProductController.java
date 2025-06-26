@@ -42,19 +42,44 @@ public class ProductController {
     }
 
     @PostMapping("/saveProduct")
-    public String saveProduct(@ModelAttribute Product product, Model model, Authentication authentication) {
+    public String saveProduct(@ModelAttribute("product") Product product,
+                             @RequestParam(value = "imageFiles", required = false) MultipartFile[] imageFiles,
+                             Model model, Authentication authentication) {
         try {
             String username = authentication.getName();
             User user = userService.findByUsername(username).orElseThrow(() ->
                     new IllegalArgumentException("User not found: " + username));
 
+            // Asignar el usuario al producto
             product.setUser(user);
-            productService.saveProductWithoutImages(product); // Guardar el producto sin imágenes
+            
+            // Validar que haya imágenes si es un producto nuevo
+            if ((product.getId() == null) && (imageFiles == null || imageFiles.length == 0 || imageFiles[0].isEmpty())) {
+                model.addAttribute("errorMessage", "Debes subir al menos una imagen para tu producto.");
+                model.addAttribute("categories", categoryService.getAllCategories());
+                return "sell-product";
+            }
+            
+            // Guardar el producto primero (sin imágenes)
+            productService.saveProductWithoutImages(product);
+            
+            // Procesar las imágenes si existen
+            if (imageFiles != null && imageFiles.length > 0 && !imageFiles[0].isEmpty()) {
+                try {
+                    productService.saveImagesForProduct(product.getId(), imageFiles);
+                } catch (IOException e) {
+                    System.err.println("Error al subir imágenes: " + e.getMessage());
+                    return "redirect:/profile?success=product-saved&warning=images-failed";
+                }
+            }
 
-            // Redirigir al formulario de subida de imágenes, pasando el ID del producto
-            return "redirect:/products/uploadImages?productId=" + product.getId();
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            // Redirigir al perfil con mensaje de éxito
+            return "redirect:/profile?success=product-saved";
+            
+        } catch (Exception e) {
+            // Capturar cualquier excepción y mostrar un mensaje de error
+            model.addAttribute("errorMessage", "Error al guardar el producto: " + e.getMessage());
+            model.addAttribute("categories", categoryService.getAllCategories());
             return "sell-product";
         }
     }
@@ -70,7 +95,7 @@ public class ProductController {
 
     @PostMapping("/uploadImages")
     public String uploadImages(@RequestParam("productId") Long productId,
-                            @RequestParam("images") MultipartFile[] imageFiles, Model model) {
+                            @RequestParam("imageFiles") MultipartFile[] imageFiles, Model model) {
         try {
             productService.saveImagesForProduct(productId, imageFiles);
             return "redirect:/profile";  // Redirige al listado de productos del usuario

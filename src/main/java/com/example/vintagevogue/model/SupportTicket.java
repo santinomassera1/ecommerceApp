@@ -2,6 +2,8 @@ package com.example.vintagevogue.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "support_tickets")
@@ -30,6 +32,15 @@ public class SupportTicket {
 
     @Column
     private LocalDateTime resolvedAt;
+    
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TicketResponse> responses = new ArrayList<>();
+
+    @Column
+    private Integer priority = 2; // 1: Alta, 2: Media, 3: Baja
+
+    @Column
+    private String category;
 
     public SupportTicket() {
         this.createdAt = LocalDateTime.now();
@@ -90,5 +101,39 @@ public class SupportTicket {
 
     public void setResolvedAt(LocalDateTime resolvedAt) {
         this.resolvedAt = resolvedAt;
+    }
+    
+    public List<TicketResponse> getResponses() {
+        return responses;
+    }
+
+    public void setResponses(List<TicketResponse> responses) {
+        this.responses = responses;
+    }
+    
+    public void addResponse(TicketResponse response) {
+        responses.add(response);
+        response.setTicket(this);
+    }
+
+    public void removeResponse(TicketResponse response) {
+        responses.remove(response);
+        response.setTicket(null);
+    }
+    
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -33,24 +33,52 @@
     </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Panel de Administración</h1>
-    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/admin}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Administración</h1>
+        </a>
+    </div>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/admin}">
+            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+        </a>
+        <a class="nav-link active" th:href="@{/admin/manage-user}">
+            <i class="fas fa-users me-1"></i> Usuarios
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-product}">
+            <i class="fas fa-box me-1"></i> Productos
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
 </header>
 
-<div class="container-fluid" style="margin-top: 80px;">
+<div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/manage-user}">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/manage-user}">
                             <i class="fas fa-users"></i> Gestionar Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/admin/ad}">
+                        <a class="nav-link" th:href="@{/admin/manage-ad}">
                             <i class="fas fa-bullhorn"></i> Gestionar Anuncios
                         </a>
                     </li>
@@ -59,57 +87,140 @@
                             <i class="fas fa-layer-group"></i> Gestionar Categorías
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-product}">
+                            <i class="fas fa-box"></i> Gestionar Productos
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
 
         <!-- Main Content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h1>Gestión de Usuarios</h1>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2>Gestión de Usuarios</h2>
+            </div>
 
             <!-- Search Bar -->
-            <input type="text" id="searchUser" class="form-control mb-3" placeholder="Buscar usuario por nombre">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" id="searchUser" class="form-control" placeholder="Buscar usuario por nombre">
+                    </div>
+                </div>
+            </div>
 
             <!-- Users Table -->
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre de Usuario</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody id="userTable">
-                <!-- User rows will be populated dynamically with JavaScript -->
-                </tbody>
-            </table>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    Usuarios Registrados
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre de Usuario</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="userTable">
+                            <!-- User rows will be populated dynamically with JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-            <h2>Asignar Roles a Usuarios</h2>
-            <form id="assignRoleForm">
-                <div class="form-group suggestions-container">
-                    <label for="assignUsername">Nombre de Usuario:</label>
-                    <input type="text" id="assignUsername" class="form-control" autocomplete="off" required>
-                    <div id="userSuggestions" class="suggestions-list"></div>
+            <!-- Assign Role Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user-tag me-1"></i>
+                    Asignar Roles a Usuarios
                 </div>
-                <div class="form-group">
-                    <label for="assignRole">Rol:</label>
-                    <select id="assignRole" class="form-control">
-                        <option value="ROLE_USER">Usuario</option>
-                        <option value="ROLE_ADMIN">Administrador</option>
-                        <option value="ROLE_SUPPORT">Soporte</option>
-                    </select>
+                <div class="card-body">
+                    <form id="assignRoleForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group suggestions-container">
+                                    <label for="assignUsername">Nombre de Usuario:</label>
+                                    <input type="text" id="assignUsername" class="form-control" autocomplete="off" required>
+                                    <div id="userSuggestions" class="suggestions-list"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="assignRole">Rol:</label>
+                                    <select id="assignRole" class="form-control">
+                                        <option value="ROLE_USER">Usuario</option>
+                                        <option value="ROLE_ADMIN">Administrador</option>
+                                        <option value="ROLE_SUPP">Soporte</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="fas fa-save me-1"></i> Asignar Rol
+                        </button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Asignar Rol</button>
-            </form>
+            </div>
+            
+            <!-- Remove Role Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user-minus me-1"></i>
+                    Quitar Roles a Usuarios
+                </div>
+                <div class="card-body">
+                    <form id="removeRoleForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group suggestions-container">
+                                    <label for="removeUsername">Nombre de Usuario:</label>
+                                    <input type="text" id="removeUsername" class="form-control" autocomplete="off" required>
+                                    <div id="removeUserSuggestions" class="suggestions-list"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="removeRole">Rol a quitar:</label>
+                                    <select id="removeRole" class="form-control">
+                                        <option value="ROLE_USER">Usuario</option>
+                                        <option value="ROLE_ADMIN">Administrador</option>
+                                        <option value="ROLE_SUPP">Soporte</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-danger mt-3">
+                            <i class="fas fa-trash-alt me-1"></i> Quitar Rol
+                        </button>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 </div>
 
 <!-- Footer -->
-<footer>
-    <div class="footer-bottom text-center mt-4">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Administración v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 
@@ -131,7 +242,9 @@
                             <td>${user.username}</td>
                             <td>${roles}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm" data-username="${user.username}" onclick="deleteUser(this)">Eliminar</button>
+                                <button class="btn btn-danger btn-sm" data-username="${user.username}" onclick="deleteUser(this)">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
                             </td>
                         </tr>
                     `);
@@ -200,6 +313,51 @@
                 error: function (error) {
                     console.error("❌ Error asignando rol:", error);
                     alert("Error al asignar rol");
+                }
+            });
+        });
+
+        // Manejar el input en el campo de nombre de usuario para mostrar sugerencias (quitar roles)
+        $("#removeUsername").on("input", function() {
+            $.get("/admin/search-user?username=" + $(this).val(), function (data) {
+                let suggestionsList = $("#removeUserSuggestions");
+                suggestionsList.empty();
+                
+                if (data.length > 0) {
+                    suggestionsList.show();
+                    data.forEach(user => {
+                        let item = $(`<div class="suggestion-item">${user.username}</div>`);
+                        item.on('click', function() {
+                            $("#removeUsername").val(user.username);
+                            suggestionsList.hide();
+                        });
+                        suggestionsList.append(item);
+                    });
+                } else {
+                    suggestionsList.hide();
+                }
+            }).fail(function (error) {
+                console.error("❌ Error obteniendo sugerencias de usuarios:", error);
+            });
+        });
+
+        $("#removeRoleForm").on("submit", function (e) {
+            e.preventDefault();
+            let username = $("#removeUsername").val();
+            let role = $("#removeRole").val();
+
+            $.ajax({
+                url: "/admin/remove-role",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ username: username, roleName: role }),
+                success: function (response) {
+                    alert(response.message);
+                    loadUsers();
+                },
+                error: function (error) {
+                    console.error("❌ Error quitando rol:", error);
+                    alert("Error al quitar rol: " + (error.responseJSON ? error.responseJSON.message : "Operación fallida"));
                 }
             });
         });

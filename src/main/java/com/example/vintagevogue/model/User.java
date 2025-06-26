@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     private String city;
     private String country;
     private String profileImageUrl;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @JsonIgnore // Evita referencias circulares en JSON
     @ManyToMany(fetch = FetchType.EAGER)
@@ -51,6 +55,7 @@ public class User implements UserDetails {
     public User() {
         this.isVerified = false;
         this.verificationToken = UUID.randomUUID().toString();
+        this.createdAt = LocalDateTime.now();
     }
 
     @Override
@@ -66,6 +71,7 @@ public class User implements UserDetails {
         this.password = password;
         this.isVerified = false;
         this.verificationToken = UUID.randomUUID().toString();
+        this.createdAt = LocalDateTime.now();
     }
 
     public Set<Product> getProducts() {
@@ -188,5 +194,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isVerified;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

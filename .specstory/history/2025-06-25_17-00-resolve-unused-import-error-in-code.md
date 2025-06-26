@@ -657,6 +657,58 @@ intentemoslo de vuelta puse mal la contraseña
 
 _**Assistant**_
 
+<no message>
+
+---
+
+```bash
+mysql -u root -p
+```
+
+```
+santinomassera@Santinos-MacBook-Air ecommerceApp % Cammysql -u root -p
+zsh: command not found: Cammysql
+santinomassera@Santinos-MacBook-Air ecommerceApp %
+```
+
+---
+
+<no message>
+
+---
+
+```bash
+mysql -u root -p
+```
+
+```
+santinomassera@Santinos-MacBook-Air ecommerceApp % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 28
+Server version: 9.3.0 Homebrew
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+```
+
+---
+
+_**User**_
+
+guardemos todos los cambios en el git
+
+---
+
+_**Assistant**_
+
 
 
 ---

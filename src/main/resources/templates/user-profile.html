@@ -1,157 +1,319 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header('Perfil de Usuario')">
+<head th:replace="~{fragments/header :: header('Perfil de Usuario')}">
 </head>
 <body>
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <div class="container profile-container mt-5">
+    <!-- Cabecera del perfil -->
+    <div class="profile-header mb-4">
+        <div class="profile-header-content">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <!-- Avatar del usuario -->
+                    <div th:if="${user.profileImageUrl != null && !user.profileImageUrl.isEmpty()}">
+                        <img th:src="${user.profileImageUrl}" alt="Avatar" class="profile-avatar" id="profileImagePreview">
+                    </div>
+                    <div th:if="${user.profileImageUrl == null || user.profileImageUrl.isEmpty()}" class="profile-avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <!-- Botón para subir imagen (solo visible en perfil propio) -->
+                    <div th:if="${isOwnProfile}" class="mt-3">
+                        <form th:action="@{/profile/upload-image}" method="post" enctype="multipart/form-data" id="imageUploadForm">
+                            <label for="profileImageInput" class="btn btn-sm btn-light">
+                                <i class="fas fa-camera"></i> Cambiar foto
+                            </label>
+                            <input type="file" id="profileImageInput" name="profileImage" style="display: none;" accept="image/*">
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="col-md-9">
+                    <div class="profile-info">
+                        <h1 class="profile-username" th:text="${user.username}">Username</h1>
+                        <p class="profile-email" th:text="${user.email}">user@example.com</p>
+                        
+                        <!-- Información adicional -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-map-marker-alt mr-2"></i> <strong>Dirección:</strong></p>
+                                <p th:text="${user.address != null && !user.address.isEmpty() ? user.address : 'No especificada'}">1234 Street</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-city mr-2"></i> <strong>Ciudad:</strong></p>
+                                <p th:text="${user.city != null && !user.city.isEmpty() ? user.city : 'No especificada'}">City</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><i class="fas fa-globe mr-2"></i> <strong>País:</strong></p>
+                                <p th:text="${user.country != null && !user.country.isEmpty() ? user.country : 'No especificado'}">Country</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas -->
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-value" id="productCount" th:text="${products.size()}">0</span>
+                                <span class="stat-label">Productos</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="salesCount">0</span>
+                                <span class="stat-label">Ventas</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="mt-3">
+                            <a th:if="${!isOwnProfile}" class="btn btn-primary" th:href="@{/messages/{userId}(userId=${user.id})}">
+                                <i class="fas fa-envelope"></i> Enviar Mensaje
+                            </a>
+                            <button th:if="${isOwnProfile}" id="editProfileBtn" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Editar Perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
-        <!-- Sidebar navigation -->
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('mainContent')">Productos</a>
-                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('manageUser')">Gestionar Usuario</a>
-                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('manageProducts')">Gestionar Productos</a>
-                <a href="#" class="list-group-item list-group-item-action" th:if="${isOwnProfile}" onclick="showSection('managePassword')">Cambiar Contraseña</a>
+        <!-- Navegación del perfil -->
+        <div class="col-md-3">
+            <div class="profile-nav list-group">
+                <a href="#" class="list-group-item list-group-item-action active" data-target="mainContent">
+                    <i class="fas fa-box"></i> Productos
+                </a>
+                <a href="#" th:if="${isOwnProfile}" class="list-group-item list-group-item-action" data-target="manageUser">
+                    <i class="fas fa-user-cog"></i> Gestionar Usuario
+                </a>
+                <a href="#" th:if="${isOwnProfile}" class="list-group-item list-group-item-action" data-target="manageProducts">
+                    <i class="fas fa-store"></i> Gestionar Productos
+                </a>
+                <a href="#" th:if="${isOwnProfile}" class="list-group-item list-group-item-action" data-target="managePassword">
+                    <i class="fas fa-key"></i> Cambiar Contraseña
+                </a>
             </div>
         </div>
 
-        <!-- Main content -->
-        <div class="col-md-8">
-            <!-- User Info Section -->
-            <div id="userInfo">
-                <h2>Perfil de Usuario: <span th:text="${user.username}">Username</span></h2>
-                <p>Email: <span th:text="${user.email}">user@example.com</span></p>
-                <p>Dirección: <span th:text="${user.address}">1234 Street</span></p>
-                <p>Ciudad: <span th:text="${user.city}">City</span></p>
-                <p>País: <span th:text="${user.country}">Country</span></p>
-                <a class="btn btn-primary" th:href="@{/messages/{userId}(userId=${user.id})}">
-                    <i class="fas fa-envelope"></i> Enviar Mensaje
-                </a>
+        <!-- Contenido principal -->
+        <div class="col-md-9">
+            <!-- Alertas de éxito o error -->
+            <div th:if="${param.success != null && param.success[0] == 'product-saved'}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> ¡Producto publicado exitosamente!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-
-            <!-- Products Section -->
-            <div id="mainContent">
-                <h2 th:if="${isOwnProfile}">Tus Productos</h2>
-                <h2 th:if="${!isOwnProfile}">Productos de <span th:text="${user.username}"></span></h2>
-                <div th:if="${products.size() == 0}">
-                    <p>No hay productos publicados todavía.</p>
+            <div th:if="${param.warning != null && param.warning[0] == 'images-failed'}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i> El producto se guardó, pero hubo un problema al subir las imágenes.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Sección de productos -->
+            <div id="mainContent" class="profile-section">
+                <h2 class="profile-section-title">
+                    <i class="fas fa-box mr-2"></i>
+                    <span th:if="${isOwnProfile}">Tus Productos</span>
+                    <span th:if="${!isOwnProfile}">Productos de <span th:text="${user.username}"></span></span>
+                </h2>
+                
+                <div th:if="${products.size() == 0}" class="empty-state">
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <h4>No hay productos publicados todavía</h4>
+                    <p class="text-muted" th:if="${isOwnProfile}">¡Comienza a vender ahora mismo!</p>
+                    <a th:if="${isOwnProfile}" th:href="@{/products/new}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus mr-2"></i> Publicar Producto
+                    </a>
                 </div>
-                <div th:each="product : ${products}">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${product.name}">Nombre del Producto</h5>
-                            <p class="card-text" th:text="${product.description}">Descripción</p>
-                            <p class="card-text"><strong th:text="${product.price}">Precio</strong></p>
-                            <div th:each="image : ${product.images}">
-                                <img th:src="@{${image.url}}" alt="Imagen del Producto" class="img-fluid">
+                
+                <!-- Grid de productos -->
+                <div class="product-grid" th:if="${products.size() > 0}">
+                    <div th:each="product : ${products}" class="product-card-profile">
+                        <!-- Estado del producto -->
+                        <div th:if="${product.available}" class="product-status status-available">Disponible</div>
+                        <div th:unless="${product.available}" class="product-status status-unavailable">No disponible</div>
+                        
+                        <!-- Imagen del producto -->
+                        <div class="product-image-container">
+                            <img th:if="${product.images != null && product.images.size() > 0}" 
+                                 th:src="${product.images[0].url}" 
+                                 alt="Imagen del Producto">
+                            <img th:if="${product.images == null || product.images.size() == 0}" 
+                                 th:src="@{/images/default-image.png}" 
+                                 alt="Imagen por defecto">
+                                 
+                            <!-- Overlay con acciones -->
+                            <div class="product-overlay">
+                                <div class="product-overlay-actions">
+                                    <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-light" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a th:if="${isOwnProfile}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-light" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:if="${isOwnProfile}" th:href="@{/products/delete/{id}(id=${product.id})}" 
+                                       class="btn btn-light" 
+                                       title="Eliminar"
+                                       onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
                             </div>
-                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning" th:if="${isOwnProfile}">Editar</a>
-                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Eliminar</a>
+                        </div>
+                        
+                        <!-- Información del producto -->
+                        <div class="product-card-body">
+                            <h5 class="product-title" th:text="${product.name}">Nombre del Producto</h5>
+                            <p class="text-muted" th:text="${#strings.abbreviate(product.description, 100)}">Descripción</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="product-price">$<span th:text="${product.price}">Precio</span></span>
+                                <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Manage User Section, visible only if own profile -->
-            <div id="manageUser" style="display: none;" th:if="${isOwnProfile}">
-                <h3>Editar Información de Usuario</h3>
-                <form th:action="@{/profile/update}" method="post">
-                    <div class="form-group">
+            <!-- Sección de gestión de usuario -->
+            <div id="manageUser" class="profile-section" style="display: none;" th:if="${isOwnProfile}">
+                <h2 class="profile-section-title">
+                    <i class="fas fa-user-cog mr-2"></i> Editar Información de Usuario
+                </h2>
+                
+                <form th:action="@{/profile/update}" method="post" class="profile-form" id="profileForm">
+                    <div class="form-group mb-3">
                         <label for="address">Dirección:</label>
                         <input type="text" id="address" name="address" class="form-control" th:value="${user.address}">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="city">Ciudad:</label>
                         <input type="text" id="city" name="city" class="form-control" th:value="${user.city}">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="country">País:</label>
                         <input type="text" id="country" name="country" class="form-control" th:value="${user.country}">
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i> Guardar Cambios
+                        </button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-outline-secondary">
+                            <i class="fas fa-times mr-2"></i> Cancelar
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Manage Products Section, visible only if own profile -->
-            <div id="manageProducts" style="display: none;" th:if="${isOwnProfile}">
-                <h3>Gestionar tus Productos</h3>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Imagen</th>
-                        <th>Nombre del Producto</th>
-                        <th>Precio</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="product : ${products}">
-                        <!-- Mostrar la primera imagen del producto -->
-                        <td th:if="${product.images.size() > 0}">
-                            <img th:src="@{${product.images[0].url}}" alt="Imagen del Producto" style="width: 100px; height: 100px; object-fit: cover;">
-                        </td>
-                        <td th:text="${product.name}">Nombre del Producto</td>
-                        <td th:text="${product.price}">Precio</td>
-                        <td th:text="${product.description}">Descripción</td>
-                        <td>
-                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning">Editar</a>
-                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" th:if="${isOwnProfile}">Eliminar</a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(products)}">
-                        <td colspan="5">No se encontraron productos</td>
-                    </tr>
-                    </tbody>
-                </table>
+            <!-- Sección de gestión de productos -->
+            <div id="manageProducts" class="profile-section" style="display: none;" th:if="${isOwnProfile}">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="profile-section-title mb-0">
+                        <i class="fas fa-store mr-2"></i> Gestionar tus Productos
+                    </h2>
+                    <a th:href="@{/products/new}" class="btn btn-success">
+                        <i class="fas fa-plus mr-1"></i> Nuevo Producto
+                    </a>
+                </div>
+                
+                <div th:if="${products.size() == 0}" class="empty-state">
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <h4>No has publicado ningún producto</h4>
+                    <p class="text-muted">¡Comienza a vender ahora mismo!</p>
+                    <a th:href="@{/products/new}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus mr-1"></i> Publicar Producto
+                    </a>
+                </div>
+                
+                <div class="table-responsive" th:if="${products.size() > 0}">
+                    <table class="table product-table">
+                        <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre del Producto</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <!-- Mostrar la primera imagen del producto -->
+                            <td class="align-middle" style="width: 100px;">
+                                <img th:if="${product.images != null && product.images.size() > 0}" 
+                                     th:src="${product.images[0].url}" 
+                                     alt="Imagen del Producto" 
+                                     class="product-image">
+                                <div th:if="${product.images == null || product.images.size() == 0}" 
+                                     class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <span class="product-name" th:text="${product.name}">Nombre del Producto</span>
+                                <small class="d-block product-description" th:text="${#strings.abbreviate(product.description, 50)}">Descripción</small>
+                            </td>
+                            <td class="align-middle"><span class="badge bg-info">$<span th:text="${product.price}">Precio</span></span></td>
+                            <td class="align-middle">
+                                <span th:if="${product.available}" class="badge bg-success">Disponible</span>
+                                <span th:unless="${product.available}" class="badge bg-secondary">No disponible</span>
+                            </td>
+                            <td class="align-middle">
+                                <div class="product-actions">
+                                    <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-action btn-outline-primary" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-action btn-outline-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-action btn-outline-danger" 
+                                       onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Manage Password Section, visible only if own profile -->
-            <div id="managePassword" style="display: none;" th:if="${isOwnProfile}">
-                <h3>Cambiar Contraseña</h3>
-                <form th:action="@{/profile/changePassword}" method="post">
-                    <div class="form-group">
+            <!-- Sección de cambio de contraseña -->
+            <div id="managePassword" class="profile-section" style="display: none;" th:if="${isOwnProfile}">
+                <h2 class="profile-section-title">
+                    <i class="fas fa-key mr-2"></i> Cambiar Contraseña
+                </h2>
+                
+                <form th:action="@{/profile/changePassword}" method="post" class="profile-form" id="passwordForm">
+                    <div class="form-group mb-3">
                         <label for="currentPassword">Contraseña Actual:</label>
-                        <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                        <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="newPassword">Nueva Contraseña:</label>
-                        <input type="password" id="newPassword" name="newPassword" class="form-control">
+                        <input type="password" id="newPassword" name="newPassword" class="form-control" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="confirmPassword">Confirmar Nueva Contraseña:</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i> Cambiar Contraseña
+                    </button>
+                    
+                    <!-- Display success or error messages -->
+                    <div id="passwordError" th:if="${passwordError}" class="alert alert-danger mt-3" th:text="${passwordError}"></div>
+                    <div th:if="${passwordSuccess}" class="alert alert-success mt-3" th:text="${passwordSuccess}"></div>
                 </form>
-                <!-- Display success or error messages -->
-                <div th:if="${passwordError}" class="alert alert-danger" th:text="${passwordError}"></div>
-                <div th:if="${passwordSuccess}" class="alert alert-success" th:text="${passwordSuccess}"></div>
             </div>
         </div>
     </div>
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 <script th:src="@{/js/profile.js}"></script>
-
-<script>
-    // Function to display the selected section and hide others
-    function showSection(sectionId) {
-        // Hide all sections
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('manageUser').style.display = 'none';
-        document.getElementById('manageProducts').style.display = 'none';
-        document.getElementById('managePassword').style.display = 'none';
-
-        // Show the selected section
-        document.getElementById(sectionId).style.display = 'block';
-    }
-</script>
 </body>
 </html>

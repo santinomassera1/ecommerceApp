@@ -1,58 +1,75 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header('Mensajes')">
+<head th:replace="~{fragments/header :: header('Mensajes')}">
 </head>
 <body>
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
-<div class="container-fluid">
-    <div class="row no-gutters">
-        <!-- Sidebar for Users -->
-        <div class="col-md-4 border-right">
-            <div class="search-bar p-3">
-                <label>
-                    <input type="text" id="searchInputUser" class="form-control" placeholder="Buscar mensajes o usuarios">
-                </label>
+<div class="container messaging-container mt-4">
+    <div class="row h-100 g-0">
+        <!-- Sidebar para usuarios -->
+        <div class="col-md-4 col-lg-3 users-sidebar">
+            <div class="search-bar">
+                <div class="input-group">
+                    <input type="text" id="searchInputUser" class="form-control" placeholder="Buscar usuarios...">
+                </div>
             </div>
-            <ul class="list-group" id="userList">
-                <!-- User Item (Dynamically populated) -->
+            <ul class="list-unstyled users-list" id="userList">
+                <!-- Los usuarios se cargarán dinámicamente -->
+                <li class="text-center p-4 text-muted" id="noUsersMessage">
+                    <i class="fas fa-users fa-2x mb-3"></i>
+                    <p>Busca usuarios para iniciar una conversación</p>
+                </li>
             </ul>
         </div>
 
-        <!-- Message Area -->
-        <div class="col-md-8">
-            <div class="message_header p-3 border-bottom">
-                <div class="d-flex bd-highlight">
-                    <div class="user_info">
-                        <span id="activeUser">Selecciona un usuario para chatear</span>
-                    </div>
+        <!-- Área de chat -->
+        <div class="col-md-8 col-lg-9 chat-container">
+            <!-- Encabezado del chat -->
+            <div class="chat-header">
+                <button class="btn btn-sm btn-light me-2 d-md-none toggle-sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-avatar-placeholder" id="activeUserAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info ms-2">
+                    <h5 class="user-name mb-0" id="activeUser">Selecciona un usuario para chatear</h5>
                 </div>
             </div>
-            <div class="messages p-3" id="messageArea">
-                <!-- Messages will be appended here -->
+
+            <!-- Estado inicial del chat (sin usuario seleccionado) -->
+            <div class="empty-chat" id="emptyChatPlaceholder">
+                <i class="fas fa-comments fa-4x mb-4"></i>
+                <h4 class="mb-3">No hay mensajes</h4>
+                <p class="text-muted">Selecciona un usuario para ver tus mensajes o iniciar una nueva conversación</p>
             </div>
 
-            <!-- Footer for sending new messages -->
-            <div class="message_footer p-3 border-top">
-                <form id="messageForm">
-                    <div class="input-group">
-                        <label for="messageContent"></label><input type="text" class="form-control" placeholder="Escribe un mensaje" id="messageContent">
-                        <div class="input-group-append">
-                            <button type="submit" class="input-group-text send_btn"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </div>
+            <!-- Área de mensajes -->
+            <div class="chat-body py-4" id="messageArea" style="display: none;">
+                <!-- Los mensajes se cargarán dinámicamente -->
+                <div class="flex-grow-1"></div> <!-- Espaciador para empujar los mensajes hacia abajo -->
+            </div>
+
+            <!-- Pie de página para enviar nuevos mensajes -->
+            <div class="chat-footer" id="chatFooter" style="display: none;">
+                <form id="messageForm" class="message-input-container">
+                    <input type="text" class="form-control message-input" placeholder="Escribe un mensaje..." id="messageContent">
+                    <button type="submit" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/messaging.js"></script>
+<script th:src="@{/js/messaging.js}"></script>
 </body>
 </html>

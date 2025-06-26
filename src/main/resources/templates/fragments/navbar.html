@@ -5,16 +5,28 @@
 </head>
 <body>
     <!-- Fragmento de la barra de navegación -->
-    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" th:href="@{/home}">
                 <img th:src="@{/images/favicon.ico}" alt="Vintage Vogue" class="logo">
                 <span class="brand-name">Vintage Vogue</span>
             </a>
-            <form id="searchForm" class="form-inline my-2 my-lg-0 flex-grow-1 mx-3 d-flex position-relative">
-                <input id="searchInput" class="form-control mr-sm-2 w-100" type="search" placeholder="Buscar" aria-label="Buscar" autocomplete="off">
-                <div id="suggestions" class="suggestions-box position-absolute w-100"></div>
-            </form>
+            
+            <!-- Barra de búsqueda modernizada -->
+            <div class="search-container flex-grow-1 mx-3 position-relative">
+                <form id="searchForm" class="search-form">
+                    <input 
+                        id="searchInput" 
+                        class="form-control search-input" 
+                        type="search" 
+                        placeholder="Buscar productos, categorías o usuarios..." 
+                        aria-label="Buscar"
+                        autocomplete="off"
+                    >
+                </form>
+                <div id="suggestions" class="search-suggestions"></div>
+            </div>
+            
             <ul class="navbar-nav d-flex align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/products/new}" title="Vender">
@@ -44,6 +56,12 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/orders/my-orders}" title="Mis Pedidos">
                         <i class="fas fa-box"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/favorites" id="favoritesLink" title="Favoritos">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge badge-danger" id="favoritesCount"></span>
                     </a>
                 </li>
                 <li class="nav-item dropdown">

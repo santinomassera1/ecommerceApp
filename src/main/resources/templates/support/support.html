@@ -1,32 +1,64 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Support Panel</title>
+    <title>Panel de Soporte - Vintage Vogue</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/png">
+    <style>
+        .priority-high {
+            color: #dc3545;
+        }
+        .priority-medium {
+            color: #fd7e14;
+        }
+        .priority-low {
+            color: #198754;
+        }
+    </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Support Panel</h1>
-    <a class="nav-link" th:href="@{/logout}">Logout</a>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/support}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Soporte</h1>
+        </a>
+    </div>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/support}">
+            <i class="fas fa-ticket-alt me-1"></i> Tickets
+        </a>
+        <a class="nav-link" th:href="@{/support/new}">
+            <i class="fas fa-plus-circle me-1"></i> Nuevo Ticket
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
 </header>
 
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="/support">
-                            <i class="fas fa-ticket-alt"></i> View Tickets
+                        <a class="nav-link active" href="/support">
+                            <i class="fas fa-ticket-alt"></i> Ver Tickets
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/support/new">
-                            <i class="fas fa-plus-circle"></i> Create New Ticket
+                            <i class="fas fa-plus-circle"></i> Crear Nuevo Ticket
                         </a>
                     </li>
                 </ul>
@@ -35,41 +67,89 @@
 
         <!-- Main content -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <h2>Your Support Tickets</h2>
-            <a href="/support/new" class="btn btn-primary">Create New Ticket</a>
-            <table class="table mt-3">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Subject</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="ticket : ${tickets}">
-                    <td th:text="${ticket.id}"></td>
-                    <td th:text="${ticket.subject}"></td>
-                    <td th:text="${ticket.status}"></td>
-                    <td>
-                        <a th:href="@{/support/{id}(id=${ticket.id})}" class="btn btn-info btn-sm">View</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2>Tickets de Soporte</h2>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/support/new" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Crear Nuevo Ticket
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-ticket-alt me-1"></i>
+                    Lista de Tickets
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Asunto</th>
+                                <th>Categoría</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Fecha de Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="ticket : ${tickets}" th:class="${ticket.status.name() == 'OPEN' ? 'table-warning' : (ticket.status.name() == 'IN_PROGRESS' ? 'table-info' : (ticket.status.name() == 'RESOLVED' ? 'table-success' : ''))}">
+                                <td th:text="${ticket.id}"></td>
+                                <td th:text="${ticket.subject}"></td>
+                                <td th:text="${ticket.category != null ? ticket.category : 'Sin categoría'}"></td>
+                                <td>
+                                    <span th:if="${ticket.priority == 1}" class="priority-high">
+                                        <i class="fas fa-exclamation-circle"></i> Alta
+                                    </span>
+                                    <span th:if="${ticket.priority == 2}" class="priority-medium">
+                                        <i class="fas fa-exclamation"></i> Media
+                                    </span>
+                                    <span th:if="${ticket.priority == 3}" class="priority-low">
+                                        <i class="fas fa-info-circle"></i> Baja
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${ticket.status.name() == 'OPEN'}" class="badge bg-warning">Abierto</span>
+                                    <span th:if="${ticket.status.name() == 'IN_PROGRESS'}" class="badge bg-info">En Progreso</span>
+                                    <span th:if="${ticket.status.name() == 'RESOLVED'}" class="badge bg-success">Resuelto</span>
+                                    <span th:if="${ticket.status.name() == 'CLOSED'}" class="badge bg-secondary">Cerrado</span>
+                                </td>
+                                <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <a th:href="@{/support/{id}(id=${ticket.id})}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye me-1"></i> Ver
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${tickets.empty}">
+                                <td colspan="7" class="text-center">No hay tickets disponibles</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. All rights reserved.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Soporte v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 
 <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/js/admin.js"></script>
-<script src="/js/search.js"></script>
 </body>
 </html>

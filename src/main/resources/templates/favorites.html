@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Mis Favoritos')}">
+</head>
+<body>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
+
+<main class="container pt-4 favorites-page">
+    <!-- Mensajes flash para errores y éxitos -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-2">Mis Productos Favoritos</h2>
+            <p class="text-muted">Aquí encontrarás todos los productos que has marcado como favoritos.</p>
+        </div>
+        <div class="col-md-4 text-right">
+            <button id="clear-all-favorites" class="btn btn-outline-danger">
+                <i class="fas fa-trash"></i> Eliminar todos los favoritos
+            </button>
+        </div>
+    </div>
+    
+    <!-- Contenedor para los productos favoritos -->
+    <div class="row" id="favorites-container">
+        <!-- Los productos favoritos se cargarán aquí dinámicamente -->
+    </div>
+    
+    <!-- Mensaje de no favoritos -->
+    <div class="row" id="no-favorites" style="display: none;">
+        <div class="col-12 text-center py-5">
+            <div class="empty-state">
+                <i class="far fa-heart fa-4x text-muted mb-3"></i>
+                <h4>No tienes productos favoritos</h4>
+                <p class="text-muted">Explora nuestros productos y marca los que te gusten con el corazón.</p>
+                <a href="/home" class="btn btn-primary mt-3">Ver productos</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/footer :: scripts}"></div>
+<script th:src="@{/js/favorites.js}"></script>
+</body>
+</html> 

@@ -1,76 +1,209 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head th:replace="fragments/header :: header('Detalles del Producto')">
+<head th:replace="~{fragments/header :: header('Detalles del Producto')}">
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
 </head>
 <body>
-<header th:replace="fragments/navbar :: navbar"></header>
+<header th:replace="~{fragments/navbar :: navbar}"></header>
 
 <div class="container mt-5">
-    <h1>Detalles del Producto</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/home}">Inicio</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/products}">Productos</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Detalles del Producto</li>
+        </ol>
+    </nav>
+    
     <div class="row">
-        <div class="col-md-6">
-            <!-- Mostrar la primera imagen del producto -->
-            <div th:if="${product.images.size() > 0}">
-                <img th:src="${product.images[0].url}" alt="Imagen del Producto" class="img-fluid">
-            </div>
-            <div th:if="${product.images.size() == 0}">
-                <p>No hay imagen disponible</p>
+        <!-- Columna de imágenes -->
+        <div class="col-lg-6 mb-4">
+            <div class="product-gallery">
+                <!-- Carrusel de imágenes del producto -->
+                <div id="productImageCarousel" class="carousel slide" data-ride="carousel">
+                    <!-- Imágenes del carrusel -->
+                    <div class="carousel-inner">
+                        <!-- Si hay imágenes, mostrarlas en el carrusel -->
+                        <div th:if="${product.images.size() > 0}" 
+                             th:each="image, stat : ${product.images}" 
+                             th:class="'carousel-item ' + (${stat.first} ? 'active' : '')">
+                            <img th:src="${image.url}" class="d-block w-100" alt="Imagen del Producto"
+                                 style="max-height: 500px; object-fit: contain;">
+                        </div>
+                        
+                        <!-- Si no hay imágenes, mostrar imagen por defecto -->
+                        <div th:if="${product.images.size() == 0}" class="carousel-item active">
+                            <img th:src="@{/images/default-image.png}" class="d-block w-100" alt="Imagen por defecto"
+                                 style="max-height: 500px; object-fit: contain;">
+                        </div>
+                    </div>
+                    
+                    <!-- Controles del carrusel si hay más de una imagen -->
+                    <div th:if="${product.images.size() > 1}">
+                        <a class="carousel-control-prev" href="#productImageCarousel" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        <a class="carousel-control-next" href="#productImageCarousel" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Siguiente</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Miniaturas de imágenes -->
+                <div class="thumbnail-container" th:if="${product.images.size() > 1}">
+                    <img th:each="image, stat : ${product.images}" 
+                         th:src="${image.url}" 
+                         th:class="'thumbnail ' + (${stat.first} ? 'active' : '')"
+                         th:data-slide-to="${stat.index}" 
+                         data-target="#productImageCarousel">
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <h2 th:text="${product.name}">Nombre del Producto</h2>
-            <p th:text="${product.description}">Descripción del Producto</p>
-            <p><strong>Precio:</strong> $<span th:text="${product.price}"></span></p>
-            <p><strong>Disponible:</strong> <span th:text="${product.available ? 'Sí' : 'No'}"></span></p>
-
-            <!-- Sección de comentarios -->
+        
+        <!-- Columna de información del producto -->
+        <div class="col-lg-6">
+            <div class="product-info">
+                <h1 class="product-title" th:text="${product.name}">Nombre del Producto</h1>
+                
+                <div class="product-price">
+                    $<span th:text="${product.price}">0.00</span>
+                </div>
+                
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Disponibilidad:</span>
+                        <span class="meta-value">
+                            <span th:if="${product.available}" class="badge bg-success">Disponible</span>
+                            <span th:unless="${product.available}" class="badge bg-danger">No disponible</span>
+                        </span>
+                    </div>
+                    
+                    <div class="meta-item" th:if="${!product.categories.isEmpty()}">
+                        <span class="meta-label">Categorías:</span>
+                        <span class="meta-value">
+                            <span th:each="category, iterStat : ${product.categories}">
+                                <span th:text="${category.name}">Categoría</span>
+                                <span th:if="${!iterStat.last}">, </span>
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <!-- Botones para agregar al carrito y comprar -->
+                    <div class="product-actions">
+                        <form th:action="@{/cart/items/add/{productId}(productId=${product.id})}" method="post" class="flex-grow-1">
+                            <button type="submit" class="btn btn-cart btn-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                        <form th:action="@{/purchase/instant-buy/{productId}(productId=${product.id})}" method="get" class="flex-grow-1">
+                            <button type="submit" class="btn btn-buy btn-icon">
+                                <i class="fas fa-bolt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="product-description">
+                    <p th:text="${product.description}">Descripción del producto...</p>
+                </div>
+                
+                <!-- Información del vendedor -->
+                <div class="seller-card">
+                    <h5>Información del vendedor</h5>
+                    <div class="seller-info">
+                        <div class="seller-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <a th:href="@{/profile/{userId}(userId=${product.user.id})}" class="seller-name" 
+                           th:text="${product.user != null ? product.user.username : 'Vendedor Desconocido'}">
+                           Vendedor
+                        </a>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Contacto:</span>
+                        <span class="meta-value" th:text="${product.user.email}">email@ejemplo.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sección de comentarios -->
+    <div class="row mt-5">
+        <div class="col-12">
             <div class="comments-section">
-                <h3>Comentarios</h3>
-                <div th:each="comment : ${comments}">
-                    <p>
-                        <strong>
-                            <a th:href="@{/profile/{userId}(userId=${comment.user.id})}" th:text="${comment.user.username}">Usuario</a>
-                        </strong>: 
-                        <span th:text="${comment.content}">Contenido del comentario</span>
-                    </p>
-                    <p><small th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</small></p>
+                <div class="comments-header">
+                    <h3>Comentarios</h3>
+                    <span class="badge bg-secondary" th:text="${comments.size() + ' comentarios'}">0 comentarios</span>
+                </div>
+                
+                <!-- Lista de comentarios -->
+                <div th:if="${comments.size() > 0}">
+                    <div class="comment-card card mb-3" th:each="comment : ${comments}">
+                        <div class="card-body">
+                            <div class="comment-header">
+                                <div>
+                                    <a th:href="@{/profile/{userId}(userId=${comment.user.id})}" class="comment-user" th:text="${comment.user.username}">Usuario</a>
+                                </div>
+                                <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                            </div>
+                            <p class="card-text" th:text="${comment.content}">Contenido del comentario</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mensaje si no hay comentarios -->
+                <div th:if="${comments.size() == 0}" class="alert alert-light text-center py-4">
+                    <i class="fas fa-comments fa-2x mb-3 text-muted"></i>
+                    <p class="mb-0">No hay comentarios todavía. ¡Sé el primero en comentar!</p>
                 </div>
 
                 <!-- Formulario para agregar un nuevo comentario -->
-                <form th:action="@{/comments/add}" method="post">
-                    <input type="hidden" name="productId" th:value="${product.id}" />
-                    <div class="form-group">
-                        <label for="content">Nuevo Comentario</label>
-                        <textarea id="content" name="content" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-2">Enviar</button>
-                </form>
-            </div>
-            
-            <!-- Información del usuario que publicó el producto -->
-            <p><strong>Vendedor:</strong> 
-                <div class="seller-info">
-                    <a th:href="@{/profile/{userId}(userId=${product.user.id})}" class="seller-name" th:text="${product.user != null ? product.user.username : 'Vendedor Desconocido'}"></a>
+                <div class="comment-form mt-4">
+                    <h5 class="mb-3">Deja tu comentario</h5>
+                    <form th:action="@{/comments/add}" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}" />
+                        <div class="form-group">
+                            <textarea id="content" name="content" class="form-control" rows="3" required placeholder="Escribe tu comentario aquí..."></textarea>
+                        </div>
+                        <div class="text-right mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane mr-2"></i> Enviar
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </p>
-            <p><strong>Contacto:</strong> <span th:text="${product.user.email}">Email</span></p>
-            <!-- Botones para agregar al carrito y comprar -->
-            <div class="product-actions">
-                <form th:action="@{/cart/items/add/{productId}(productId=${product.id})}" method="post">
-                    <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
-                </form>
-                <form th:action="@{/checkout/{id}(id=${product.id})}" method="post">
-                    <button type="submit" class="btn btn-danger btn-lg">Comprar Ahora</button>
-                </form>
             </div>
         </div>
     </div>
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <!-- Scripts -->
-<div th:replace="fragments/footer :: scripts"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
 <script th:src="@{/js/comment.js}"></script>
+<script>
+    // Script para hacer que las miniaturas funcionen como navegación del carrusel
+    $(document).ready(function() {
+        $('.thumbnail').click(function() {
+            var slideTo = $(this).data('slide-to');
+            $('#productImageCarousel').carousel(slideTo);
+            
+            // Actualizar la miniatura activa
+            $('.thumbnail').removeClass('active');
+            $(this).addClass('active');
+        });
+        
+        // Actualizar la miniatura activa cuando cambie el carrusel
+        $('#productImageCarousel').on('slid.bs.carousel', function() {
+            var index = $('.carousel-item.active').index();
+            $('.thumbnail').removeClass('active');
+            $('.thumbnail[data-slide-to="' + index + '"]').addClass('active');
+        });
+    });
+</script>
 </body>
 </html>

@@ -9,13 +9,9 @@
     <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link rel="icon" href="/images/favicon.ico" type="image/png">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
         .content-wrapper {
             margin-left: 250px;
             padding: 20px;
-            margin-top: 60px;
         }
         .card {
             border: none;
@@ -43,31 +39,6 @@
             border-radius: 5px;
             padding: 8px 16px;
             font-weight: 500;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-warning {
-            background-color: #ffc107;
-            border-color: #ffc107;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-        .table {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .table th {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
         }
         .image-preview {
             max-width: 100%;
@@ -117,165 +88,200 @@
     </style>
 </head>
 <body>
-<header class="header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
-    <h1>Panel de Administración</h1>
-    <a class="nav-link" th:href="@{/logout}">Cerrar Sesión</a>
-</header>
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
-    <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-user}">
-                    <i class="fas fa-users"></i> Gestionar Usuarios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/admin/ad}">
-                    <i class="fas fa-bullhorn"></i> Gestionar Anuncios
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/admin/manage-categories}">
-                    <i class="fas fa-layer-group"></i> Gestionar Categorías
-                </a>
-            </li>
-        </ul>
+<header class="header">
+    <div class="d-flex align-items-center">
+        <a th:href="@{/admin}" class="d-flex align-items-center text-decoration-none">
+            <img src="/images/favicon.ico" alt="Logo" class="me-2" style="height: 30px;">
+            <h1>Panel de Administración</h1>
+        </a>
     </div>
-</nav>
+    <div class="header-nav">
+        <a class="nav-link" th:href="@{/admin}">
+            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-user}">
+            <i class="fas fa-users me-1"></i> Usuarios
+        </a>
+        <a class="nav-link" th:href="@{/admin/manage-product}">
+            <i class="fas fa-box me-1"></i> Productos
+        </a>
+    </div>
+    <div>
+        <a class="nav-link me-2" th:href="@{/home}">
+            <i class="fas fa-store me-1"></i> Ver Tienda
+        </a>
+        <a class="nav-link" th:href="@{/logout}">
+            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+        </a>
+    </div>
+</header>
 
-<div class="content-wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Gestionar Anuncios</h1>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-user}">
+                            <i class="fas fa-users"></i> Gestionar Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/manage-ad}">
+                            <i class="fas fa-bullhorn"></i> Gestionar Anuncios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-categories}">
+                            <i class="fas fa-layer-group"></i> Gestionar Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/manage-product}">
+                            <i class="fas fa-box"></i> Gestionar Productos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2>Gestión de Anuncios</h2>
+            </div>
+            
+            <!-- Mensajes de alerta -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <!-- Section for Creating/Editing Ads -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Crear/Editar Anuncio</h3>
                 </div>
-                
-                <!-- Mensajes de alerta -->
-                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span th:text="${error}"></span>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                
-                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <span th:text="${success}"></span>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                
-                <!-- Section for Creating/Editing Ads -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="mb-0">Crear/Editar Anuncio</h3>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="@{/admin/ad/save}" th:object="${ad}" method="post" enctype="multipart/form-data" id="adForm">
-                            <input type="hidden" th:field="*{id}">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="title" class="font-weight-bold">Título:</label>
-                                        <input type="text" id="title" name="title" th:field="*{title}" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="description" class="font-weight-bold">Descripción:</label>
-                                        <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="4"></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="startDate" class="font-weight-bold">Fecha de Inicio:</label>
-                                        <input type="datetime-local" id="startDate" name="startDate" th:field="*{startDate}" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="endDate" class="font-weight-bold">Fecha de Fin:</label>
-                                        <input type="datetime-local" id="endDate" name="endDate" th:field="*{endDate}" class="form-control">
-                                    </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/ad/save}" th:object="${ad}" method="post" enctype="multipart/form-data" id="adForm">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="title" class="font-weight-bold">Título:</label>
+                                    <input type="text" id="title" name="title" th:field="*{title}" class="form-control" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Imagen del Anuncio:</label>
-                                        <div class="input-group">
-                                            <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="URL directa de la imagen o GIF (debe terminar en .jpg, .png, .gif, etc.)">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-outline-secondary" id="extractUrlBtn" title="Intentar extraer URL directa">
-                                                    <i class="fas fa-magic"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#helpModal">
-                                                    <i class="fas fa-question-circle"></i>
-                                                </button>
-                                                <span class="input-group-text file-input-container">
-                                                    <i class="fas fa-upload"></i>
-                                                    <input type="file" id="imageFile" name="imageFile" accept="image/*, .gif" onchange="handleFileUpload(this)">
-                                                </span>
-                                            </div>
+                                <div class="form-group">
+                                    <label for="description" class="font-weight-bold">Descripción:</label>
+                                    <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="4"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="startDate" class="font-weight-bold">Fecha de Inicio:</label>
+                                    <input type="datetime-local" id="startDate" name="startDate" th:field="*{startDate}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="endDate" class="font-weight-bold">Fecha de Fin:</label>
+                                    <input type="datetime-local" id="endDate" name="endDate" th:field="*{endDate}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Imagen del Anuncio:</label>
+                                    <div class="input-group">
+                                        <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="URL directa de la imagen o GIF (debe terminar en .jpg, .png, .gif, etc.)">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary" id="extractUrlBtn" title="Intentar extraer URL directa">
+                                                <i class="fas fa-magic"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#helpModal">
+                                                <i class="fas fa-question-circle"></i>
+                                            </button>
+                                            <span class="input-group-text file-input-container">
+                                                <i class="fas fa-upload"></i>
+                                                <input type="file" id="imageFile" name="imageFile" accept="image/*, .gif" onchange="handleFileUpload(this)">
+                                            </span>
                                         </div>
-                                        <small class="form-text text-muted">
-                                            Ingrese una URL directa a la imagen (ej: https://ejemplo.com/imagen.gif) o suba un archivo.<br>
-                                            <strong>No use URLs de búsqueda de Google</strong> - Haga clic derecho en la imagen y seleccione "Copiar dirección de imagen".<br>
-                                            Si pegó una URL de Google, haga clic en <i class="fas fa-magic"></i> para intentar extraer la URL directa o
-                                            <a href="#" data-toggle="modal" data-target="#helpModal">ver ayuda</a>.
-                                        </small>
-                                        <div class="upload-progress" id="uploadProgress"></div>
-                                        <div class="upload-status" id="uploadStatus"></div>
                                     </div>
-                                    <div class="preview-container">
-                                        <img id="imagePreview" th:class="${ad.imageUrl != null && ad.imageUrl.endsWith('.gif')} ? 'image-preview gif-preview' : 'image-preview'" th:src="${ad.imageUrl}" th:if="${ad.imageUrl != null && !ad.imageUrl.isEmpty()}" alt="Vista previa">
-                                        <p id="noImageText" class="text-muted" th:if="${ad.imageUrl == null || ad.imageUrl.isEmpty()}">No hay imagen seleccionada</p>
-                                    </div>
-                                    
-                                    <!-- Sección para usar GIF de ejemplo -->
-                                    <div class="form-group mt-3">
-                                        <label class="font-weight-bold">O use un GIF de ejemplo:</label>
-                                        <div class="row">
-                                            <div class="col-6 col-md-4 mb-2">
-                                                <img src="/images/sample.gif" class="img-thumbnail gif-preview sample-gif" 
-                                                     style="cursor: pointer; height: 100px; object-fit: cover;"
-                                                     onclick="useExampleGif('/images/sample.gif')" 
-                                                     alt="GIF de ejemplo">
-                                            </div>
+                                    <small class="form-text text-muted">
+                                        Ingrese una URL directa a la imagen (ej: https://ejemplo.com/imagen.gif) o suba un archivo.<br>
+                                        <strong>No use URLs de búsqueda de Google</strong> - Haga clic derecho en la imagen y seleccione "Copiar dirección de imagen".<br>
+                                        Si pegó una URL de Google, haga clic en <i class="fas fa-magic"></i> para intentar extraer la URL directa o
+                                        <a href="#" data-toggle="modal" data-target="#helpModal">ver ayuda</a>.
+                                    </small>
+                                    <div class="upload-progress" id="uploadProgress"></div>
+                                    <div class="upload-status" id="uploadStatus"></div>
+                                </div>
+                                <div class="preview-container">
+                                    <img id="imagePreview" th:class="${ad.imageUrl != null && ad.imageUrl.endsWith('.gif')} ? 'image-preview gif-preview' : 'image-preview'" th:src="${ad.imageUrl}" th:if="${ad.imageUrl != null && !ad.imageUrl.isEmpty()}" alt="Vista previa">
+                                    <p id="noImageText" class="text-muted" th:if="${ad.imageUrl == null || ad.imageUrl.isEmpty()}">No hay imagen seleccionada</p>
+                                </div>
+                                
+                                <!-- Sección para usar GIF de ejemplo -->
+                                <div class="form-group mt-3">
+                                    <label class="font-weight-bold">O use un GIF de ejemplo:</label>
+                                    <div class="row">
+                                        <div class="col-6 col-md-4 mb-2">
+                                            <img src="/images/sample.gif" class="img-thumbnail gif-preview sample-gif" 
+                                                 style="cursor: pointer; height: 100px; object-fit: cover;"
+                                                 onclick="useExampleGif('/images/sample.gif')" 
+                                                 alt="GIF de ejemplo">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Guardar Anuncio
-                                </button>
-                                <a th:href="@{/admin/ad}" class="btn btn-secondary ml-2">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-    <!-- Section for Searching Ads -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="mb-0">Anuncios Existentes</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <input type="text" id="searchAd" class="form-control" placeholder="Buscar anuncios por título">
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>ID</th>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Anuncio
+                            </button>
+                            <a th:href="@{/admin/ad}" class="btn btn-secondary ml-2">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Section for Searching Ads -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Anuncios Existentes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" id="searchAd" class="form-control" placeholder="Buscar anuncios por título">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
                                     <th>Título</th>
                                     <th>Imagen</th>
                                     <th>Fechas</th>
                                     <th style="width: 200px;">Acciones</th>
-            </tr>
-            </thead>
-            <tbody id="adTable">
-            <tr th:each="ad : ${ads}">
-                <td th:text="${ad.id}"></td>
-                <td th:text="${ad.title}"></td>
-                <td>
+                                </tr>
+                            </thead>
+                            <tbody id="adTable">
+                                <tr th:each="ad : ${ads}">
+                                    <td th:text="${ad.id}"></td>
+                                    <td th:text="${ad.title}"></td>
+                                    <td>
                                         <img th:if="${ad.imageUrl != null && !ad.imageUrl.isEmpty()}" 
                                              th:src="${ad.imageUrl}" alt="Imagen de anuncio" 
                                              style="max-height: 50px; max-width: 100px;">
@@ -293,24 +299,30 @@
                                         <a th:href="@{/admin/ad/delete/{id}(id=${ad.id})}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este anuncio?');">
                                             <i class="fas fa-trash"></i> Eliminar
                                         </a>
-                </td>
-            </tr>
+                                    </td>
+                                </tr>
                                 <tr th:if="${ads.empty}">
                                     <td colspan="5" class="text-center">No hay anuncios disponibles</td>
                                 </tr>
-            </tbody>
-        </table>
-    </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            </div>
-            </div>
-            </div>
+        </main>
     </div>
 </div>
 
-<footer>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Vintage Vogue. Todos los derechos reservados.</p>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2024</span> Vintage Vogue</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Panel de Administración v1.0</p>
+            </div>
+        </div>
     </div>
 </footer>
 
