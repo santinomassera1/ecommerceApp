@@ -12,7 +12,6 @@ import com.example.vintagevogue.service.ProductService;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,9 +44,6 @@ public class AdminController {
     
     @Autowired
     private ProductService productService;
-    
-    @Autowired
-    private Environment environment;
     
     @Value("${app.maintenance.enabled:false}")
     private boolean maintenanceMode;

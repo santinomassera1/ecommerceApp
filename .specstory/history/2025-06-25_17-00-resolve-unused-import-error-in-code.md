@@ -709,7 +709,308 @@ guardemos todos los cambios en el git
 
 _**Assistant**_
 
+<no message>
 
+---
+
+```bash
+git status
+```
+
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   .specstory/history/2025-06-25_17-00-resolve-unused-import-er
+ror-in-code.md
+        modified:   src/main/java/com/example/vintagevogue/config/WebSocketConfi
+g.java
+        modified:   src/main/java/com/example/vintagevogue/controller/AdminContr
+oller.java
+        modified:   src/main/java/com/example/vintagevogue/controller/CartContro
+ller.java
+        modified:   src/main/java/com/example/vintagevogue/controller/CartItemCo
+ntroller.java
+        modified:   src/main/java/com/example/vintagevogue/controller/ProductCon
+troller.java
+        modified:   src/main/java/com/example/vintagevogue/controller/PurchaseCo
+ntroller.java
+        modified:   src/main/java/com/example/vintagevogue/controller/SupportTic
+ketController.java
+        modified:   src/main/java/com/example/vintagevogue/model/SupportTicket.j
+ava
+        modified:   src/main/java/com/example/vintagevogue/model/User.java
+        modified:   src/main/java/com/example/vintagevogue/security/EmailVerific
+ationFilter.java
+        modified:   src/main/java/com/example/vintagevogue/service/CartItemServi
+ce.java
+        modified:   src/main/java/com/example/vintagevogue/service/CartService.j
+ava
+        modified:   src/main/java/com/example/vintagevogue/service/OrderService.
+java
+        modified:   src/main/java/com/example/vintagevogue/service/UserService.j
+ava
+        modified:   src/main/resources/static/css/admin.css
+        modified:   src/main/resources/static/css/home.css
+        modified:   src/main/resources/static/css/sell.css
+        modified:   src/main/resources/static/css/styles.css
+        modified:   src/main/resources/static/js/cart.js
+        deleted:    src/main/resources/static/js/categories.js
+        modified:   src/main/resources/static/js/home.js
+        modified:   src/main/resources/static/js/messaging.js
+        modified:   src/main/resources/static/js/profile.js
+        modified:   src/main/resources/static/js/search.js
+        modified:   src/main/resources/templates/admin.html
+        modified:   src/main/resources/templates/cart.html
+        modified:   src/main/resources/templates/category-form.html
+        modified:   src/main/resources/templates/fragments/footer.html
+        modified:   src/main/resources/templates/fragments/header.html
+        modified:   src/main/resources/templates/fragments/navbar.html
+        modified:   src/main/resources/templates/home.html
+        modified:   src/main/resources/templates/manage-ad.html
+        modified:   src/main/resources/templates/manage-categories.html
+        modified:   src/main/resources/templates/manage-product.html
+        modified:   src/main/resources/templates/manage-user.html
+        modified:   src/main/resources/templates/messaging.html
+        modified:   src/main/resources/templates/order-confirmation.html
+        modified:   src/main/resources/templates/product-details.html
+        modified:   src/main/resources/templates/purchase.html
+        modified:   src/main/resources/templates/sell-product.html
+        modified:   src/main/resources/templates/support/new.html
+        modified:   src/main/resources/templates/support/support.html
+        modified:   src/main/resources/templates/support/view.html
+        modified:   src/main/resources/templates/tracking/my-orders.html
+        modified:   src/main/resources/templates/tracking/track-details.html
+        modified:   src/main/resources/templates/tracking/track-form.html
+        modified:   src/main/resources/templates/upload-image.html
+        modified:   src/main/resources/templates/user-profile.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        .specstory/history/2025-06-26_00-47-fix-enum-switch-case-error.md
+        src/main/java/com/example/vintagevogue/config/DataInitializer.java
+        src/main/java/com/example/vintagevogue/controller/CartRestController.jav
+a
+        src/main/java/com/example/vintagevogue/controller/FavoritesController.ja
+va
+        src/main/java/com/example/vintagevogue/model/TicketResponse.java
+        src/main/java/com/example/vintagevogue/repository/TicketResponseReposito
+ry.java
+        src/main/java/com/example/vintagevogue/service/TicketResponseService.jav
+a
+        src/main/resources/static/css/product-detail.css
+        src/main/resources/static/images/1750900784438_buzo_ntf1.jpeg
+        src/main/resources/static/images/1750900784459_buzo_ntf2.jpeg
+        src/main/resources/static/js/favorites.js
+        src/main/resources/static/js/navbar.js
+        src/main/resources/templates/favorites.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+```
+
+---
+
+<no message>
+
+---
+
+```bash
+git add .
+```
+
+```
+santinomassera@Santinos-MacBook-Air ecommerceApp % 
+
+```
+
+---
+
+<no message>
+
+---
+
+```bash
+git commit -m "Configuración de base de datos y corrección de errores de roles"
+```
+
+```
+<n de base de datos y corrección de errores de roles"
+[main f6a8981] Configuración de base de datos y corrección de errores de roles
+ 62 files changed, 27892 insertions(+), 1609 deletions(-)
+ create mode 100644 .specstory/history/2025-06-26_00-47-fix-enum-switch-case-error.md
+ create mode 100644 src/main/java/com/example/vintagevogue/config/DataInitializer.java
+ create mode 100644 src/main/java/com/example/vintagevogue/controller/CartRestController.java
+ create mode 100644 src/main/java/com/example/vintagevogue/controller/FavoritesController.java
+ create mode 100644 src/main/java/com/example/vintagevogue/model/TicketResponse.java
+ create mode 100644 src/main/java/com/example/vintagevogue/repository/TicketResponseRepository.java
+ create mode 100644 src/main/java/com/example/vintagevogue/service/TicketResponseService.java
+ create mode 100644 src/main/resources/static/css/product-detail.css
+ create mode 100644 src/main/resources/static/images/1750900784438_buzo_ntf1.jpeg
+ create mode 100644 src/main/resources/static/images/1750900784459_buzo_ntf2.jpeg
+ delete mode 100644 src/main/resources/static/js/categories.js
+ create mode 100644 src/main/resources/static/js/favorites.js
+ create mode 100644 src/main/resources/static/js/navbar.js
+ create mode 100644 src/main/resources/templates/favorites.html
+santinomassera@Santinos-MacBook-Air ecommerceApp %
+```
+
+---
+
+<no message>
+
+---
+
+```bash
+git push
+```
+
+```
+santinomassera@Santinos-MacBook-Air ecommerceApp % git push
+Enumerating objects: 153, done.
+Counting objects: 100% (153/153), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (82/82), done.
+Writing objects: 100% (86/86), 216.29 KiB | 6.01 MiB/s, done.
+Total 86 (delta 39), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (39/39), completed with 30 local objects.
+To https://github.com/santinomassera1/ecommerceApp.git
+   420ea20..f6a8981  main -> main
+santinomassera@Santinos-MacBook-Air ecommerceApp %
+```
+
+---
+
+¡Perfecto! Todos los cambios han sido guardados correctamente en el repositorio Git.
+
+Resumen de las acciones realizadas:
+
+1. Se agregaron todos los archivos modificados y nuevos al área de preparación con `git add .`
+2. Se creó un commit con el mensaje "Configuración de base de datos y corrección de errores de roles" usando `git commit -m "..."`
+3. Se enviaron los cambios al repositorio remoto con `git push`
+
+El commit incluye:
+- 62 archivos modificados
+- Varios archivos nuevos creados, incluyendo configuraciones, controladores y servicios
+- Algunos archivos eliminados
+
+Los cambios están ahora guardados tanto en tu repositorio local como en el remoto, por lo que están seguros y puedes acceder a ellos desde cualquier lugar o restaurar versiones anteriores si es necesario.
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+Missing non-null annotation: inherited method from OncePerRequestFilter specifies this parameter as @NonNull
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+<no message>
+
+---
+
+```diff
+  import org.springframework.stereotype.Component;
+  import org.springframework.web.filter.OncePerRequestFilter;
++ import org.springframework.lang.NonNull;
+  
+  import java.io.IOException;
+```
+
+```diff
+  
+      @Override
+-     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
++     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+              throws ServletException, IOException {
+          
+```
+
+---
+
+Añadí la anotación `@NonNull` a los tres parámetros del método `doFilterInternal` e importé `org.springframework.lang.NonNull`. Esto resuelve el error al indicar explícitamente que los parámetros no pueden ser nulos, cumpliendo con el contrato del método here
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+Missing non-null annotation: inherited method from WebMvcConfigurer specifies this parameter as @NonNull
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+<no message>
+
+---
+
+```diff
+  import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+  import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
++ import org.springframework.lang.NonNull;
+  
+  @Configuration
+  public class WebConfig implements WebMvcConfigurer {
+  
+      @Override
+-     public void addResourceHandlers(ResourceHandlerRegistry registry) {
++     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+          // Spring Boot maneja automáticamente los recursos estáticos desde classpath:/static/
+          // Solo necesitamos agregar la configuración para el directorio físico donde se guardan las nuevas imágenes
+```
+
+---
+
+Añadí la anotación `@NonNull` al parámetro del método `addResourceHandlers` e importé `org.springframework.lang.NonNull`. Esto resuelve el error al indicar explícitamente que el parámetro no puede ser nulo, cumpliendo con el contrato de la interfaz WebMvcConfigurer.
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+Missing non-null annotation: inherited method from WebSocketMessageBrokerConfigurer specifies this parameter as @NonNull
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+<no message>
+
+---
+
+<details>
+            <summary>Listed directory src/main/java/com/example/vintagevogue/config • **7** results</summary>
+        
+| Name |
+|-------|
+| 📄 `WebConfig.java` |
+| 📄 `DataInitializer.java` |
+| 📄 `SecurityConfig.java` |
+| 📄 `WebSocketConfig.java` |
+| 📄 `AppConfig.java` |
+| 📄 `PasswordEncoderConfig.java` |
+| 📄 `ThymeleafConfig.java` |
+
+</details>
+
+---
+
+<no message>
 
 ---
 
