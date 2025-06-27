@@ -61,6 +61,15 @@
                             <i class="fas fa-plus-circle"></i> Crear Nuevo Ticket
                         </a>
                     </li>
+                    <li class="nav-item mt-4">
+                        <hr>
+                        <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">Administración</h6>
+                    </li>
+                    <li class="nav-item">
+                        <button id="toggleMaintenanceBtn" class="nav-link btn btn-link text-danger">
+                            <i class="fas fa-tools"></i> Modo Mantenimiento
+                        </button>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -73,6 +82,9 @@
                     <a href="/support/new" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Crear Nuevo Ticket
                     </a>
+                    <button id="toggleMaintenanceBtnTop" class="btn btn-danger ms-2">
+                        <i class="fas fa-tools me-1"></i> Modo Mantenimiento
+                    </button>
                 </div>
             </div>
             
@@ -151,5 +163,75 @@
 
 <script src="/vendor/jquery/jquery-3.7.1.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleMaintenanceBtn = document.getElementById('toggleMaintenanceBtn');
+        const toggleMaintenanceBtnTop = document.getElementById('toggleMaintenanceBtnTop');
+        
+        function toggleMaintenanceMode() {
+            fetch('/admin/toggle-maintenance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    if (data.enabled) {
+                        toggleMaintenanceBtn.classList.add('active');
+                        toggleMaintenanceBtn.innerHTML = '<i class="fas fa-tools"></i> Desactivar Mantenimiento';
+                        toggleMaintenanceBtnTop.innerHTML = '<i class="fas fa-tools me-1"></i> Desactivar Mantenimiento';
+                        toggleMaintenanceBtnTop.classList.add('btn-success');
+                        toggleMaintenanceBtnTop.classList.remove('btn-danger');
+                    } else {
+                        toggleMaintenanceBtn.classList.remove('active');
+                        toggleMaintenanceBtn.innerHTML = '<i class="fas fa-tools"></i> Activar Mantenimiento';
+                        toggleMaintenanceBtnTop.innerHTML = '<i class="fas fa-tools me-1"></i> Activar Mantenimiento';
+                        toggleMaintenanceBtnTop.classList.add('btn-danger');
+                        toggleMaintenanceBtnTop.classList.remove('btn-success');
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cambiar el modo de mantenimiento');
+            });
+        }
+        
+        if (toggleMaintenanceBtn) {
+            toggleMaintenanceBtn.addEventListener('click', toggleMaintenanceMode);
+        }
+        
+        if (toggleMaintenanceBtnTop) {
+            toggleMaintenanceBtnTop.addEventListener('click', toggleMaintenanceMode);
+        }
+        
+        // Verificar estado actual del modo mantenimiento al cargar
+        fetch('/admin/maintenance-status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.enabled) {
+                    toggleMaintenanceBtn.classList.add('active');
+                    toggleMaintenanceBtn.innerHTML = '<i class="fas fa-tools"></i> Desactivar Mantenimiento';
+                    toggleMaintenanceBtnTop.innerHTML = '<i class="fas fa-tools me-1"></i> Desactivar Mantenimiento';
+                    toggleMaintenanceBtnTop.classList.add('btn-success');
+                    toggleMaintenanceBtnTop.classList.remove('btn-danger');
+                } else {
+                    toggleMaintenanceBtn.classList.remove('active');
+                    toggleMaintenanceBtn.innerHTML = '<i class="fas fa-tools"></i> Activar Mantenimiento';
+                    toggleMaintenanceBtnTop.innerHTML = '<i class="fas fa-tools me-1"></i> Activar Mantenimiento';
+                    toggleMaintenanceBtnTop.classList.add('btn-danger');
+                    toggleMaintenanceBtnTop.classList.remove('btn-success');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
 </body>
 </html>

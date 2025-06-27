@@ -11,14 +11,21 @@ import com.example.vintagevogue.service.CategoryService;
 import com.example.vintagevogue.service.ProductService;
 import com.example.vintagevogue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 @Controller
 @RequestMapping("/admin")
@@ -38,6 +45,12 @@ public class AdminController {
     
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private Environment environment;
+    
+    @Value("${app.maintenance.enabled:false}")
+    private boolean maintenanceMode;
 
     @GetMapping
     public String adminPage(Model model) {
@@ -76,6 +89,52 @@ public class AdminController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "manage-product";
+    }
+    
+    @PostMapping("/toggle-maintenance")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> toggleMaintenanceMode() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Leer el archivo de propiedades
+            Properties properties = new Properties();
+            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+            
+            // Cambiar el valor de la propiedad
+            boolean currentMode = Boolean.parseBoolean(properties.getProperty("app.maintenance.enabled", "false"));
+            boolean newMode = !currentMode;
+            properties.setProperty("app.maintenance.enabled", String.valueOf(newMode));
+            
+            // Guardar el archivo de propiedades
+            String appPropertiesPath = getClass().getClassLoader().getResource("application.properties").getPath();
+            try (FileOutputStream out = new FileOutputStream(appPropertiesPath)) {
+                properties.store(out, "Updated maintenance mode");
+            }
+            
+            // Actualizar el valor en memoria
+            maintenanceMode = newMode;
+            
+            response.put("success", true);
+            response.put("enabled", newMode);
+            response.put("message", newMode ? 
+                    "Modo mantenimiento activado. Los usuarios verán un mensaje de mantenimiento." : 
+                    "Modo mantenimiento desactivado. La aplicación funciona normalmente.");
+            
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            response.put("success", false);
+            response.put("message", "Error al cambiar el modo de mantenimiento: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    @GetMapping("/maintenance-status")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getMaintenanceStatus() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("enabled", maintenanceMode);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/products/mark-as-sold")

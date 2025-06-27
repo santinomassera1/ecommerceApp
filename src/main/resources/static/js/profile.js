@@ -83,28 +83,31 @@ function showSection(sectionId) {
 function initForms() {
     // Botón para editar perfil
     const editProfileBtn = document.getElementById('editProfileBtn');
-    const profileForm = document.getElementById('profileForm');
     
-    if (editProfileBtn && profileForm) {
+    if (editProfileBtn) {
         editProfileBtn.addEventListener('click', function() {
-            profileForm.style.display = 'block';
-            this.style.display = 'none';
+            // Buscar el elemento de navegación para "Gestionar Usuario"
+            const manageUserNav = document.querySelector('.profile-nav .list-group-item[data-target="manageUser"]');
             
-            // Enfocar el primer campo del formulario
-            const firstInput = profileForm.querySelector('input');
-            if (firstInput) {
-                firstInput.focus();
+            if (manageUserNav) {
+                // Simular clic en el elemento de navegación
+                manageUserNav.click();
             }
         });
     }
     
     // Botón para cancelar edición
     const cancelEditBtn = document.getElementById('cancelEditBtn');
-    if (cancelEditBtn && profileForm && editProfileBtn) {
+    const profileForm = document.getElementById('profileForm');
+    if (cancelEditBtn && profileForm) {
         cancelEditBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            profileForm.style.display = 'none';
-            editProfileBtn.style.display = 'block';
+            
+            // Volver a la sección principal
+            const mainContentNav = document.querySelector('.profile-nav .list-group-item[data-target="mainContent"]');
+            if (mainContentNav) {
+                mainContentNav.click();
+            }
         });
     }
     

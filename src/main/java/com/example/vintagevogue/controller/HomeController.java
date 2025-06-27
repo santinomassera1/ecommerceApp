@@ -7,6 +7,7 @@ import com.example.vintagevogue.service.AdService;
 import com.example.vintagevogue.service.CategoryService;
 import com.example.vintagevogue.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,21 @@ public class HomeController {
 
     @Autowired
     private CategoryService categoryService;
+    
+    @Value("${app.maintenance.enabled:false}")
+    private boolean maintenanceMode;
+    
+    @Value("${app.maintenance.message:La aplicación se encuentra en mantenimiento. Por favor, intente más tarde.}")
+    private String maintenanceMessage;
+    
     @GetMapping("/home")
     public String home(Model model) {
+        // Verificar si la aplicación está en modo mantenimiento
+        if (maintenanceMode) {
+            model.addAttribute("maintenanceMessage", maintenanceMessage);
+            return "maintenance";
+        }
+        
         List<Ad> ads = adService.getAllAds();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -46,5 +60,14 @@ public class HomeController {
         model.addAttribute("categories", categories);
 
         return "home";
+    }
+    
+    @GetMapping("/")
+    public String root() {
+        // Verificar si la aplicación está en modo mantenimiento
+        if (maintenanceMode) {
+            return "redirect:/home";
+        }
+        return "redirect:/home";
     }
 }
